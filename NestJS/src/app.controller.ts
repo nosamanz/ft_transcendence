@@ -8,18 +8,13 @@ import { send } from 'process';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('users')
-  getHtml(@Res() response: Response) {
-    const filePath = path.join(__dirname, '..', '..', 'index', 'index.html');
-    return response.sendFile(filePath);
-  }
-  @Post('users')
-  getResponse(@Req() request: Request, @Body() body : any) {
-    console.log('body-> ', body);
-  }
-  @Get('hello')
-  callGetHello(@Res() response: Response) {
-    const message = this.appService.getHello();
-    response.send(message);
-  }
+  // @Get()
+  // getHtml(@Res() response: Response) {
+  //   const filePath = path.join(__dirname, '..', '..', 'index', 'index.html');
+  //   return response.sendFile(filePath);
+  // }
+  // @Post('users')
+  // getResponse(@Req() request: Request, @Body() body : any) {
+  //   console.log('body-> ', body);
+  // }
 }

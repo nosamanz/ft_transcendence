@@ -11,7 +11,6 @@ export class UsersController {
 
 	@Get()
 	getUsers(@Res() response : Response){
-
 		const filePath = path.join(__dirname, '..', '..' ,'..', 'Front', 'html', 'index.html');
 		return response.sendFile(filePath);
 	}
@@ -26,8 +25,8 @@ export class UsersController {
 	// }
 
 	@Post()
-	async createUser(@Body('name') name: string, @Body('email') email: string) {
-		console.log(name + "--" + email);
-		return this.usersService.createUser(name, email);
+	async createUser(@Body('nick') nick: string, @Body('pass') pass: string) {
+		console.log(nick + "--" + pass);
+		return this.usersService.createUser(nick, pass);
   	}
 }

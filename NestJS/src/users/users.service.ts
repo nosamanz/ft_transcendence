@@ -41,10 +41,10 @@ export class UsersService {
 		// return this.users.find(user => user.id === userId);
 		return new User();
 	}
-  async createUser(name: string, email: string): Promise<User> {
+  async createUser(nick: string, pass: string): Promise<User> {
     const user = new User();
-    user.name = name;
-    user.email = email;
+    user.nick = nick;
+    user.pass = pass;
     return await this.userRepository.save(user);
   }
 }

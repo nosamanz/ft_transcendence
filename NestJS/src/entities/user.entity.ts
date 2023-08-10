@@ -6,8 +6,8 @@ export class User {
   id: number;
 
   @Column()
-  name: string;
+  nick: string;
 
   @Column()
-  email: string;
+  pass: string;
 }
