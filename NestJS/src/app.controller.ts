@@ -4,17 +4,16 @@ import { AppService } from './app.service';
 import * as path from 'path';
 import { send } from 'process';
 
-@Controller('trans')
+@Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('login')
+  @Get('users')
   getHtml(@Res() response: Response) {
     const filePath = path.join(__dirname, '..', '..', 'index', 'index.html');
     return response.sendFile(filePath);
-    // return response.sendFile('../../index/index.html');
   }
-  @Post('login')
+  @Post('users')
   getResponse(@Req() request: Request, @Body() body : any) {
     console.log('body-> ', body);
   }

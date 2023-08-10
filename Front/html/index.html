@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Transcendence</title>
+	<link rel = "stylesheet" href="../Css/index.css">
+  
+</head>
+<body>
+	<header>
+		<h2 class="logo">Transcendence</h2>
+		<nav class="navigation">
+			<a class="navigation-a" href="#index">Giriş</a>
+			<a class="navigation-a" href="#home">Oyun</a>
+			<a class="navigation-a" href="#leaderboard">Leaderboard</a>
+			<a class="navigation-a" href="#profil">Profil</a>
+			<button class="navigation-button" href="#index">Login</button>
+		</nav>
+	</header>
+	<section id = "index">
+	<div class="login-container" id="login" >
+		<form class="form" method="post">
+			<h1>Giriş Yap</h1>
+			<label>Kullanıcı Adı</label>
+			<input type="text" id = "id" placeholder="Kullanıcı Adı" name="name" required>
+			<label>Şifre</label>
+			<input type="password" id = "pass" placeholder="Şifre" name="email" required>
+			<button type="submit" id = "42" onclick="showContent()" >42 İle Giriş Yap</button>
+			<button type="submit" id = "google" onclick="showContent()" >Google İle Giriş Yap</button>
+		</form>
+	</div>
+	</section>
+	<section id = "home" class="home-container">
+		<div class="home-container" id="content">
+
+		</div>
+	</section>
+	<section id = "profil">
+		<div class="content-container" id="content">
+		</div>
+	</section>
+	<section id = "leaderboard">
+		<div class="content-container" id="content">
+		</div>
+	</section>
+	<script  src="../JavaScript/index.js"></script>
+</body>
+
+</html>
