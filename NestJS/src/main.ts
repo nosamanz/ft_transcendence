@@ -7,7 +7,7 @@ import * as path from 'path';
 async function bootstrap() {
   // const app = await NestFactory.create(AppModule);
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  
+
   app.useStaticAssets(path.join(__dirname, '..', '..', 'Front'));
   //for Swagger
   const config = new DocumentBuilder()

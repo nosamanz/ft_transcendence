@@ -13,7 +13,7 @@ export class AppController {
   //   const filePath = path.join(__dirname, '..', '..', 'index', 'index.html');
   //   return response.sendFile(filePath);
   // }
-  // @Post('users')
+  // @Post()
   // getResponse(@Req() request: Request, @Body() body : any) {
   //   console.log('body-> ', body);
   // }
