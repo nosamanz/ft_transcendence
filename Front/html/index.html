@@ -8,42 +8,85 @@
   
 </head>
 <body>
-	<header>
-		<h2 class="logo">Transcendence</h2>
+	<header class="first" id = "first_header">
+		<h1 class="logo">Transcendence</h2>
 		<nav class="navigation">
-			<a class="navigation-a" href="#index">Giriş</a>
 			<a class="navigation-a" href="#home">Oyun</a>
 			<a class="navigation-a" href="#leaderboard">Leaderboard</a>
 			<a class="navigation-a" href="#profil">Profil</a>
 			<button class="navigation-button" href="#index">Login</button>
 		</nav>
 	</header>
-	<section id = "index">
+	<header class="second" id = "second_header">
+		<h1 class="logo">Transcendence</h2>
+		<nav class="navigation">
+			<a class="navigation-a" href="#home">Oyun</a>
+			<a class="navigation-a" href="#leaderboard">Leaderboard</a>
+			<a class="navigation-a" href="#profil">Profil</a>
+			<button class="navigation-button" href="#index">Login</button>
+		</nav>
+	</header>
+	<main >
+		<section id = "index">
 	<div class="login-container" id="login" >
-		<form class="form" method="post">
+		<form class="form" action="/" method="post">
 			<h1>Giriş Yap</h1>
 			<label>Kullanıcı Adı</label>
-			<input type="text" id = "id" placeholder="Kullanıcı Adı" name="nick" required>
+			<input type="text" id = "id" placeholder="Kullanıcı Adı" required>
 			<label>Şifre</label>
-			<input type="password" id = "pass" placeholder="Şifre" name="pass" required>
-			<button type="submit" id = "42" onclick="showContent(e)" >42 İle Giriş Yap</button>
-			<button type="submit" id = "google" onclick="showContent()" >Google İle Giriş Yap</button>
+			<input type="password"  id = "pass" placeholder="Şifre" required>
+			<button type="submit" id = "42" onclick="showContent()" >42 İle Giriş Yap</button>
+			<button type="submit" id = "google" onclick="showContent(), hiddenHeader(), showHeader()" >Google İle Giriş Yap</button>
 		</form>
 	</div>
-	</section>
-	<section id = "home" class="home-container">
+</section>
+	<section id = "home">
 		<div class="home-container" id="content">
+			<div class="home-main">
+				<div class="home-chat">
+					<div class="home-header">
+						<h1>WebChat</h1>
+					</div>
+					<div class="home-body">
+						<p class="message">Hello</p>
+						<p class="message-user">Deneme</p>
+					</div>
+					<div class="home-footer">
+						<form method="post">
+							<input class="chat-input">
+							<button type="submit">Send</button>
+						</form>
+					</div>
+				</div>
+				<div class="home-game">
+					<label class="homegame-label">HHH</label>
+				</div>
+				<div class="home-list">
+					<label class="homelist-label"><br></label>
+				</div>
+		</div>
+	</section>
+	<section id = "leaderboard" >
+		<div class="leaderboard-container" id="content">
+			<div class="leaderboard-header">
+				<h2>Leaderboard</h2>
+			</div>
+			<div class="leaderboard-main">
+				<div class="nick">
+					
+				</div>
+				<div class="win">
 
+				</div>
+			</div>
 		</div>
 	</section>
 	<section id = "profil">
-		<div class="content-container" id="content">
+		<div class="profil-container" id="content">
+			<h2>Profil</h2>
 		</div>
 	</section>
-	<section id = "leaderboard">
-		<div class="content-container" id="content">
-		</div>
-	</section>
+	</main>
 	<script  src="../JavaScript/index.js"></script>
 </body>
 
