@@ -1,52 +1,13 @@
 
-function showContent() {
+const redirectButton = document.getElementById('redirectButton');
 
-	var contentContainer = document.getElementById("id");
-	// var id = document.getElementById("id").value;
-	// var pass = document.getElementById("pass").value;
-	// if (id == "esma" && pass == "123")
-	// {
-	// 	contentContainer.classList.add("active");
-	// 	hiddenLogin();
-	// }
-	hiddenLogin();
-	
-}
+redirectButton.addEventListener('click', () => {
+	console.log("XXX");
+	window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-bbfbe7593d2e8d5c3878b3c32d6095c72d7e249eb711983ec73694f0f6962561&redirect_uri=http%3A%2F%2F10.12.14.1%3A5000%2F&response_type=code'; // Replace with your desired URL
+});
 
 function hiddenLogin()
 {
 	var loginContainer = document.getElementById("login");
 	loginContainer.classList.add("pasive");
 }
-
-function hiddenHeader()
-{
-	var headerContainer = document.getElementById("first_header");
-
-}
-
-function showHeader()
-{
-
-}
-
-function lines()
-{
-	let sizeW = Math.random() * 12;
-	let e = document.createElement('div');
-	e.setAttribute('class', 'circle');
-	document.body.appendChild(e);
-
-	e.style.width= 2 +sizeW+'px';
-	e.style.left = Math.random() * + innerWidth + 'px';
-	setTimeout(function()
-	{
-		document.body.removeChild(e)
-	}, 5000);
-}
-
-
-setInterval(function()
-{
-	lines();
-}, 1000);

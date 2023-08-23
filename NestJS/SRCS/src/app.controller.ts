@@ -8,11 +8,10 @@ import { send } from 'process';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  // @Get()
-  // getHtml(@Res() response: Response) {
-  //   const filePath = path.join(__dirname, '..', '..', 'index', 'index.html');
-  //   return response.sendFile(filePath);
-  // }
+  @Get()
+  getHello() {
+    console.log("Hello World");
+  }
   // @Post()
   // getResponse(@Req() request: Request, @Body() body : any) {
   //   console.log('body-> ', body);
