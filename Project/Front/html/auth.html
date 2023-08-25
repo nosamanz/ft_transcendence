@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Query Parameter Example</title>
+</head>
+<body>
+
+    <h2>URL Query Parameter Example</h2>
+
+    <p id="result"></p>
+
+  <script>
+    window.onload = async function() {
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+        var code = getQueryParam('code');
+
+        if (code !== null) {
+            document.getElementById("result").textContent = 'Code: ' + code;
+            const data = {};
+            data["data"] = code;
+
+            try {
+            const response = await fetch('http://localhost:5000/auth/signin_intra', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                console.log('Server response:', responseData);
+            } else {
+                console.error('Failed to send data:', response.statusText);
+            }
+            } catch (error) {
+            console.error('Error:', error);
+            }
+
+        } else {
+            // "code" sorgu parametresi yoksa, uygun bir mesaj göster
+            document.getElementById("result").textContent = 'Code not found in URL.';
+        }
+    };
+  </script>
+</body>
+</html>
