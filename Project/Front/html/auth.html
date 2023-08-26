@@ -23,7 +23,7 @@
             data["data"] = code;
 
             try {
-            const response = await fetch('http://localhost:5000/auth/signin_intra', {
+            const response = await fetch('http://10.12.14.1:80/auth/signin_intra', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json'

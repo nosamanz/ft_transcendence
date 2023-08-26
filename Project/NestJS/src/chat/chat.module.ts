@@ -8,7 +8,6 @@ import { ChatGateway } from './chat.gateway';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AllChat]), TypeOrmModule.forFeature([PrivChat])],
   controllers: [ChatController],
   providers: [ChatService, ChatGateway]
 })
