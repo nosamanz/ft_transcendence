@@ -3,8 +3,10 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
+  dotenv.config(); // dotenv ile .env dosyasını yükleyin
   // const app = await NestFactory.create(AppModule);
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 

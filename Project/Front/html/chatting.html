@@ -18,7 +18,7 @@
     const sendButton = document.getElementById('sendButton');
     const privButton = document.getElementById('privButton');
 
-    const socket = io.connect('http://10.12.14.1:5000');
+    const socket = io.connect('http://10.12.14.1:80');
 
     socket.on('chat', (data) => {
       output.innerHTML += `<p>${data.sender}: "${data.message}"</p>`;

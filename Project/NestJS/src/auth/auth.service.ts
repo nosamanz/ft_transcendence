@@ -1,23 +1,27 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtService } from '@nestjs/jwt';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
-	constructor(private prisma: PrismaService) {}
+	constructor(
+		private prisma: PrismaService,
+	) {}
 
 	async signin_intra(code: string): Promise<any> {
 		const form = new FormData();
 		form.append('grant_type', 'authorization_code');
-		form.append('client_id', 'u-s4t2ud-e7bed2aab0541a9726ad7abcc0023e254fe1c3b64bfab299d2d2a395b625a545');
-		form.append('client_secret', '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');
+		form.append('client_id', process.env.UID);
+		form.append('client_secret', process.env.SECRET);
 		form.append('code', code);
-		form.append('redirect_uri', 'http://10.12.14.1:80/auth/getcode');
+		form.append('redirect_uri', process.env.REDIRECT_URI);
 
 		const responseToken = await fetch('https://api.intra.42.fr/oauth/token', {
 				method: 'POST',
 				body: form
 			});
-		console.log(responseToken.ok);
+		console.log(responseToken);
 		const dataToken = await responseToken.json();
 
 		const responseInfo = await fetch('https://api.intra.42.fr/v2/me', {
@@ -27,86 +31,30 @@ export class AuthService {
 		});
 		console.log(responseInfo.ok);
 		const dataInfo = await responseInfo.json();
-		const responseLast = await fetch('https://api.intra.42.fr/oauth/token/info', {
-			headers: {
-				'Authorization': 'Bearer ' + dataToken.access_token
-			}
-		});
-		const dataInfo1 = await responseLast.json();
-		console.log("The Info is:" + dataInfo1);
 
 		console.log(dataInfo.email);
 		console.log(dataInfo.last_name);
 		console.log(dataInfo.first_name);
-		console.log(typeof(dataInfo));
 		console.log(dataInfo.id);
 
-		const userData = {
-			id:				dataInfo.id,
-			email:		dataInfo.email,
-			name:			dataInfo.first_name,
-			surname:	dataInfo.last_name,
-			login:		dataInfo.login,
-			imgLink:	dataInfo.image.link,
-		};
-
 		const createdUser = await this.prisma.user.create({
-			data: userData,
+			data: {
+				id:			dataInfo.id,
+				email:		dataInfo.email,
+				name:		dataInfo.first_name,
+				surname:	dataInfo.last_name,
+				login:		dataInfo.login,
+			}
 		});
-
 		console.log('Created user:', createdUser);
-
-		// const email = dataInfo.email;
-		// const firstName = dataInfo.first_name;
-		// const lastName = dataInfo.last_name;
-
-		// this.prisma.user.create(
-		//   {
-		//     data: {
-		//       email: dataInfo.email,
-		//       name: dataInfo.name,
-		//       surname: dataInfo.surname,
-		//     },
-		//   }
-		// )
-
-		// const createdUser = await this.prisma.user.create(
-		//   {
-		//     data: {
-		//       email: dataInfo.email,
-		//       name: dataInfo.name,
-		//       surname: dataInfo.surname,
-		//     },
-		//   }
-		// );
-
-		// console.log('Created user:', createdUser);
-		// // dataInfo içinden istenilen datalar çekilebilir
-		// var dto: AuthDto = {
-		//     email: dataInfo.email,
-		//     hash: process.env.BACKEND_GENERAL_SECRET_KEY as string,
-		//     firstName: dataInfo.first_name,
-		//     lastName: dataInfo.last_name,
-		//     userName: dataInfo.login
-		// }
-
-		// var firstSingIn = false;
-		// var user: string | any = await this.prisma.user.findUnique({
-		//     where: {
-		//         email: dto.email,
-		//     },
-		// });
-		// if (!user) {
-		//     await this.signup(dto);
-
-		//     user = await this.prisma.user.findUnique({
-		//         where: {
-		//             email: dto.email,
-		//         },
-		//     });
-		//     firstSingIn = true;
-		// }
 	}
+	// async getImageBuffer(url :string): Promise<Buffer> {
+	// 	const response = await axios.get(url, { responseType: 'arraybuffer' });
+	// 	return Buffer.from(response.data, 'base64');
+	// }
+	// async getLogin(code: string): Promise<string> {
+	// 	return "Geldi";
+	// }
 }
 
 

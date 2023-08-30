@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Post , Body, Res} from '@nestjs/common';
+import { Controller, Get, UseGuards, Post , Body, Res} from '@nestjs/common';
 import { ChatService } from './chat.service';
+import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import * as path from 'path'
 
@@ -8,6 +9,7 @@ export class ChatController {
     constructor(private chatService: ChatService){}
 
     @Get()
+	  @UseGuards(AuthGuard('42'))
     getChat(@Res() response: Response) {
       const filePath = path.join(__dirname, '..', '..', '..', 'Front', 'html', 'chatting.html');
       return response.sendFile(filePath);

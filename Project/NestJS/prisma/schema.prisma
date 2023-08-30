@@ -16,5 +16,9 @@ model User {
 	name		String
 	surname		String
 	login		String
-	imgLink		String
+	// img			Bytes
+	// TFAuth		Boolean
+	// TFSecret	String
 }
+
+
