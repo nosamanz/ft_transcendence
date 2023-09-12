@@ -18,7 +18,6 @@ export class AuthController {
 	async signin_intra(@Body() info: any) {
 		if(!info)
 			return("404 Not Found");
-		console.log('Post received:', info);
 		return (this.authService.signin_intra(info.data));
 	}
 }

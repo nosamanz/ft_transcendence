@@ -6,14 +6,21 @@ import { FortyTwoStrategy } from './strategies/fortytwo/fortytwo.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
 import { UserService } from 'src/user/user.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { jwtConstants } from '../jwtconstants';
+
 
 @Module({
   imports: [
     PrismaModule,
     PassportModule.register({ defaultStrategy: '42'}),
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '3000s' },
+    }),
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, FortyTwoStrategy, UserService]
+  providers: [AuthService, FortyTwoStrategy, UserService, JwtService]
 })
 export class AuthModule {}

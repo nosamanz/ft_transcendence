@@ -3,46 +3,48 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import axios from 'axios';
+import { number, string } from 'yargs';
+import { jwtConstants } from 'src/jwtconstants';
+import { JwtDto } from 'src/DTO/jwt.dto';
 
 @Injectable()
 export class AuthService {
 	constructor(
 		private prisma: PrismaService,
 		private userService: UserService,
+		private jwtService: JwtService,
 		) {}
 
-	async signin_intra(code: string): Promise<any> {
+	async signin_intra(code: string): Promise<JwtDto> {
 		const form = new FormData();
 		form.append('grant_type', 'authorization_code');
 		form.append('client_id', process.env.UID);
 		form.append('client_secret', process.env.SECRET);
 		form.append('code', code);
 		form.append('redirect_uri', process.env.REDIRECT_URI);
-		console.log("Geldi---->");
 		const responseToken = await fetch('https://api.intra.42.fr/oauth/token', {
 				method: 'POST',
 				body: form
 			});
-		console.log(responseToken);
 		const dataToken = await responseToken.json();
-		console.log("->>",dataToken.access_token);
 		const responseInfo = await fetch('https://api.intra.42.fr/v2/me', {
 			headers: {
 				'Authorization': 'Bearer ' + dataToken.access_token
 			}
 		});
-		console.log(responseInfo.ok);
 		const dataInfo = await responseInfo.json();
 
 		console.log("Hoşgeldin " + dataInfo.login);
 		const user = await this.userService.getUserByLogin(dataInfo.login);
+		const token: string = await this.createToken(dataInfo.id);
+		console.log("Token: " + token);
 		if(user)
 		{
 			if(user.TFAuth === true)
 			{
-				return (2);
+				return ({token: token, result: 2});
 			}
-			return (1);
+			return ({token: token, result: 1});
 		}
 		await this.prisma.user.create({
 			data: {
@@ -58,16 +60,14 @@ export class AuthService {
 				secretAscii:"Musablars"
 			}
 		});
-		return (0);
+		return ({token: token, result: 0});
 
 	}
-	// async getImageBuffer(url :string): Promise<Buffer> {
-	// 	const response = await axios.get(url, { responseType: 'arraybuffer' });
-	// 	return Buffer.from(response.data, 'base64');
-	// }
-	// async getLogin(code: string): Promise<string> {
-	// 	return "Geldi";
-	// }
+
+	async createToken(userId: number): Promise<string> {
+		const payload = { sub: userId};
+		return this.jwtService.sign(payload, jwtConstants);
+	}
 }
 
 

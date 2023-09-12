@@ -71,6 +71,14 @@
             });
             if (response.ok) {
                 const responseData = await response.json();
+                console.log(responseData.result + " <__> " + responseData.token);
+                const responseUser = await fetch('http://10.12.14.1:80/user', {
+                    headers: {
+                    'authorization': 'Bearer ' + responseData.token,
+                    'Content-Type': 'application/json'
+                    },
+                });
+                console.log(responseUser.nick);
                 if(responseData == 2)
                 {
                     // Code al
