@@ -26,12 +26,14 @@ export class AuthService {
 				method: 'POST',
 				body: form
 			});
-		const dataToken = await responseToken.json();
-		const responseInfo = await fetch('https://api.intra.42.fr/v2/me', {
-			headers: {
-				'Authorization': 'Bearer ' + dataToken.access_token
-			}
-		});
+			console.log(responseToken.ok);
+			const dataToken = await responseToken.json();
+			const responseInfo = await fetch('https://api.intra.42.fr/v2/me', {
+				headers: {
+					'Authorization': 'Bearer ' + dataToken.access_token
+				}
+			});
+			console.log(responseInfo.ok);
 		const dataInfo = await responseInfo.json();
 
 		console.log("Hoşgeldin " + dataInfo.login);
@@ -65,8 +67,13 @@ export class AuthService {
 	}
 
 	async createToken(userId: number): Promise<string> {
-		const payload = { sub: userId};
-		return this.jwtService.sign(payload, jwtConstants);
+		const payload = {
+			"sub": userId,
+			"iat": 13334150876,
+		};
+		const a =  this.jwtService.sign(payload, jwtConstants);
+		console.log("Signed: " + a);
+		return a;
 	}
 }
 

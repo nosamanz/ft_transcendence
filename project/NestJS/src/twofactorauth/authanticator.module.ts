@@ -7,7 +7,12 @@ import { PrismaModule } from 'src/prisma/prisma.module'
 import { UserService } from 'src/user/user.service';
 
 @Module({
-	imports:[PrismaModule, JwtModule.register({secret: jwtConstants.secret})],
+	imports:[
+		PrismaModule,
+		JwtModule.register({
+			secret: jwtConstants.secret,
+			signOptions: { expiresIn: '3000s' },
+		}),],
 	controllers: [AuthanticatorController],
 	providers: [AuthanticatorService, UserService, JwtService],
 	exports:[AuthanticatorService]

@@ -78,7 +78,9 @@
                     'Content-Type': 'application/json'
                     },
                 });
-                console.log(responseUser.nick);
+                console.log(responseUser.ok);
+                const responseUserData = await responseUser.json();
+                console.log("Hoşgeldin "+ responseUserData.name + " by " + responseUserData.email);
                 if(responseData == 2)
                 {
                     // Code al
