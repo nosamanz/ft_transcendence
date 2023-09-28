@@ -1,0 +1,120 @@
+.body{
+  background-color:#112D4E ;
+}
+
+
+.home{
+  width: 100%;
+  height: calc(100vh - 70px);
+}
+
+.navbar{
+  height: 70px;
+  background-color: #112D4E;
+  color: #F5EFE6;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.logo{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.list{
+
+  display: flex;
+  list-style: none;
+}
+
+.listItem{
+  width: 80px;
+  height: 25px;
+  margin-right: 20px;
+  font-size:1.1em;
+  font-weight: 500;
+  border: 2px, solid #DBE2EF;
+  background: transparent;
+  outline: none;
+  border-radius: 20px;
+  transition: .5s;
+  cursor: pointer;
+ 
+}
+.pItem{
+  width: 80px;
+  height: 25px;
+  margin-right: 20px;
+  font-weight: 500;
+  background: transparent;
+  font-size: 1.1em;
+}
+
+.list:hover{
+	background: #DBE2EF;
+	color:#112D4E;
+}
+
+.avatar{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.link{
+  color: inherit;
+  text-decoration: none;
+}
+
+.login{
+  height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.loginH1{
+  position: absolute;
+  top: 22%;
+  left: 40%;
+  color: #112D4E;
+  transform: translate(-25%, -50%);
+  z-index: 1;
+}
+
+.wrapper{
+  width: 15%;
+  height: 25%;
+  border-radius: 10px;
+  box-shadow: 0px 5px 33px -21px rgba(66, 68, 70, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #DBE2EF;
+  color: #F5EFE6;
+  position: relative;
+}
+
+.loginButton{
+  width: 150px;
+  height: 30px;
+  padding: 15px 25px;
+  border-radius: 5px;
+  border: 5px;
+  color: black;
+  background-color: white;
+  font-weight: bold;
+  align-items: center;
+  display: flex;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.icon{
+  width: 40px;
+  height: 40px;
+}
+
