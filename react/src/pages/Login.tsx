@@ -31,6 +31,7 @@ const Login = ({setUser}) => {
 			});
 
 			const responseData = await response.json();
+			console.log("----->");
 			console.log(responseData.token);
 
 			const responseUser = await fetch("http://10.12.14.1:80/user", {
@@ -49,7 +50,7 @@ const Login = ({setUser}) => {
 
 
   const handleFTLogin = () => {
-	window.location.href=('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-013340e8953f8ac2fa419a2f883cdb4c61492cbd04a7d7fb072c34f1cf7fd42f&redirect_uri=http%3A%2F%2F10.12.14.1%3A80%2Fauth%2F42%2Fgetcode&response_type=code');
+	window.location.href=('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-49c00e638b92e23cd3e1a9e499e18c4f0187c30258c088afa3788a9d97129c66&redirect_uri=http%3A%2F%2F10.12.14.1%3A80%2Fauth%2F42%2Fgetcode&response_type=code');
 };
 
   return (

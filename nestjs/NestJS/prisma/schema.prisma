@@ -73,7 +73,13 @@ model Achievements{
 //     LatterLevel: 'asc', // You can use 'asc' for ascending or 'desc' for descending order
 //   },
 // });
-// console.log(users);
+// this.prisma.message.create({
+//   data: {
+//     Content: "Msuab",
+//     SenderID: 9852,
+//     ChannelID: 2
+//   }
+// });
 
 // // leaderboard sırala ver latter level
 
@@ -93,9 +99,10 @@ model Channel {
   messages        Message[]
   Users           User[]
 }
+// @Post('/:channelName/message')
+
 // @Get()//Ana Sayfa
 // @Get('/:channelName/messages')
-// @Post('/:channelName/message')
 // @Get('/:channelName/ban/:user')
 // @Get('/:channelName/kick/:user')
 // @Get('/:channelName/mute/:user')

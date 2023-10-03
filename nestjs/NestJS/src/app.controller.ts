@@ -12,7 +12,6 @@ export class AppController {
 
 	@Get('')
 	getUsers(@Res() response : Response){
-		console.log();
 		const filePath = path.join(__dirname, '..' ,'..', 'Front', 'html', 'index.html');
 		return response.sendFile(filePath);
 	}

@@ -75,7 +75,7 @@
                 body: JSON.stringify(data)
             });
             if (response.ok) {
-                const responseData = await response.json();
+                const responseData = await response.json(); 
                 console.log("--------------------------------");
                 console.log("Result: " + responseData.result);
                 console.log("Token: " + responseData.token);

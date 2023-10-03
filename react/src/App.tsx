@@ -48,6 +48,7 @@ function App() {
         <Routes>
               <Route index element = {<Home />} />
               <Route path='/home' element = {<Home />} />
+              <Route path='/login' element = {<Login />} />
               {/* <Route path='/chat' element = {<Chat />} /> */}
               {/* // <Route path='/chat' element={<Chat user={user} />} */}
         </Routes>
