@@ -18,7 +18,8 @@
     const sendButton = document.getElementById('sendButton');
     const privButton = document.getElementById('privButton');
 
-    const socket = io.connect('http://10.12.14.1:80');
+    const socket = io.connect('http://10.12.13.2:80');
+    console.log("Girdim")
     if (token)
       socket.emit('token', token);
 

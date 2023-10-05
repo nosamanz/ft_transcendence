@@ -104,9 +104,11 @@ model Channel {
 // @Get()//Ana Sayfa
 // @Get('/:channelName/messages')
 // @Get('/:channelName/ban/:user')
+// @Get('/:channelName/setAdmin/:user')
 // @Get('/:channelName/kick/:user')
 // @Get('/:channelName/mute/:user')
-// @Get('/:channelName/setAdmin/:user')
+
+
 // @Get('/:channelName/setPassword/:hashedpass')
 // @Get('/:channelName/inviteOnly')
 

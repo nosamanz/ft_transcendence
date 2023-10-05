@@ -67,10 +67,19 @@ export class ChatController {
 	@UseGuards(JwtGuard)
 	async getNewAdmin(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname:string){
 		const userID: number = parseInt(req.body.toString(), 10);
-		const ret = await this.chatService.channelControls(userID, chname, destUser,"setadmin");
-		console.log(ret);
-		if ((ret !== undefined))
-			return res.send(ret);
+		return res.send(await this.chatService.channelControls(userID, chname, destUser, "setadmin"));
+	}
+	@Get('/:channelName/kick/:user')
+	@UseGuards(JwtGuard)
+	async getKickedUser(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname: string){
+		const userID: number = parseInt(req.body.toString(), 10);
+		return res.send(await this.chatService.channelControls(userID, chname, destUser, "kick"));
+	}
+	@Get('/:channelName/mute/:user')
+	@UseGuards(JwtGuard)
+	async getMutedUser(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname : string){
+		const userID: number = parseInt(req.body.toString(), 10);
+		return res.send(await this.chatService.channelControls(userID, chname, destUser, "mute"));
 	}
 	@Get('/:channelName/ban/:user')
 	@UseGuards(JwtGuard)
@@ -78,45 +87,42 @@ export class ChatController {
 		const userID: number = parseInt(req.body.toString(), 10);
 		//check is user admin and the kicked user mustn't be a channel owner
 		// const channel = await this.prisma.channel.findFirst({ where: { Name: chname,}})
-
-		const ret = await this.chatService.channelControls(userID, chname, destUser, "ban");
-		console.log("-->"+ret);
-		if ((ret !== undefined))
-			return res.send(ret);
-		// if (!(channel.AdminIDs.some((element) => element === userID)))
-		// {
-		// 	console.log("You are not Channel Admin !");
-		// 	res.send("You are not Channel Admin !");
-		// 	return res.send("You are not Channel Admin !");
-		// }
-		// const destuser = await this.prisma.user.findFirst({ where: { nick: destUser } })
-		// console.log(destuser.id);
-		// if ((channel.AdminIDs.some((element) => element === destuser.id)) || (channel.ChannelOwnerID === destuser.id))
-		// {
-		// 	console.log("Dest user is Admin or Channel Owner!");
-		// 	return res.send("Dest user is Admin !");
-		// }
-		// else if ((channel.BannedIDs.some((element) => element === destuser.id)))
-		// {
-		// 	console.log("Dest User Already Banned !");
-		// 	return;
-		// }
-		// channel.BannedIDs.push(destuser.id);
-		// console.log(channel.BannedIDs);
-		// try{
-		// 	await this.prisma.channel.update({
-		// 		where: { Name: chname },
-		// 		data: { BannedIDs: channel.BannedIDs}
-		// 	})
-		// }
-		// catch(error){
-		// 	console.log("Error ! While channel updating");
-		// }
+		return res.send(await this.chatService.channelControls(userID, chname, destUser, "ban"));
 	}
-	// @Get('/:channelName/kick/:user')
-	// async getKickedUser(@Req())
+
+	
 	// @Post()
 	// async createUser(@Body('msg') msg: string) {
-	// console.log("From Controller: " + msg);
+		// console.log("From Controller: " + msg);
+		// }
+	}
+
+	// if (!(channel.AdminIDs.some((element) => element === userID)))
+	// {
+	// 	console.log("You are not Channel Admin !");
+	// 	res.send("You are not Channel Admin !");
+	// 	return res.send("You are not Channel Admin !");
 	// }
-}
+	// const destuser = await this.prisma.user.findFirst({ where: { nick: destUser } })
+	// console.log(destuser.id);
+	// if ((channel.AdminIDs.some((element) => element === destuser.id)) || (channel.ChannelOwnerID === destuser.id))
+	// {
+	// 	console.log("Dest user is Admin or Channel Owner!");
+	// 	return res.send("Dest user is Admin !");
+	// }
+	// else if ((channel.BannedIDs.some((element) => element === destuser.id)))
+	// {
+	// 	console.log("Dest User Already Banned !");
+	// 	return;
+	// }
+	// channel.BannedIDs.push(destuser.id);
+	// console.log(channel.BannedIDs);
+	// try{
+	// 	await this.prisma.channel.update({
+	// 		where: { Name: chname },
+	// 		data: { BannedIDs: channel.BannedIDs}
+	// 	})
+	// }
+	// catch(error){
+	// 	console.log("Error ! While channel updating");
+	// }
