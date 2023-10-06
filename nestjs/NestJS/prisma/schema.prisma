@@ -8,65 +8,65 @@
 
 // windows
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "windows"]
+	provider      = "prisma-client-js"
+	binaryTargets = ["native", "windows"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+	provider = "postgresql"
+	url      = env("DATABASE_URL")
 }
 
 model Friend {
-  id            Int   @id @default(autoincrement())
-  OtherUserID   Int
-  User          User  @relation(fields: [UserId], references: [id])
-  UserId        Int
+	id            Int   @id @default(autoincrement())
+	OtherUserID   Int
+	User          User  @relation(fields: [UserId], references: [id])
+	UserId        Int
 }
 
 model Ignore {
-  id            Int   @id @default(autoincrement())
-  OtherUserID   Int
-  User          User  @relation(fields: [UserId], references: [id])
-  UserId        Int
+	id            Int   @id @default(autoincrement())
+	OtherUserID   Int
+	User          User  @relation(fields: [UserId], references: [id])
+	UserId        Int
 }
 
 model History {
-  id            Int     @id @default(autoincrement())
-  RivalNick     String
-  Score         Int
-  RivalScore    Int
-  User          User    @relation(fields: [UserId], references: [id])
-  UserId        Int
+	id            Int     @id @default(autoincrement())
+	RivalNick     String
+	Score         Int
+	RivalScore    Int
+	User          User    @relation(fields: [UserId], references: [id])
+	UserId        Int
 }
 
 model User {
-  id              Int      @id // @unique idi!!!
-  login           String   @unique
-  nick            String   @unique
-  imgPath         String
-  TFAuth          Boolean
-  TFSecret        String
-  secretAscii     String
-  WinCount        Int
-  LoseCount       Int
-  LatterLevel     Int
-  // FriendRequests  User[]
-  Achievements    Achievements?
-  Friends         Friend[]
-  IgnoredUsers    Ignore[]
-  MatchHistory    History[]
-  Channels        Channel[]
+	id              Int      @id // @unique idi!!!
+	login           String   @unique
+	nick            String   @unique
+	imgPath         String
+	TFAuth          Boolean
+	TFSecret        String
+	secretAscii     String
+	WinCount        Int
+	LoseCount       Int
+	LatterLevel     Int
+	// FriendRequests  User[]
+	Achievements    Achievements?
+	Friends         Friend[]
+	IgnoredUsers    Ignore[]
+	MatchHistory    History[]
+	Channels        Channel[]
 }
 
 model Achievements{
-  id      Int     @id @default(autoincrement())
-  Ac1     Boolean
-  Ac2     Boolean
-  Ac3     Boolean
-  Ac4     Boolean
-  User    User    @relation(fields: [UserID], references: [id])
-  UserID  Int     @unique
+	id      Int     @id @default(autoincrement())
+	Ac1     Boolean
+	Ac2     Boolean
+	Ac3     Boolean
+	Ac4     Boolean
+	User    User    @relation(fields: [UserID], references: [id])
+	UserID  Int     @unique
 }
 // const users = await prisma.user.findMany({
 //   orderBy: {
@@ -85,19 +85,19 @@ model Achievements{
 
 //
 model Channel {
-  id              Int @id @default(autoincrement())
-  Name            String @unique
-  ChannelOwnerID  Int
-  AdminIDs        Int[] // ChannelOwner is an administrator
-  BannedIDs       Int[]
-  MutedIDs        Int[]
-  InvitedIDs      Int[]
-  Password        String
-  IsDirect        Boolean
-  IsInviteOnly    Boolean
-  UserCount       Int
-  messages        Message[]
-  Users           User[]
+	id              Int @id @default(autoincrement())
+	Name            String @unique
+	ChannelOwnerID  Int
+	AdminIDs        Int[] // ChannelOwner is an administrator
+	BannedIDs       Int[]
+	MutedIDs        Int[]
+	InvitedIDs      Int[]
+	Password        String
+	IsDirect        Boolean
+	IsInviteOnly    Boolean
+	UserCount       Int
+	messages        Message[]
+	Users           User[]
 }
 // @Post('/:channelName/message')
 
@@ -108,17 +108,20 @@ model Channel {
 // @Get('/:channelName/kick/:user')
 // @Get('/:channelName/mute/:user')
 
+//@Get('/:channelName/create')
+//@Get('/:channelName/ignore/:user')
+//IGNORE ?
 
 // @Get('/:channelName/setPassword/:hashedpass')
-// @Get('/:channelName/inviteOnly')
+// @Get('/:channelName/inviteOnly') // @Get('/:channelName/setInviteOnly')
 
 model Message {
-  id        Int       @id @default(autoincrement())
-  Content   String
-  SenderID  Int
+	id        Int       @id @default(autoincrement())
+	Content   String
+	SenderID  Int
 
-  Channel   Channel   @relation(fields: [ChannelID], references: [id])
-  ChannelID Int
+	Channel   Channel   @relation(fields: [ChannelID], references: [id])
+	ChannelID Int
 
-  CreatedAt DateTime  @default(now())
+	CreatedAt DateTime  @default(now())
 }

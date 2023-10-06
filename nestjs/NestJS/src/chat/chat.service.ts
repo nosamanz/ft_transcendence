@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { connectedClients } from './chat.gateway';
-import { clientInfo } from 'src/entities/clientInfo.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatService {
@@ -10,14 +10,59 @@ export class ChatService {
 		private prisma: PrismaService,
 	){}
 
-	async createUser(nick: string, pass: string): Promise<void> {
+	// async createUser(nick: string, pass: string): Promise<void> {
 
-	}
+	// }
 	getHello(msq: string): string
 	{
 		return("Your(msq): " + msq);
 	}
 
+
+	private async joinCh(userID, chname, channel){
+		channel.UserCount++;
+		await this.prisma.channel.update({
+			where: {Name: chname},
+			data: {
+				UserCount: channel.UserCount,
+				Users: {
+					connect: {
+						id : userID
+					}
+		}}})
+	}
+	private async checkPasswd(userPasswd, channel){
+		const channelPasswd = await channel.passwd;
+		return bcrypt.compare(userPasswd, channelPasswd);
+	}
+	async createCh(userID, chname, passwd?)
+	{
+		let IsDirect : boolean = false;
+		try {
+			const channel = await this.prisma.channel.findFirst({ where: { Name: chname }});
+			if (channel){
+				if (!channel.IsDirect && !this.checkPasswd(passwd, channel)) { return "Incorrect Password"};
+				if (channel.IsInviteOnly && !channel.InvitedIDs.some((element) => element === userID)) {return "You are not invited to this channel."}
+				this.joinCh(userID, chname, channel);
+			}else{
+				if (passwd){
+					passwd = bcrypt.hash(passwd, 10);
+					IsDirect = true;
+				}
+				await this.prisma.channel.create({
+					data: {
+						Name: chname,
+						Password: passwd,
+						ChannelOwnerID: userID,
+						AdminIDs: userID,
+						IsDirect: IsDirect,
+						IsInviteOnly: false,
+						UserCount: 0,
+					}
+				})
+			}
+		}catch{return "Error while performing channel operation"}
+	}
 
 
 	private async setAdmin(channel, destuser, chname){
@@ -98,10 +143,6 @@ export class ChatService {
 			return "Error ! While channel updating";
 		}
 	}
-	private async createCh(userID, chname)
-	{
-
-	}
 
 	async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string> {
 
@@ -109,7 +150,7 @@ export class ChatService {
 		// {
 		// 	const retCh = await this.createCh(userID, chname);
 		// 	console.log(retCh);
-		// 	return (retCh !== undefined) ? retCh : ("The channel operation successful.");
+		// 	return (retCh !== undefined) ? retCh : ("The channel operation successful.")
 		// }
 		const channel = await this.prisma.channel.findFirst({
 			where: {
@@ -163,88 +204,88 @@ export class ChatService {
 	}
 
 	async subscribeToChannel(client: Socket, message: string, channelName: string, userID: number): Promise<void> {
-        // control edilecek !!
-        const channel = await this.prisma.channel.findFirst({
-            where: {
-                Name: channelName,
-            },
-            select: {
-                Users: {
-                    select:{
-                        id: true,
-                        IgnoredUsers: true,
-                    }
-                },
-                MutedIDs: true,
-            }
-        });
-        if(!channel)
-        {
-            console.log("The channel: " + channelName + " couldn't be found in the database!");
-            return;
-        }
-        const usersOnChat = channel.Users;
-        const MutedIDs = channel.MutedIDs;
-        usersOnChat.forEach((element) => {
-            const socket = this.getSocketByUserID(element.id);
-            if(!socket)
-            {
-                console.log("Socket to send couldn't be found!");
-                return;
-            }
-            if (!element.IgnoredUsers.some((element) => element.OtherUserID === userID) &&
-                !MutedIDs.some((element) => element === userID)
-            )
-            {
-                socket.emit('chat', {message: message, channelName: channelName, sender: client.id});
-            }
-        });
-    }
+		// control edilecek !!
+		const channel = await this.prisma.channel.findFirst({
+			where: {
+				Name: channelName,
+			},
+			select: {
+				Users: {
+					select:{
+						id: true,
+						IgnoredUsers: true,
+					}
+				},
+				MutedIDs: true,
+			}
+		});
+		if(!channel)
+		{
+			console.log("The channel: " + channelName + " couldn't be found in the database!");
+			return;
+		}
+		const usersOnChat = channel.Users;
+		const MutedIDs = channel.MutedIDs;
+		usersOnChat.forEach((element) => {
+			const socket = this.getSocketByUserID(element.id);
+			if(!socket)
+			{
+				console.log("Socket to send couldn't be found!");
+				return;
+			}
+			if (!element.IgnoredUsers.some((element) => element.OtherUserID === userID) &&
+				!MutedIDs.some((element) => element === userID)
+			)
+			{
+				socket.emit('chat', {message: message, channelName: channelName, sender: client.id});
+			}
+		});
+	}
 
-    async saveMessage(client: Socket, message: string, channelName: string): Promise<void> {
+	async saveMessage(client: Socket, message: string, channelName: string): Promise<void> {
 
-        const channel = await this.prisma.channel.findFirst({
-            where: {
-                Name: channelName
-            },
-            select: {
-                id: true,
-                messages: true,
-            }
-        });
-        if(!channel)
-        {
-            console.log("The channel: " + channelName + " couldn't be found in the database!");
-            return;
-        }
-        const senderID = await this.getUserBySocket(client);
-        if(!senderID)
-        {
-            console.log("Sender information couldn't be found in connected clients list!");
-            return;
-        }
-        await this.prisma.message.create({
-            data: {
-                Content: message,
-                SenderID: senderID,
-                ChannelID: channel.id
-            }
-        });
-    }
+		const channel = await this.prisma.channel.findFirst({
+			where: {
+				Name: channelName
+			},
+			select: {
+				id: true,
+				messages: true,
+			}
+		});
+		if(!channel)
+		{
+			console.log("The channel: " + channelName + " couldn't be found in the database!");
+			return;
+		}
+		const senderID = await this.getUserBySocket(client);
+		if(!senderID)
+		{
+			console.log("Sender information couldn't be found in connected clients list!");
+			return;
+		}
+		await this.prisma.message.create({
+			data: {
+				Content: message,
+				SenderID: senderID,
+				ChannelID: channel.id
+			}
+		});
+	}
 
-    getUserBySocket(client: Socket): number
-    {
-        const clientInfo = connectedClients.find((clientInfo) => clientInfo.client === client);
-        if (clientInfo)
-            return (clientInfo.id);
-        return (undefined);
-    }
+	getUserBySocket(client: Socket): number
+	{
+		const clientInfo = connectedClients.find((clientInfo) => clientInfo.client === client);
+		if (clientInfo)
+			return (clientInfo.id);
+		return (undefined);
+	}
 
-    getSocketByUserID(userID: number): Socket
-    {
-        const clientInfo = connectedClients.find((clientInfo) => clientInfo.id === userID);
-        if (clientInfo)
-            return (clientInfo.client);
-        return (undefined);
-    }
+	getSocketByUserID(userID: number): Socket
+	{
+		const clientInfo = connectedClients.find((clientInfo) => clientInfo.id === userID);
+		if (clientInfo)
+			return (clientInfo.client);
+		return (undefined);
+	}
 }

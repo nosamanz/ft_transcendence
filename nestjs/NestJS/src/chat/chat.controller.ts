@@ -12,7 +12,6 @@ export class ChatController {
 	constructor(
 			private chatService: ChatService,
 			private prisma: PrismaService,
-			private userService: UserService,
 	){}
 	@Get()
 	getChat(@Res() response: Response) {
@@ -85,15 +84,13 @@ export class ChatController {
 	@UseGuards(JwtGuard)
 	async getBannedUser(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname:string){
 		const userID: number = parseInt(req.body.toString(), 10);
-		//check is user admin and the kicked user mustn't be a channel owner
-		// const channel = await this.prisma.channel.findFirst({ where: { Name: chname,}})
 		return res.send(await this.chatService.channelOp(userID, chname, destUser, "ban"));
 	}
 	@Get('/:channelName/create')
 	@UseGuards(JwtGuard)
 	async getChannel(@Req() req: Request, @Res() res: Response, @Param('channelName') chname:string){
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.channelOp(userID, chname, undefined, "createch"));
+		return res.send(await this.chatService.createCh(userID, chname, passwd));
 	}
 
 	// @Post()
@@ -105,8 +102,8 @@ export class ChatController {
     bindSocket(@Req() req: Request): void {
       const userID: number = parseInt(req.body.toString(), 10);
       const socketID: string = req.headers['socket-id'];
-	  console.log("socketID ---->" + socketID);
-	  console.log("userID ---> " + userID);
+	  console.log("socketID ----> " + socketID);
+	  console.log("userID 	----> " + userID);
       if(!socketID || !userID)
       {
         console.log("SocketID or UserID couldn't find!");
