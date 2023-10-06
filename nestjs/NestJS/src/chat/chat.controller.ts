@@ -1,11 +1,11 @@
 import { Controller, Get, UseGuards, Post , Body, Res, Param, Req} from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { AuthGuard } from '@nestjs/passport';
 import { response, Response } from 'express';
 import * as path from 'path'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
+import { connectedClients } from './chat.gateway';
 
 @Controller('chat')
 export class ChatController {
@@ -67,19 +67,19 @@ export class ChatController {
 	@UseGuards(JwtGuard)
 	async getNewAdmin(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname:string){
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.channelControls(userID, chname, destUser, "setadmin"));
+		return res.send(await this.chatService.channelOp(userID, chname, destUser, "setadmin"));
 	}
 	@Get('/:channelName/kick/:user')
 	@UseGuards(JwtGuard)
 	async getKickedUser(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname: string){
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.channelControls(userID, chname, destUser, "kick"));
+		return res.send(await this.chatService.channelOp(userID, chname, destUser, "kick"));
 	}
 	@Get('/:channelName/mute/:user')
 	@UseGuards(JwtGuard)
 	async getMutedUser(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname : string){
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.channelControls(userID, chname, destUser, "mute"));
+		return res.send(await this.chatService.channelOp(userID, chname, destUser, "mute"));
 	}
 	@Get('/:channelName/ban/:user')
 	@UseGuards(JwtGuard)
@@ -87,14 +87,40 @@ export class ChatController {
 		const userID: number = parseInt(req.body.toString(), 10);
 		//check is user admin and the kicked user mustn't be a channel owner
 		// const channel = await this.prisma.channel.findFirst({ where: { Name: chname,}})
-		return res.send(await this.chatService.channelControls(userID, chname, destUser, "ban"));
+		return res.send(await this.chatService.channelOp(userID, chname, destUser, "ban"));
+	}
+	@Get('/:channelName/create')
+	@UseGuards(JwtGuard)
+	async getChannel(@Req() req: Request, @Res() res: Response, @Param('channelName') chname:string){
+		const userID: number = parseInt(req.body.toString(), 10);
+		return res.send(await this.chatService.channelOp(userID, chname, undefined, "createch"));
 	}
 
-	
 	// @Post()
 	// async createUser(@Body('msg') msg: string) {
 		// console.log("From Controller: " + msg);
 		// }
+	@Get('connect')
+    @UseGuards(JwtGuard)
+    bindSocket(@Req() req: Request): void {
+      const userID: number = parseInt(req.body.toString(), 10);
+      const socketID: string = req.headers['socket-id'];
+	  console.log("socketID ---->" + socketID);
+	  console.log("userID ---> " + userID);
+      if(!socketID || !userID)
+      {
+        console.log("SocketID or UserID couldn't find!");
+        return;
+      }
+      const indexToUpdate = connectedClients.findIndex((clientInfo) => clientInfo.client.id === socketID);
+
+      if (indexToUpdate === -1) {
+        console.log("Client id couldn't be bind with userID!");
+        return;
+      }
+      console.log("UserID: " + userID +" binded with socket " + socketID);
+      connectedClients[indexToUpdate].id = userID;
+      }
 	}
 
 	// if (!(channel.AdminIDs.some((element) => element === userID)))

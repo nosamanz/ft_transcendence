@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { find } from 'rxjs';
-import { User } from 'src/entities/user.entity';
+import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { connectedClients } from './chat.gateway';
+import { clientInfo } from 'src/entities/clientInfo.entity';
 
 @Injectable()
 export class ChatService {
@@ -16,6 +17,7 @@ export class ChatService {
 	{
 		return("Your(msq): " + msq);
 	}
+
 
 
 	private async setAdmin(channel, destuser, chname){
@@ -96,7 +98,19 @@ export class ChatService {
 			return "Error ! While channel updating";
 		}
 	}
-	async channelControls(userID: number, chname: string , destUser : string, process : string) : Promise<string> {
+	private async createCh(userID, chname)
+	{
+
+	}
+
+	async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string> {
+
+		// if (process === "createch")
+		// {
+		// 	const retCh = await this.createCh(userID, chname);
+		// 	console.log(retCh);
+		// 	return (retCh !== undefined) ? retCh : ("The channel operation successful.");
+		// }
 		const channel = await this.prisma.channel.findFirst({
 			where: {
 				Name: chname
@@ -117,7 +131,7 @@ export class ChatService {
 			if (((channel.AdminIDs.some((element) => element === destuser.id)) || (channel.ChannelOwnerID === destuser.id))
 				&& !(channel.ChannelOwnerID === userID))
 				return "Dest User is Admin or Channel Owner !";
-			if (process === "ban")
+			else if (process === "ban")
 			{
 				const retBan = await this.ban(channel, destuser, chname);
 				console.log(retBan);
@@ -147,4 +161,90 @@ export class ChatService {
 			return "The User not in the channel";
 		}
 	}
+
+	async subscribeToChannel(client: Socket, message: string, channelName: string, userID: number): Promise<void> {
+        // control edilecek !!
+        const channel = await this.prisma.channel.findFirst({
+            where: {
+                Name: channelName,
+            },
+            select: {
+                Users: {
+                    select:{
+                        id: true,
+                        IgnoredUsers: true,
+                    }
+                },
+                MutedIDs: true,
+            }
+        });
+        if(!channel)
+        {
+            console.log("The channel: " + channelName + " couldn't be found in the database!");
+            return;
+        }
+        const usersOnChat = channel.Users;
+        const MutedIDs = channel.MutedIDs;
+        usersOnChat.forEach((element) => {
+            const socket = this.getSocketByUserID(element.id);
+            if(!socket)
+            {
+                console.log("Socket to send couldn't be found!");
+                return;
+            }
+            if (!element.IgnoredUsers.some((element) => element.OtherUserID === userID) &&
+                !MutedIDs.some((element) => element === userID)
+            )
+            {
+                socket.emit('chat', {message: message, channelName: channelName, sender: client.id});
+            }
+        });
+    }
+
+    async saveMessage(client: Socket, message: string, channelName: string): Promise<void> {
+
+        const channel = await this.prisma.channel.findFirst({
+            where: {
+                Name: channelName
+            },
+            select: {
+                id: true,
+                messages: true,
+            }
+        });
+        if(!channel)
+        {
+            console.log("The channel: " + channelName + " couldn't be found in the database!");
+            return;
+        }
+        const senderID = await this.getUserBySocket(client);
+        if(!senderID)
+        {
+            console.log("Sender information couldn't be found in connected clients list!");
+            return;
+        }
+        await this.prisma.message.create({
+            data: {
+                Content: message,
+                SenderID: senderID,
+                ChannelID: channel.id
+            }
+        });
+    }
+
+    getUserBySocket(client: Socket): number
+    {
+        const clientInfo = connectedClients.find((clientInfo) => clientInfo.client === client);
+        if (clientInfo)
+            return (clientInfo.id);
+        return (undefined);
+    }
+
+    getSocketByUserID(userID: number): Socket
+    {
+        const clientInfo = connectedClients.find((clientInfo) => clientInfo.id === userID);
+        if (clientInfo)
+            return (clientInfo.client);
+        return (undefined);
+    }
 }

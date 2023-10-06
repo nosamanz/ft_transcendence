@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import L42 from '../images/42icon.png';
-// import { Button } from 'react-bootstrap';
-import Cookies from 'js-cookie';
+import { Button } from 'react-bootstrap';
 import { Navigate, useNavigate } from 'react-router-dom';
-import Home from './Home';
-// import { cookies } from '../App';
+import Home from '../pages/Home';
 
 const Login = ({setUser}) => {
 
@@ -33,29 +31,18 @@ const Login = ({setUser}) => {
 				},
 				body: JSON.stringify( data ), // Assuming code is an object
 			});
-			console.log("--------->" + code);
+
 			const responseData = await response.json();
-			// {token: Jwt_Token, result: 0} The new user has been saved in database and the token has been created.
-			// {token: Jwt_Token, result: 1} The user has already been saved in database and the token has been created.
-			// {user_id: user_id, result: 2} The user should be redirected to the TFA page.
-			if(responseData.result !== 2)
-			{
-				Cookies.set("jwt_authorization", responseData.token);
-			}
-			else
-			{
-				//TFA PAGE
-			}
 			console.log(responseData.token);
-			const responseUser = await fetch("http://10.12.14.1:80/user", {
+
+			const responseUser = await fetch("http://10.12.13.2:80/user", {
 				headers: {
-					'authorization': 'Bearer ' + Cookies.get("jwt_authorization"),
+					'authorization': 'Bearer ' + responseData.token,
                     'Content-Type': 'application/json'
 				}
 			});
 			const UserData = await responseUser.json();
-			setUser(UserData.nick);
-			console.log(Cookies.get("jwt_authorization"));
+			setUser(UserData.login);
 			console.log(UserData);
 		}
 	}
@@ -64,7 +51,7 @@ const Login = ({setUser}) => {
 
 
   const handleFTLogin = () => {
-	window.location.href=('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-077b70076cf4de01892c573d0d5337b6b27cff2d6f67bb166eb7c187d1678e39&redirect_uri=http%3A%2F%2F10.12.14.1%3A3000&response_type=code');
+	window.location.href=('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-077b70076cf4de01892c573d0d5337b6b27cff2d6f67bb166eb7c187d1678e39&redirect_uri=http%3A%2F%2F10.12.14.1%3A80%2Fauth%2F42%2Fgetcode&response_type=code');
 };
 
   return (

@@ -1,57 +1,40 @@
-// import React, {useState, useEffect} from 'react';
-// import './App.css';
-// import Navbar from './component/Navbar';
-// import Home from './pages/Home';
-// import Login from './pages/Login';
-// import Chat from './pages/Chat';
-// import {BrowserRouter, Routes, Route, Link, Navigate} from "react-router-dom";
-
-
-// function App() {
-//   const [user, setUser] = useState(null);
-//   return (
-//     <BrowserRouter>
-//     <div className='body'>
-//         <Navbar user = {user}/>
-//         <Routes>
-//           {
-//             user ? (
-//               <Route path='/' element = {<Home setUser={setUser}/>} />
-//               // <Route path='/chat' element={<Chat user={user} />}
-//               ) : (
-//                 <Route path='/' element = {<Login setUser = {setUser}/>} />
-//             )
-//           }
-//         </Routes>
-//     </div>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
-
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import Navbar from './component/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
-// import Chat from './pages/Chat';
 import {BrowserRouter, Routes, Route, Link, Navigate} from "react-router-dom";
+import Profile from './pages/Profile';
+import LeaderBoard from './pages/LeaderBoard';
+import Chat from './pages/Chat';
 
 
 function App() {
   const [user, setUser] = useState(null);
+  console.log(user);
   return (
     <BrowserRouter>
     <div className='body'>
-        <Navbar user = {user}/>
+        <Navbar user = "Esma"/>
         <Routes>
-              <Route index element = {<Home />} />
-              <Route path='/home' element = {<Home />} />
-              <Route path='/login' element = {<Login />} />
-              {/* <Route path='/chat' element = {<Chat />} /> */}
-              {/* // <Route path='/chat' element={<Chat user={user} />} */}
+          {
+            user ? (<>
+            <Route path='/' element = {<Home setUser={setUser}/>} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/leaderboard" element={<LeaderBoard />} />
+            </>
+              ) : (
+                <Route path='/' element = {<Login setUser = {setUser}/>} />
+            )
+          }
         </Routes>
+        {/* <Routes>
+        <Route path='/home' element = {<Home setUser={setUser}/>} />
+        <Route path='/login' element={<Login setUser={setUser} />}></Route>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/leaderboard" element={<LeaderBoard />} />
+        <Route path='chat' element={<Chat/>}/>
+        </Routes> */}
     </div>
     </BrowserRouter>
   );
