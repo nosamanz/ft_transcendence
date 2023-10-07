@@ -18,7 +18,6 @@ export class ChatService {
 		return("Your(msq): " + msq);
 	}
 
-
 	private async joinCh(userID, chname, channel){
 		channel.UserCount++;
 		await this.prisma.channel.update({
@@ -29,41 +28,49 @@ export class ChatService {
 					connect: {
 						id : userID
 					}
-		}}})
+		}}});
 	}
+
 	private async checkPasswd(userPasswd, channel){
-		const channelPasswd = await channel.passwd;
+		const channelPasswd = channel.passwd;
 		return bcrypt.compare(userPasswd, channelPasswd);
 	}
-	async createCh(userID, chname, passwd?)
+
+	async createCh(userID, chname, passwd, IsDirect : boolean)
 	{
-		let IsDirect : boolean = false;
 		try {
 			const channel = await this.prisma.channel.findFirst({ where: { Name: chname }});
 			if (channel){
-				if (!channel.IsDirect && !this.checkPasswd(passwd, channel)) { return "Incorrect Password"};
+				if (!this.checkPasswd(passwd, channel)) { return "Incorrect Password"};
 				if (channel.IsInviteOnly && !channel.InvitedIDs.some((element) => element === userID)) {return "You are not invited to this channel."}
 				this.joinCh(userID, chname, channel);
-			}else{
-				if (passwd){
-					passwd = bcrypt.hash(passwd, 10);
-					IsDirect = true;
+			}
+			else{
+				console.log("Geldimm");
+				console.log(passwd);
+				if (passwd)
+				{
+					passwd = await bcrypt.hash(passwd, 10);
+					console.log(passwd);
 				}
+
 				await this.prisma.channel.create({
 					data: {
 						Name: chname,
 						Password: passwd,
 						ChannelOwnerID: userID,
-						AdminIDs: userID,
+						AdminIDs: [userID],
 						IsDirect: IsDirect,
 						IsInviteOnly: false,
 						UserCount: 0,
 					}
 				})
+				console.log("12344444");
 			}
-		}catch{return "Error while performing channel operation"}
+		}catch(error){
+			console.log(error);
+			return "Error while performing channel operation"}
 	}
-
 
 	private async setAdmin(channel, destuser, chname){
 		if ((channel.AdminIDs.some((element) => element === destuser.id)))
@@ -82,6 +89,7 @@ export class ChatService {
 		}
 		return undefined;
 	}
+
 	private async ban(channel, destuser, chname){
 		if ((channel.BannedIDs.some((element) => element === destuser.id)))
 			return "Dest User is Already Banned !";
@@ -230,7 +238,7 @@ export class ChatService {
 			const socket = this.getSocketByUserID(element.id);
 			if(!socket)
 			{
-				console.log("Socket to send couldn't be found!");
+				// console.log("Socket to send couldn't be found!");
 				return;
 			}
 			if (!element.IgnoredUsers.some((element) => element.OtherUserID === userID) &&
@@ -284,6 +292,7 @@ export class ChatService {
 	getSocketByUserID(userID: number): Socket
 	{
 		const clientInfo = connectedClients.find((clientInfo) => clientInfo.id === userID);
+		// console.log(clientInfo);
 		if (clientInfo)
 			return (clientInfo.client);
 		return (undefined);

@@ -9,7 +9,7 @@ const LeaderBoard = () =>{
 				<h1>LeaderBoard</h1>
 			</div>
 			<LeaderBoardProfile LeaderBoard={Leaderboard} />
-			
+
 
 		</div>
 	)

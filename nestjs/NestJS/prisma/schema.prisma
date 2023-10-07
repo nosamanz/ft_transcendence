@@ -93,8 +93,8 @@ model Channel {
 	MutedIDs        Int[]
 	InvitedIDs      Int[]
 	Password        String
-	IsDirect        Boolean
-	IsInviteOnly    Boolean
+	IsDirect        boolean
+	IsInviteOnly    boolean
 	UserCount       Int
 	messages        Message[]
 	Users           User[]
@@ -109,7 +109,7 @@ model Channel {
 // @Get('/:channelName/mute/:user')
 
 //@Get('/:channelName/create')
-//@Get('/:channelName/ignore/:user')
+//@Get('/user/ignore/:user')
 //IGNORE ?
 
 // @Get('/:channelName/setPassword/:hashedpass')

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import image from "../images/free-photo1.jpeg"
-// import { cookies } from "../App";
+import { cookies } from "../App";
 
 const Profile = () => {
 	const [user, setUser] = useState({});

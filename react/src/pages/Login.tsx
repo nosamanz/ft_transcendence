@@ -5,7 +5,7 @@ import L42 from '../images/42icon.png';
 import Cookies from 'js-cookie';
 import { Navigate, useNavigate } from 'react-router-dom';
 import Home from './Home';
-// import { cookies } from '../App';
+import { cookies } from '../App';
 
 const Login = ({setUser}) => {
 
@@ -15,7 +15,6 @@ const Login = ({setUser}) => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			console.log("123");
 			const params = new URLSearchParams(window.location.search);
 			const code = params.get('code');
 			const data = {};
@@ -33,14 +32,13 @@ const Login = ({setUser}) => {
 				},
 				body: JSON.stringify( data ), // Assuming code is an object
 			});
-			console.log("--------->" + code);
 			const responseData = await response.json();
 			// {token: Jwt_Token, result: 0} The new user has been saved in database and the token has been created.
 			// {token: Jwt_Token, result: 1} The user has already been saved in database and the token has been created.
 			// {user_id: user_id, result: 2} The user should be redirected to the TFA page.
 			if(responseData.result !== 2)
 			{
-				Cookies.set("jwt_authorization", responseData.token);
+				cookies.set("jwt_authorization", responseData.token);
 			}
 			else
 			{
@@ -49,13 +47,13 @@ const Login = ({setUser}) => {
 			console.log(responseData.token);
 			const responseUser = await fetch("http://10.12.14.1:80/user", {
 				headers: {
-					'authorization': 'Bearer ' + Cookies.get("jwt_authorization"),
+					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                     'Content-Type': 'application/json'
 				}
 			});
 			const UserData = await responseUser.json();
 			setUser(UserData.nick);
-			console.log(Cookies.get("jwt_authorization"));
+			console.log(cookies.get("jwt_authorization"));
 			console.log(UserData);
 		}
 	}

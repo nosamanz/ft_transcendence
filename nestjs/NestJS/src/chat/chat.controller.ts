@@ -6,6 +6,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { connectedClients } from './chat.gateway';
+import * as bcrypt from 'bcrypt';
+
+export let hashed1: string = "";
+export let hashed2: string = "";
 
 @Controller('chat')
 export class ChatController {
@@ -13,14 +17,20 @@ export class ChatController {
 			private chatService: ChatService,
 			private prisma: PrismaService,
 	){}
+
 	@Get()
 	getChat(@Res() response: Response) {
 		const filePath = path.join(__dirname, '..', '..', '..', 'Front', 'html', 'chatting.html');
 		return response.sendFile(filePath);
 	}
+
 	@Get('/:channelName/messages')
 	@UseGuards(JwtGuard)
-	async getMessages(@Res() response: Response, @Req() req: Request, @Param('channelName') chname: string){
+	async getMessages(
+		@Res() response: Response,
+		@Req() req: Request,
+		@Param('channelName') chname: string)
+	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		// const user = await this.userService.getUserByID(userID, true);
 		//Lets find Channel
@@ -62,44 +72,78 @@ export class ChatController {
 		//Check
 		// const messages = await this.prisma.user.findMany()
 	}
+
 	@Get('/:channelName/setAdmin/:user')
 	@UseGuards(JwtGuard)
-	async getNewAdmin(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname:string){
+	async getNewAdmin(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('user') destUser: string,
+		@Param('channelName') chname:string)
+	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		return res.send(await this.chatService.channelOp(userID, chname, destUser, "setadmin"));
 	}
+
 	@Get('/:channelName/kick/:user')
 	@UseGuards(JwtGuard)
-	async getKickedUser(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname: string){
+	async getKickedUser(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('user') destUser: string,
+		@Param('channelName') chname: string)
+	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		return res.send(await this.chatService.channelOp(userID, chname, destUser, "kick"));
 	}
+
 	@Get('/:channelName/mute/:user')
 	@UseGuards(JwtGuard)
-	async getMutedUser(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname : string){
+	async getMutedUser(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('user') destUser: string,
+		@Param('channelName') chname : string)
+	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		return res.send(await this.chatService.channelOp(userID, chname, destUser, "mute"));
 	}
+
 	@Get('/:channelName/ban/:user')
 	@UseGuards(JwtGuard)
-	async getBannedUser(@Req() req: Request, @Res() res: Response, @Param('user') destUser: string, @Param('channelName') chname:string){
+	async getBannedUser(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('user') destUser: string,
+		@Param('channelName') chname:string)
+	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		return res.send(await this.chatService.channelOp(userID, chname, destUser, "ban"));
 	}
-	@Get('/:channelName/create')
+
+	@Get('/:channelName/create/:isDirect/:passwd')
 	@UseGuards(JwtGuard)
-	async getChannel(@Req() req: Request, @Res() res: Response, @Param('channelName') chname:string){
+	async getChannel(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('channelName') chname: string,
+		@Param('isDirect') isDirect: boolean,
+		@Param('passwd') passwd: string)
+	{
+		const IsDirect : Boolean = isDirect;
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.createCh(userID, chname, passwd));
+		return res.send(await this.chatService.createCh(userID, chname, passwd, IsDirect));
 	}
 
 	// @Post()
 	// async createUser(@Body('msg') msg: string) {
 		// console.log("From Controller: " + msg);
 		// }
+
 	@Get('connect')
     @UseGuards(JwtGuard)
-    bindSocket(@Req() req: Request): void {
+    bindSocket(@Req() req: Request): void
+	{
       const userID: number = parseInt(req.body.toString(), 10);
       const socketID: string = req.headers['socket-id'];
 	  console.log("socketID ----> " + socketID);

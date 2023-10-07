@@ -28,3 +28,7 @@ async function bootstrap() {
   await app.listen(80, '0.0.0.0');
 }
 bootstrap();
+//$2b$10$ZybM9eGWK1BaqEi3PVQfYO8c6cF5x129sRnstmI0GsToTPwFtnpwG
+//$2b$10$9SHezhUglWxzVrssueL0CewBo8r5m05wDN/Yo.zK9bq08PE5GFtlS
+//$2b$10$EOBl.pHc7t/1D1uavaZ87O9gH06BR0eoBYqEBdh7OH7.W.A9t/Jvi
+//$2b$04$kMV2I2.SLd/RE1kCDGcifuuwMKrzWhMPx2xUWQX/AuAHuRqQrp9uq

@@ -1,7 +1,26 @@
 import React, {useState, useEffect, Component} from "react";
 // import { cookies } from "../App";
 import io from "socket.io-client";
-import Cookies from 'js-cookie';
+import { cookies } from '../App';
+
+export const socket = io('http://localhost:80', {
+	transports: ['websocket']
+});
+
+socket.on("connect", async () => {
+	const response = await fetch('http://10.12.14.1:80/chat/connect', {
+		headers: {
+			'socket-id': socket.id,
+			'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+		},
+	});
+	socket.emit("chat", {channelName: "123", message: "Geldim"})
+	// console.log("RESPONSE-"+response.ok);
+});
+
+socket.on('connect_error', (error) =>{
+	console.log('Bağlantı hatası', error);
+});
 
 const Home = ({setUser}) =>{
 	const user = setUser;
@@ -48,7 +67,7 @@ const Home = ({setUser}) =>{
 			const responseImage = await fetch('http://10.12.14.1:80/avatar/upload', {
 				method: 'POST',
 				headers: {
-					'authorization': 'Bearer ' + Cookies.get("jwt_authorization"),
+					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 					// 'authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4OTU5LCJpYXQiOjEzMzM0MTUwODc2fQ.nQc9al-VV2z-w9oYNrG7_6KgMqQUcfy3yqqLq9fdR28',
 				},
 				body: formData,
@@ -70,26 +89,7 @@ const Home = ({setUser}) =>{
 					console.error('An error occurred:', error);
 				}
 			};
-			useEffect(() =>{
-				const fetchData = async () => {
-					const socket = io('http://localhost:80', {
-						transports: ['websocket']
-					});
-					socket.on("connect", async () => {
-						const response = await fetch('http://10.12.14.1:80/chat/connect', {
-							headers: {
-								'socket-id': socket.id,
-								'authorization': 'Bearer ' + Cookies.get("jwt_authorization"),
-							},
-						});
-						// console.log("RESPONSE-"+response.ok);
-					  });
-					socket.on('connect_error', (error) =>{
-						console.log('Bağlantı hatası', error);
-					});
-				}
-				fetchData();
-			},[])
+
 			const handleClick = (event) =>{
 				setLoaded(true);
 				event.preventDefault();

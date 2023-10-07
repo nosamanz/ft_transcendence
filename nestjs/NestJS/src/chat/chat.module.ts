@@ -4,7 +4,6 @@ import { ChatService } from './chat.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { ChatGateway } from './chat.gateway';
 
 
 @Module({

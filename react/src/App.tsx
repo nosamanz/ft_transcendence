@@ -7,7 +7,9 @@ import {BrowserRouter, Routes, Route, Link, Navigate} from "react-router-dom";
 import Profile from './pages/Profile';
 import LeaderBoard from './pages/LeaderBoard';
 import Chat from './pages/Chat';
+import Cookies from 'universal-cookie';
 
+export const cookies = new Cookies();
 
 function App() {
   const [user, setUser] = useState(null);
