@@ -1,0 +1,30 @@
+export const Leaderboard = [
+    {
+        nick:"ebattal",
+        latterLevel:340,
+        img:"",
+        win:5,
+        lose:2,
+    },
+    {
+        nick:"ebattal",
+        latterLevel:340,
+        img:"",
+        win:5,
+        lose:2,
+    },
+    {
+        nick:"ebattal",
+        latterLevel:340,
+        img:"",
+        win:5,
+        lose:2,
+    },
+    {
+        nick:"ebattal",
+        latterLevel:340,
+        img:"",
+        win:5,
+        lose:2,
+    },
+];
