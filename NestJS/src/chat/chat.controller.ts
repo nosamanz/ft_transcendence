@@ -16,6 +16,7 @@ export class ChatController {
 	constructor(
 			private chatService: ChatService,
 			private prisma: PrismaService,
+			private userService: UserService,
 	){}
 
 	@Get()
@@ -31,8 +32,9 @@ export class ChatController {
 		@Req() req: Request,
 		@Param('channelName') chname: string)
 	{
+		console.log("-------------------->");
 		const userID: number = parseInt(req.body.toString(), 10);
-		// const user = await this.userService.getUserByID(userID, true);
+		const user = await this.userService.getUserByID(userID, true);
 		//Lets find Channel
 		const channel = await this.prisma.channel.findFirst({
 			where: {
@@ -54,23 +56,20 @@ export class ChatController {
 			}
 		});
 		let messages = channel.messages;
-		let TheUser = channel.Users[0];
+
 		channel.messages.forEach((message) => console.log("Mes: "+ message.SenderID + "  " + message.Content))
-		// console.log("Channel " + channel.messages);
-		// TheUser.IgnoredUsers.forEach((IgnoredUsers) => console.log("Ignored: "+ IgnoredUsers.OtherUserID))
 		channel.BannedIDs.forEach((id) => console.log("Banned: "+ id))
 		channel.MutedIDs.forEach((id) => console.log("Muted: "+ id))
+
 		messages = messages.filter(
 			message => (
 				message.SenderID !== channel.MutedIDs.find((element) => element === message.SenderID) &&
 				message.SenderID !== channel.BannedIDs.find((element) => element === message.SenderID) &&
-				message.SenderID !== (TheUser.IgnoredUsers.find((element) => element.OtherUserID === message.SenderID) !== undefined ? TheUser.IgnoredUsers.find((element) => element.OtherUserID === message.SenderID).OtherUserID: undefined)
+				message.SenderID !== user.IgnoredUsers.some((element) => element.OtherUserID === message.SenderID)
 					)
 				)
 		messages.forEach((message) => console.log("Mes Send: "+ message.SenderID + "  " + message.Content))
 		return response.send(messages);
-		//Check
-		// const messages = await this.prisma.user.findMany()
 	}
 
 	@Get('/:channelName/setAdmin/:user')
@@ -139,6 +138,7 @@ export class ChatController {
 	// async createUser(@Body('msg') msg: string) {
 		// console.log("From Controller: " + msg);
 		// }
+
 
 	@Get('connect')
     @UseGuards(JwtGuard)

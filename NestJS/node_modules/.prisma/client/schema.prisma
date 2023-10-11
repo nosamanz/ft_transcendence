@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+//debian
+//generator client {
+//	provider = "prisma-client-js"
+//}
+
+// windows
+generator client {
+	provider      = "prisma-client-js"
+	binaryTargets = ["native", "windows"]
+}
+
+datasource db {
+	provider = "postgresql"
+	url      = env("DATABASE_URL")
+}
+
+model Friend {
+	id            Int   @id @default(autoincrement())
+	OtherUserID   Int
+	User          User  @relation(fields: [UserId], references: [id])
+	UserId        Int
+}
+
+model Ignore {
+	id            Int   @id @default(autoincrement())
+	OtherUserID   Int
+	User          User  @relation(fields: [UserId], references: [id])
+	UserId        Int
+}
+
+model History {
+	id            Int     @id @default(autoincrement())
+	RivalNick     String
+	Score         Int
+	RivalScore    Int
+	User          User    @relation(fields: [UserId], references: [id])
+	UserId        Int
+}
+
+model User {
+	id              Int      @id // @unique idi!!!
+	login           String   @unique
+	nick            String   @unique
+	imgPath         String
+	TFAuth          Boolean
+	TFSecret        String
+	secretAscii     String
+	WinCount        Int
+	LoseCount       Int
+	LatterLevel     Int
+	// FriendRequests  User[]
+	Achievements    Achievements?
+	Friends         Friend[]
+	IgnoredUsers    Ignore[]
+	MatchHistory    History[]
+	Channels        Channel[]
+}
+
+model Achievements{
+	id      Int     @id @default(autoincrement())
+	Ac1     Boolean
+	Ac2     Boolean
+	Ac3     Boolean
+	Ac4     Boolean
+	User    User    @relation(fields: [UserID], references: [id])
+	UserID  Int     @unique
+}
+// const users = await prisma.user.findMany({
+//   orderBy: {
+//     LatterLevel: 'asc', // You can use 'asc' for ascending or 'desc' for descending order
+//   },
+// });
+// this.prisma.message.create({
+//   data: {
+//     Content: "Msuab",
+//     SenderID: 9852,
+//     ChannelID: 2
+//   }
+// });
+
+// // leaderboard sırala ver latter level
+
+//
+model Channel {
+	id              Int @id @default(autoincrement())
+	Name            String @unique
+	ChannelOwnerID  Int
+	AdminIDs        Int[] // ChannelOwner is an administrator
+	BannedIDs       Int[]
+	MutedIDs        Int[]
+	InvitedIDs      Int[]
+	Password        String
+	IsDirect        Boolean
+	IsInviteOnly    Boolean
+	UserCount       Int
+	messages        Message[]
+	Users           User[]
+}
+// @Post('/:channelName/message')
+
+// @Get()//Ana Sayfa
+// @Get('/:channelName/messages')
+// @Get('/:channelName/ban/:user')
+// @Get('/:channelName/setAdmin/:user')
+// @Get('/:channelName/kick/:user')
+// @Get('/:channelName/mute/:user')
+
+//@Get('/:channelName/create')
+//@Get('/user/ignore/:user')
+//IGNORE ?
+
+// @Get('/:channelName/setPassword/:hashedpass')
+// @Get('/:channelName/inviteOnly') // @Get('/:channelName/setInviteOnly')
+
+model Message {
+	id        Int       @id @default(autoincrement())
+	Content   String
+	SenderID  Int
+
+	Channel   Channel   @relation(fields: [ChannelID], references: [id])
+	ChannelID Int
+
+	CreatedAt DateTime  @default(now())
+}

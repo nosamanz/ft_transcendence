@@ -10,7 +10,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private userService UserService) {}
 
   handleConnection(client: Socket){
   // client.on("connection", (socket) => {
@@ -36,14 +38,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('chat')
   async handleChatMessage(client: Socket, data: any): Promise<void> {
-  console.log("sub mes. = " + client.id + " " + data);
 	const userID = await this.chatService.getUserBySocket(client);
+  const user = await this.userSer
 	await this.chatService.subscribeToChannel(client, data.message, data.channelName, userID);
 	await this.chatService.saveMessage(client, data.message, data.channelName);
 	// This method runs when a client sends a 'chat' message.
 	// Broadcast the message to all connected clients.
 	console.log("Chat: " + client.id + ": " + data.message + "<" + data.channelName + ">");
-	this.server.emit('chat', { message: data.message, channelName: data.channelName, sender: client.id });
+	// this.server.emit('chat', { message: data.message, channelName: data.channelName, sender: client.id });
   }
 
   // // !we should get that one: payload: { message: string, targetClientId: string }

@@ -39,6 +39,7 @@ export class ChatService {
 	async createCh(userID, chname, passwd, IsDirect)
 	{
 		try {
+			console.log("123");
 			const channel = await this.prisma.channel.findFirst({ where: { Name: chname }});
 			if (channel){
 				if (!this.checkPasswd(passwd, channel)) { return "Incorrect Password"};
@@ -49,7 +50,6 @@ export class ChatService {
 				if (passwd)
 				{
 					passwd = await bcrypt.hash(passwd, 10);
-					console.log(passwd);
 				}
 				await this.prisma.channel.create({
 					data: {
@@ -241,13 +241,14 @@ export class ChatService {
 				!MutedIDs.some((element) => element === userID)
 			)
 			{
-				socket.emit('chat', {message: message, channelName: channelName, sender: client.id});
+				socket.emit('chat', {message: message, channelName: channelName, senderName: ,senderSocket: client.id});
 			}
 		});
 	}
 
 	async saveMessage(client: Socket, message: string, channelName: string): Promise<void> {
 
+		console.log(message);
 		const channel = await this.prisma.channel.findFirst({
 			where: {
 				Name: channelName
@@ -268,6 +269,7 @@ export class ChatService {
 			console.log("Sender information couldn't be found in connected clients list!");
 			return;
 		}
+		console.log(message)
 		await this.prisma.message.create({
 			data: {
 				Content: message,

@@ -90,10 +90,6 @@ const Home = ({setUser}) =>{
 				}
 			};
 
-			const handleClick = (event) =>{
-				setLoaded(true);
-				event.preventDefault();
-			}
 			return(
 				<div className="home">
 		{

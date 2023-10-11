@@ -2,6 +2,7 @@ import React from "react";
 import Messages from "./Messages";
 import InputBox from "./InputBox";
 const MessageBox = () =>{
+    console.log("MessageBox");
 	return(
 		<div className="messageBox">
 			<div className="messageBoxInfo">
