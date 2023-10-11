@@ -201,7 +201,7 @@ export class ChatService {
 		}
 	}
 
-	async subscribeToChannel(client: Socket, message: string, channelName: string, userID: number): Promise<void> {
+	async subscribeToChannel(client: Socket, message: string, channelName: string, user: any): Promise<void> {
 		// control edilecek !!
 		const channel = await this.prisma.channel.findFirst({
 			where: {
@@ -231,18 +231,17 @@ export class ChatService {
 				// console.log("Socket to send couldn't be found!");
 				return;
 			}
-			if (!element.IgnoredUsers.some((element) => element.OtherUserID === userID) &&
-				!MutedIDs.some((element) => element === userID)
+			if (!element.IgnoredUsers.some((element) => element.OtherUserID === user.id) &&
+				!MutedIDs.some((element) => element === user.id)
 			)
 			{
-				// socket.emit('chat', {message: message, channelName: channelName, senderName: senderName , senderSocket: client.id});
+				 socket.emit('chat', {message: message, channelName: channelName, senderNick: user.name, senderSocket: client.id});
 			}
 		});
 	}
 
-	async saveMessage(client: Socket, message: string, channelName: string): Promise<void> {
+	async saveMessage(client: Socket, message: string, channelName: string, sender: any): Promise<void> {
 
-		console.log(message);
 		const channel = await this.prisma.channel.findFirst({
 			where: {
 				Name: channelName
@@ -257,17 +256,11 @@ export class ChatService {
 			console.log("The channel: " + channelName + " couldn't be found in the database!");
 			return;
 		}
-		const senderID = await this.getUserBySocket(client);
-		if(!senderID)
-		{
-			console.log("Sender information couldn't be found in connected clients list!");
-			return;
-		}
-		console.log(message)
 		await this.prisma.message.create({
 			data: {
 				Content: message,
-				SenderID: senderID,
+				SenderID: sender.id,
+				SenderNick: sender.nick,
 				ChannelID: channel.id
 			}
 		});
@@ -284,7 +277,6 @@ export class ChatService {
 	getSocketByUserID(userID: number): Socket
 	{
 		const clientInfo = connectedClients.find((clientInfo) => clientInfo.id === userID);
-		// console.log(clientInfo);
 		if (clientInfo)
 			return (clientInfo.client);
 		return (undefined);

@@ -117,9 +117,10 @@ model Channel {
 // @Get('/:channelName/inviteOnly') // @Get('/:channelName/setInviteOnly')
 
 model Message {
-	id        Int       @id @default(autoincrement())
-	Content   String
-	SenderID  Int
+	id        	Int       @id @default(autoincrement())
+	Content   	String
+	SenderID  	Int
+	SenderNick	String
 
 	Channel   Channel   @relation(fields: [ChannelID], references: [id])
 	ChannelID Int

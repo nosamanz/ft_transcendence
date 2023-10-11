@@ -1,32 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Message from "./Message";
 import { currentChannel } from "../pages/Chat";
 import { cookies } from "../App";
 import { socket } from "../pages/Home";
 
-let messagesReceived;
-
-socket.on('chat', async (data) => {
-    console.log("My data: ")
-    console.log(data);
-
-    // messagesReceived = data {message. channel. sender.}
-})
-
 const Messages=() =>{
+    const [messagesReceived, setMessagesReceived] = useState([{}]);
+    
+    socket.on('chat', async (data) => {
+        console.log("My data: ");
+        console.log(data);
+        
+        setMessagesReceived((prevMessages) => [...prevMessages, data]);
+    });
         const fetchData = async () =>{
             const responseMessages = await fetch(`http://10.12.14.1:80/${currentChannel}/messages`, {
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-                    'Content-Type': 'application/json'
                 }
             });
-            messagesReceived = await responseMessages.json();
+            setMessagesReceived(await responseMessages.json());
             console.log("Geldi Baba" + Messages);
         }
-        if(currentChannel !== ""){
+        //if(currentChannel !== ""){
             fetchData();
-        }
+        //}
+        console.log("Merba");
     return(
         <div className="messages">
             <Message messages = {messagesReceived} />

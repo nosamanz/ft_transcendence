@@ -42,10 +42,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleChatMessage(client: Socket, data: any): Promise<void> {
 	const userID = await this.chatService.getUserBySocket(client);
   const user = await this.userService.getUserByID(userID, true);
-  console.log("989898");
-  console.log(user);
-	await this.chatService.subscribeToChannel(client, data.message, data.channelName, userID);
-	await this.chatService.saveMessage(client, data.message, data.channelName);
+	await this.chatService.subscribeToChannel(client, data.message, data.channelName, user);
+	await this.chatService.saveMessage(client, data.message, data.channelName, user);
 	// This method runs when a client sends a 'chat' message.
 	// Broadcast the message to all connected clients.
 	console.log("Chat: " + client.id + ": " + data.message + "<" + data.channelName + ">");

@@ -8,10 +8,10 @@ const Message = ({message}) =>{
     return(
         <div className="message owner">
             <div className="messageInfo">
-               <span>{userMessage.sender}</span>
+               <span>{userMessage == undefined ? undefined : userMessage.senderNick}</span>
             </div>
             <div className="messageContent">
-                <p className="messageP">{userMessage.message}</p>
+                <p className="messageP">{userMessage == undefined ? undefined : userMessage.message}</p>
                 {/* <img className="mIImg" src={image2} alt="dneeme"/> */}
             </div>
         </div>

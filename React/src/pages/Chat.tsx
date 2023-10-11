@@ -11,20 +11,20 @@ export let currentChannel = "";
 
 const Chat = () =>{
     let [currentChannel, setCurrentChannel] = useState<string>("");
-    useEffect (() => {
-        const fetchData = async () =>{
-            const responseMessages = await fetch(`http://10.12.14.1:80/${currentChannel}/messages`, {
-                headers: {
-                    'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-                    'Content-Type': 'application/json'
-                }
-            });
-            const Messages = await responseMessages.json();
-        }
-        if(currentChannel !== ""){
-            fetchData();
-        }
-    })
+    //useEffect (() => {
+    //    const fetchData = async () =>{
+    //        const responseMessages = await fetch(`http://10.12.14.1:80/${currentChannel}/messages`, {
+    //            headers: {
+    //                'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+    //                'Content-Type': 'application/json'
+    //            }
+    //        });
+    //        const Messages = await responseMessages.json();
+    //    }
+    //    if(currentChannel !== ""){
+    //        fetchData();
+    //    }
+    //})
     console.log("Chat");
     return(
         <div className="chat">

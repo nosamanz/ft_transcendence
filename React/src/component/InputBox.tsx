@@ -5,7 +5,7 @@ const InputBox = () =>{
   const [inputValue, setInputValue] = useState<string>("");
   const HandleClick = async () => {
     console.log("Bura geldi   [" + inputValue + "]");
-    socket.emit('chat', {message: inputValue, channelName: "123", sender: socket.id });
+    socket.emit('chat', {message: inputValue, channelName: "123", senderSocket: socket.id });
   }
   const change = (e) =>{
     setInputValue(e.target.value);
