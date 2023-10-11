@@ -108,8 +108,9 @@ model Channel {
 // @Get('/:channelName/kick/:user')
 // @Get('/:channelName/mute/:user')
 
-//@Get('/:channelName/create')
 //@Get('/user/ignore/:user')
+//@Get('/:channelName/create')
+
 //IGNORE ?
 
 // @Get('/:channelName/setPassword/:hashedpass')

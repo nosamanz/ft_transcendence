@@ -1,10 +1,14 @@
-import { Controller, Get, Post , Body, Res, UseGuards, Headers, Req, Param} from '@nestjs/common';
+import { Controller, Get, Post , Body, Res, UseGuards, Req, Param} from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('user')
 export class UserController {
-	constructor( private userService: UserService){}
+	constructor(
+		private userService: UserService,
+		private prisma: PrismaService)
+	{}
 
 	@Get()
 	@UseGuards(JwtGuard)
@@ -15,19 +19,45 @@ export class UserController {
 
 	@Get('changeNick/:nickToChange')
 	@UseGuards(JwtGuard)
-	async ChangeNick(@Req() req: Request, @Param('nickToChange') nickToChange: string){
-	const userID: number = parseInt(req.body.toString(), 10);
-	const user = await this.userService.getUserByID(userID, true);
-	await this.userService.updateUser({nick: nickToChange}, user);
+	async ChangeNick(
+		@Req() req: Request,
+		@Param('nickToChange') nickToChange: string)
+	{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID, true);
+		await this.userService.updateUser({nick: nickToChange}, user);
 	}
 
 	@Get('addFriend/:friendName')
 	@UseGuards(JwtGuard)
-	async AddFriend(@Req() req: Request, @Param('friendName') friendName: string){
+	async AddFriend(
+		@Req() req: Request,
+		@Param('friendName') friendName: string)
+	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID, true);
 		// let friends: FriendDto[] = user.friends;
 		await this.userService.updateUser({nick: friendName}, user);
+	}
+
+	@Get('ignoreUser/:user')
+	@UseGuards(JwtGuard)
+	async IgnoreUser(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('user') destuser: string)
+	{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID, true);
+		const destUser = await this.userService.getUserByID(userID, true);
+		if (user.IgnoredUsers.some((element) => element === destUser.id))
+			// return res.send("")
+			return "The User Already Ignored.";
+		user.IgnoredUsers.push(destUser.id);
+		await this.prisma.user.update({
+			where: { id: user.id },
+			data: { IgnoredUsers: user.IgnoredUsers }
+		})
 	}
 
 	@Post('getForm')
@@ -37,7 +67,6 @@ export class UserController {
 		const user = await this.userService.getUserByID(userID, true);
 
 		let UpdateInfo: {nick?: any,imgPath?: any} = {};
-
 		// img yerele kaydet
 		const imgPath = "path"
 
