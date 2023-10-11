@@ -10,7 +10,7 @@ socket.on('chat', async (data) => {
     console.log("My data: ")
     console.log(data);
 
-    messagesReceived = data {message. channel. sender.}
+    // messagesReceived = data {message. channel. sender.}
 })
 
 const Messages=() =>{

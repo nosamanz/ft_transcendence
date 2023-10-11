@@ -148,14 +148,8 @@ export class ChatService {
 		}
 	}
 
-	async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string> {
-
-		// if (process === "createch")
-		// {
-		// 	const retCh = await this.createCh(userID, chname);
-		// 	console.log(retCh);
-		// 	return (retCh !== undefined) ? retCh : ("The channel operation successful.")
-		// }
+	async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string>
+	{
 		const channel = await this.prisma.channel.findFirst({
 			where: {
 				Name: chname
@@ -241,7 +235,7 @@ export class ChatService {
 				!MutedIDs.some((element) => element === userID)
 			)
 			{
-				socket.emit('chat', {message: message, channelName: channelName, senderName: ,senderSocket: client.id});
+				// socket.emit('chat', {message: message, channelName: channelName, senderName: senderName , senderSocket: client.id});
 			}
 		});
 	}
