@@ -64,8 +64,8 @@ export class ChatController {
 		messages = messages.filter(
 			message => (
 				message.SenderID !== channel.MutedIDs.find((element) => element === message.SenderID) &&
-				message.SenderID !== channel.BannedIDs.find((element) => element === message.SenderID) &&
-				message.SenderID !== user.IgnoredUsers.some((element) => element.OtherUserID === message.SenderID)
+				message.SenderID !== channel.BannedIDs.find((element) => element === message.SenderID)
+				// message.SenderID !== user.IgnoredUsers.some((element) => element.OtherUserID === message.SenderID)
 					)
 				)
 		messages.forEach((message) => console.log("Mes Send: "+ message.SenderID + "  " + message.Content))

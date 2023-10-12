@@ -4,14 +4,13 @@ import image2 from "../images/free-photo2.jpg";
 
 
 const Message = ({message}) =>{
-    const userMessage = message;
     return(
         <div className="message owner">
             <div className="messageInfo">
-               <span>{userMessage == undefined ? undefined : userMessage.senderNick}</span>
+               <span>{message === undefined ? "" : message.senderNick}</span>
             </div>
             <div className="messageContent">
-                <p className="messageP">{userMessage == undefined ? undefined : userMessage.message}</p>
+                <p className="messageP">{message == undefined ? "" : message.message}</p>
                 {/* <img className="mIImg" src={image2} alt="dneeme"/> */}
             </div>
         </div>

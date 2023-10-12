@@ -39,7 +39,6 @@ export class ChatService {
 	async createCh(userID, chname, passwd, IsDirect)
 	{
 		try {
-			console.log("123");
 			const channel = await this.prisma.channel.findFirst({ where: { Name: chname }});
 			if (channel){
 				if (!this.checkPasswd(passwd, channel)) { return "Incorrect Password"};
@@ -203,6 +202,7 @@ export class ChatService {
 
 	async subscribeToChannel(client: Socket, message: string, channelName: string, user: any): Promise<void> {
 		// control edilecek !!
+		console.log("Al");
 		const channel = await this.prisma.channel.findFirst({
 			where: {
 				Name: channelName,
@@ -224,6 +224,7 @@ export class ChatService {
 		}
 		const usersOnChat = channel.Users;
 		const MutedIDs = channel.MutedIDs;
+		console.log("Al1");
 		usersOnChat.forEach((element) => {
 			const socket = this.getSocketByUserID(element.id);
 			if(!socket)
@@ -235,7 +236,9 @@ export class ChatService {
 				!MutedIDs.some((element) => element === user.id)
 			)
 			{
-				 socket.emit('chat', {message: message, channelName: channelName, senderNick: user.name, senderSocket: client.id});
+				// console.log("Al--");
+				// console.log(socket.id);
+				socket.emit('chat', {message: message, channelName: channelName, senderNick: user.name, senderSocket: client.id});
 			}
 		});
 	}
