@@ -25,7 +25,7 @@ export class AvatarController {
         const token = JWT.replace('Bearer ', '');
         const decode = this.jwtService.verify(token, jwtConstants);
         const userID: number = parseInt(decode.sub, 10);
-		const user = await this.userService.getUserByID(userID, true);
+		const user = await this.userService.getUserByID(userID);
         const AvatarFileName = userID + '.jpeg';
 
         const directoryPath = '../Avatars/';

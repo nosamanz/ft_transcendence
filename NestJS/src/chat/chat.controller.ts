@@ -34,7 +34,7 @@ export class ChatController {
 	{
 		console.log("-------------------->");
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID, true);
+		const user = await this.userService.getUserByID(userID);
 		//Lets find Channel
 		const channel = await this.prisma.channel.findFirst({
 			where: {

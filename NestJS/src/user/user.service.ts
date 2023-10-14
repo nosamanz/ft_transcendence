@@ -18,7 +18,7 @@ export class UserService
 		{
 			const decode = this.jwtService.verify(token, jwtConstants);
 			const userID: number = decode.sub;
-			const user = await this.getUserByID(userID, true);
+			const user = await this.getUserByID(userID);
 			return user;
 		}
 		catch(error)
@@ -26,17 +26,17 @@ export class UserService
 			return(undefined)
 		}
     }
-    async getUserByID(id: number, is_friends: boolean): Promise<any> {
+
+    async getUserByID(id: number, include?: any): Promise<any> {
         const user = await this.prisma.user.findFirst({
             where: {
                 id: id
             },
-            // include: {
-            //     friends: is_friends,
-            // },
+            include: include
         });
         return user;
     }
+
     async getUserByLogin(login: string): Promise<any> {
         const user = await this.prisma.user.findFirst({
             where: {
@@ -45,6 +45,17 @@ export class UserService
         });
         return user;
     }
+
+    async getUserByNick(nick: string, include?: any): Promise<any> {
+        const user = await this.prisma.user.findFirst({
+            where: {
+                nick: nick,
+            },
+            include: include
+        });
+        return user;
+    }
+
     async updateUser(userUpdateInformation: any, user: any) {
         try
         {
@@ -74,10 +85,15 @@ export class UserService
             where: { id : user.id },
             select: {
                 Channels: {
-                    where: { IsDirect: isDirect }
+                    where: { IsDirect: isDirect },
+                    include: { Users: true}
                 }
             }
         })
-        return (userCh.Channels);
+        const channels = userCh.Channels;
+        channels.forEach((element) => {
+            element.Users = element.Users.filter((element) => element.id !== user.id)
+        })
+        return (channels);
     }
 }

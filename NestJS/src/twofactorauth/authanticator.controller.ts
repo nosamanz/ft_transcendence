@@ -15,7 +15,7 @@ export class AuthanticatorController {
 	@UseGuards(JwtGuard)
 	async getQR(@Req() req, @Res() res) {
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID, true);
+		const user = await this.userService.getUserByID(userID);
 		const qrCode = await this.authanticatorService.getQR(user);
 		const qrCodeBuffer = await qrcode.toBuffer(qrCode);
 		res.set('Content-type', 'image/png');
@@ -26,7 +26,7 @@ export class AuthanticatorController {
 	@UseGuards(JwtGuard)
 	async enableTwoFactor(@Req() req, @Res() res){
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID, true);
+		const user = await this.userService.getUserByID(userID);
 		const tfa = await this.authanticatorService.generateTwoFactorAuthenticationSecret(user);
 		const qrCodeBuffer = await qrcode.toBuffer(tfa.qrCode);
 		res.set('Content-type', 'image/png');
@@ -37,7 +37,7 @@ export class AuthanticatorController {
 	@UseGuards(JwtGuard)
 	async disableTwoFactor(@Req() req, @Res() res) {
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID, true);
+		const user = await this.userService.getUserByID(userID);
 		await this.authanticatorService.disableTwoFactorAuthentication(user);
 	}
 
@@ -49,7 +49,7 @@ export class AuthanticatorController {
 		@Param('code') code: string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID, true);
+		const user = await this.userService.getUserByID(userID);
 		if (!user.TFAuth)
 			throw new UnauthorizedException();
 		const result = await this.authanticatorService.verifyTwoFactorAuthentication(code, user.TFSecret);

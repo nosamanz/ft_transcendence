@@ -31,7 +31,7 @@ export class AppController {
 	// async getProfile(@Res() response : Response, @Req() req : Request){
 	// 	console.log("profile");
 	// 	// const userID: number = parseInt(req.body.toString(), 10);
-	// 	// const userProfile = this.userService.getUserByID(userID, true);
+	// 	// const userProfile = this.userService.getUserByID(userID);
 	// 	const user = await this.prisma.user.
 
 

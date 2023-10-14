@@ -19,7 +19,16 @@ datasource db {
 
 model Friend {
 	id            Int   @id @default(autoincrement())
-	OtherUserID   Int
+	OtherUserID   Int   @unique
+	OtherUserNick String
+	User          User  @relation(fields: [UserId], references: [id])
+	UserId        Int
+}
+
+model FriendRequest {
+	id            Int   @id @default(autoincrement())
+	OtherUserID   Int   @unique
+	OtherUserNick String
 	User          User  @relation(fields: [UserId], references: [id])
 	UserId        Int
 }
@@ -51,7 +60,7 @@ model User {
 	WinCount        Int
 	LoseCount       Int
 	LatterLevel     Int
-	// FriendRequests  User[]
+	FriendRequests  FriendRequest[]
 	Achievements    Achievements?
 	Friends         Friend[]
 	IgnoredUsers    Ignore[]

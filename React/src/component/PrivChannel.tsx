@@ -9,7 +9,7 @@ const PrivChannel = ({channel, setCurrentChannel}) =>{
         <div className="userChat">
 			    <img className="searchChatImage" src={image}/>
                 <div className="userChatInfo">
-                    <span onClick={HandleClick} >{channel.users}</span>
+                    <span onClick={HandleClick} >{channel.Users != undefined? channel.Users[0].nick : undefined}</span>
                 </div>
 		</div>
     )
