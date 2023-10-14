@@ -2,12 +2,11 @@ import React from "react";
 import MessageBox from "./MessageBox";
 import InputBox from "./InputBox";
 
-const MainBox = () =>{
-    console.log("Mainbox");
+const MainBox = ({currentChannel}) =>{
     return(
         <div className="mainBox">
-          <MessageBox/>
-            <InputBox/>
+          <MessageBox currentChannel={currentChannel} />
+            <InputBox currentChannel={currentChannel} />
         </div>
     )
 

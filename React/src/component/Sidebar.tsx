@@ -1,11 +1,11 @@
 import React from "react";
 import SidebarNav from "./SidebarNav";
 import ChatSearch from "./ChatSearch";
-const Sidebar = () =>{
+const Sidebar = ({setCurrentChannel}) =>{
     return(
         <div className="sidebar">
             <SidebarNav/>
-            <ChatSearch/>
+            <ChatSearch setCurrentChannel={setCurrentChannel} />
         </div>
     )
 

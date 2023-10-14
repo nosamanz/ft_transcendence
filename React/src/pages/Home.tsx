@@ -3,7 +3,7 @@ import React, {useState, useEffect, Component} from "react";
 import io from "socket.io-client";
 import { cookies } from '../App';
 
-export const socket = io('http://localhost:80', {
+export const socket = io('http://10.12.14.1:80', {
 	transports: ['websocket']
 });
 

@@ -10,7 +10,6 @@ const Profile = () => {
 			const responseUser = await fetch("http://10.12.14.1:80/user", {
 				headers: {
 					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-					'Content-Type': 'application/json'
 				}
 			});
 			setUser(await responseUser.json());

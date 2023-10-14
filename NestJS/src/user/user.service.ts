@@ -68,4 +68,16 @@ export class UserService
 		};
 		return this.jwtService.sign(payload, jwtConstants);
 	}
+
+    async getChannels(user: any, isDirect: boolean) : Promise<any> {
+        const userCh = await this.prisma.user.findFirst({
+            where: { id : user.id },
+            select: {
+                Channels: {
+                    where: { IsDirect: isDirect }
+                }
+            }
+        })
+        return (userCh.Channels);
+    }
 }

@@ -1,5 +1,6 @@
 import { Controller, Get, Post , Body, Res, UseGuards, Req, Param} from '@nestjs/common';
 import { UserService } from './user.service';
+import { Response } from 'express';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -60,6 +61,31 @@ export class UserController {
 		})
 	}
 
+	@Get('channels')
+	@UseGuards(JwtGuard)
+	async GetChannels(
+		@Req() req: Request,
+		@Res() res: Response)
+	{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID, true);
+		const channels = await this.userService.getChannels(user, false);
+		return res.send(channels);
+	}
+
+	@Get('privChannels')
+	@UseGuards(JwtGuard)
+	async GetPrivChannels(
+		@Req() req: Request,
+		@Res() res: Response)
+	{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID, true);
+		const channels = await this.userService.getChannels(user, true);
+		return res.send(channels);
+	}
+
+
 	@Post('getForm')
 	@UseGuards(JwtGuard)
 	async getForm(@Req() req: Request, @Body() info: any){
@@ -77,4 +103,5 @@ export class UserController {
 
 		await this.userService.updateUser(UpdateInfo, user);
 	}
+
 }

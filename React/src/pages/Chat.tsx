@@ -7,31 +7,14 @@ import Sidebar from "../component/Sidebar";
 import GroupSidebar from "../component/GroupSidebar";
 import { cookies } from "../App";
 
-export let currentChannel = "";
 
-const Chat = () =>{
-    let [currentChannel, setCurrentChannel] = useState<string>("");
-    //useEffect (() => {
-    //    const fetchData = async () =>{
-    //        const responseMessages = await fetch(`http://10.12.14.1:80/${currentChannel}/messages`, {
-    //            headers: {
-    //                'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-    //                'Content-Type': 'application/json'
-    //            }
-    //        });
-    //        const Messages = await responseMessages.json();
-    //    }
-    //    if(currentChannel !== ""){
-    //        fetchData();
-    //    }
-    //})
-    console.log("Chat");
+const Chat = ({setCurrentChannel, currentChannel}) =>{
     return(
         <div className="chat">
             <div className="chatContainer">
-                <Sidebar/>
-                <MainBox/>
-                <GroupSidebar/>
+                <Sidebar setCurrentChannel={setCurrentChannel} />
+                <MainBox currentChannel={currentChannel} />
+                <GroupSidebar  setCurrentChannel={setCurrentChannel}  />
             </div>
             <div className="friends">
                 <Friends />

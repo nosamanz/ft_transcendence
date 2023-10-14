@@ -1,8 +1,7 @@
 import React from "react";
 import Messages from "./Messages";
 import InputBox from "./InputBox";
-const MessageBox = () =>{
-    console.log("MessageBox");
+const MessageBox = ({currentChannel}) =>{
 	return(
 		<div className="messageBox">
 			<div className="messageBoxInfo">
@@ -22,7 +21,7 @@ const MessageBox = () =>{
 				</div>
 			</div>
 			<div>
-				<Messages />
+				<Messages currentChannel={currentChannel}  />
 			</div>
 		</div>
 	)

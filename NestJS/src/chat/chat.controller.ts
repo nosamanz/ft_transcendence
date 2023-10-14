@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards, Post , Body, Res, Param, Req} from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { response, Response } from 'express';
+import { Response } from 'express';
 import * as path from 'path'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
@@ -57,18 +57,18 @@ export class ChatController {
 		});
 		let messages = channel.messages;
 
-		channel.messages.forEach((message) => console.log("Mes: "+ message.SenderID + "  " + message.Content))
+		channel.messages.forEach((message) => console.log("Mes: "+ message.senderID + "  " + message.message))
 		channel.BannedIDs.forEach((id) => console.log("Banned: "+ id))
 		channel.MutedIDs.forEach((id) => console.log("Muted: "+ id))
 
 		messages = messages.filter(
 			message => (
-				message.SenderID !== channel.MutedIDs.find((element) => element === message.SenderID) &&
-				message.SenderID !== channel.BannedIDs.find((element) => element === message.SenderID)
-				// message.SenderID !== user.IgnoredUsers.some((element) => element.OtherUserID === message.SenderID)
+				message.senderID !== channel.MutedIDs.find((element) => element === message.senderID) &&
+				message.senderID !== channel.BannedIDs.find((element) => element === message.senderID)
+				// message.senderID !== user.IgnoredUsers.some((element) => element.OtherUserID === message.senderID)!!!
 					)
 				)
-		messages.forEach((message) => console.log("Mes Send: "+ message.SenderID + "  " + message.Content))
+		messages.forEach((message) => console.log("Mes Send: "+ message.senderID + "  " + message.message))
 		return response.send(messages);
 	}
 

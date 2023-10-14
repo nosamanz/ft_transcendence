@@ -200,12 +200,13 @@ export class ChatService {
 		}
 	}
 
-	async subscribeToChannel(client: Socket, message: string, channelName: string, user: any): Promise<void> {
+	// data: {message: string, channelName: string, senderID: number, senderNick: string}
+	async subscribeToChannel(data: any): Promise<void> {
 		// control edilecek !!
 		console.log("Al");
 		const channel = await this.prisma.channel.findFirst({
 			where: {
-				Name: channelName,
+				Name: data.channelName,
 			},
 			select: {
 				Users: {
@@ -219,12 +220,11 @@ export class ChatService {
 		});
 		if(!channel)
 		{
-			console.log("The channel: " + channelName + " couldn't be found in the database!");
+			console.log("The channel: " + data.channelName + " couldn't be found in the database!");
 			return;
 		}
 		const usersOnChat = channel.Users;
 		const MutedIDs = channel.MutedIDs;
-		console.log("Al1");
 		usersOnChat.forEach((element) => {
 			const socket = this.getSocketByUserID(element.id);
 			if(!socket)
@@ -232,39 +232,38 @@ export class ChatService {
 				// console.log("Socket to send couldn't be found!");
 				return;
 			}
-			if (!element.IgnoredUsers.some((element) => element.OtherUserID === user.id) &&
-				!MutedIDs.some((element) => element === user.id)
+			if (!element.IgnoredUsers.some((element) => element.OtherUserID === data.senderID) &&
+				!MutedIDs.some((element) => element === data.senderID)
 			)
 			{
-				// console.log("Al--");
 				// console.log(socket.id);
-				socket.emit('chat', {message: message, channelName: channelName, senderNick: user.name, senderSocket: client.id});
+				socket.emit('chat', {message: data.message, channelName: data.channelName, senderID: data.senderID, senderNick: data.senderNick});
 			}
 		});
 	}
-
-	async saveMessage(client: Socket, message: string, channelName: string, sender: any): Promise<void> {
+	// data: {message: string, channelName: string, senderID: number, senderNick: string}
+	async saveMessage(data: any): Promise<void> {
 
 		const channel = await this.prisma.channel.findFirst({
 			where: {
-				Name: channelName
+				Name: data.channelName
 			},
 			select: {
-				id: true,
+				Name: true,
 				messages: true,
 			}
 		});
 		if(!channel)
 		{
-			console.log("The channel: " + channelName + " couldn't be found in the database!");
+			console.log("The channel: " + data.channelName + " couldn't be found in the database!");
 			return;
 		}
 		await this.prisma.message.create({
 			data: {
-				Content: message,
-				SenderID: sender.id,
-				SenderNick: sender.nick,
-				ChannelID: channel.id
+				message: data.message,
+				channelName: channel.Name,
+				senderID: data.senderID,
+				senderNick: data.senderNick,
 			}
 		});
 	}

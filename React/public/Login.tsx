@@ -13,7 +13,6 @@ const Login = ({setUser}) => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			console.log("123");
 			const params = new URLSearchParams(window.location.search);
 			const code = params.get('code');
 			const data = {};
@@ -38,7 +37,6 @@ const Login = ({setUser}) => {
 			const responseUser = await fetch("http://10.12.13.2:80/user", {
 				headers: {
 					'authorization': 'Bearer ' + responseData.token,
-                    'Content-Type': 'application/json'
 				}
 			});
 			const UserData = await responseUser.json();

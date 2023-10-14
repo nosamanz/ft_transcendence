@@ -12,19 +12,19 @@ import Cookies from 'universal-cookie';
 export const cookies = new Cookies();
 
 function App() {
+	const [currentChannel, setCurrentChannel] = useState("");
   const [user, setUser] = useState(null);
-  console.log(user);
   return (
     <BrowserRouter>
     <div className='body'>
-        <Navbar user = "Esma"/>
+        <Navbar user = "We won this match"/>
         <Routes>
           {
             user ? (<>
             <Route path='/' element = {<Home setUser={setUser}/>} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/leaderboard" element={<LeaderBoard />} />
-            <Route path='/chat' element={<Chat/>}/>
+            <Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel}currentChannel={currentChannel} />}/>
             </>
               ) : (
                 <Route path='/' element = {<Login setUser = {setUser}/>} />

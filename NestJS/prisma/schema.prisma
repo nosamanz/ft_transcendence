@@ -118,12 +118,12 @@ model Channel {
 
 model Message {
 	id        	Int       @id @default(autoincrement())
-	Content   	String
-	SenderID  	Int
-	SenderNick	String
+	message   	String
+	senderID  	Int
+	senderNick	String
 
-	Channel   Channel   @relation(fields: [ChannelID], references: [id])
-	ChannelID Int
+	Channel   Channel   @relation(fields: [channelName], references: [Name])
+	channelName	String
 
 	CreatedAt DateTime  @default(now())
 }
