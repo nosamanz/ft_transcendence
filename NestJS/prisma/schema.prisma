@@ -1,12 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-//debian
-//generator client {
-//	provider = "prisma-client-js"
-//}
-
-// windows
 generator client {
 	provider      = "prisma-client-js"
 	binaryTargets = ["native", "windows"]
@@ -77,6 +68,43 @@ model Achievements{
 	User    User    @relation(fields: [UserID], references: [id])
 	UserID  Int     @unique
 }
+
+model Channel {
+	id              Int @id @default(autoincrement())
+	Name            String @unique
+	ChannelOwnerID  Int
+	AdminIDs        Int[] // ChannelOwner is an administrator
+	BannedIDs       Int[]
+	MutedIDs        Int[]
+	InvitedIDs      Int[]
+	Password        String
+	IsDirect        Boolean
+	IsInviteOnly    Boolean
+	messages        Message[]
+	Users           User[]
+}
+
+model Message {
+	id        	Int       @id @default(autoincrement())
+	message   	String
+	senderID  	Int
+	senderNick	String
+
+	Channel   Channel   @relation(fields: [channelName], references: [Name])
+	channelName	String
+
+	CreatedAt DateTime  @default(now())
+}
+
+// @Get()//Ana Sayfa
+// @Get('/:channelName/messages')
+// @Get('/:channelName/ban/:user')
+// @Get('/:channelName/setAdmin/:user')
+// @Get('/:channelName/kick/:user')
+// @Get('/:channelName/mute/:user')
+// @Get('/:channelName/create')
+// @Get('/user/ignore/:user')
+
 // const users = await prisma.user.findMany({
 //   orderBy: {
 //     LatterLevel: 'asc', // You can use 'asc' for ascending or 'desc' for descending order
@@ -90,49 +118,3 @@ model Achievements{
 //   }
 // });
 
-// // leaderboard sırala ver latter level
-
-//
-model Channel {
-	id              Int @id @default(autoincrement())
-	Name            String @unique
-	ChannelOwnerID  Int
-	AdminIDs        Int[] // ChannelOwner is an administrator
-	BannedIDs       Int[]
-	MutedIDs        Int[]
-	InvitedIDs      Int[]
-	Password        String
-	IsDirect        Boolean
-	IsInviteOnly    Boolean
-	UserCount       Int
-	messages        Message[]
-	Users           User[]
-}
-// @Post('/:channelName/message')
-
-// @Get()//Ana Sayfa
-// @Get('/:channelName/messages')
-// @Get('/:channelName/ban/:user')
-// @Get('/:channelName/setAdmin/:user')
-// @Get('/:channelName/kick/:user')
-// @Get('/:channelName/mute/:user')
-
-//@Get('/user/ignore/:user')
-//@Get('/:channelName/create')
-
-//IGNORE ?
-
-// @Get('/:channelName/setPassword/:hashedpass')
-// @Get('/:channelName/inviteOnly') // @Get('/:channelName/setInviteOnly')
-
-model Message {
-	id        	Int       @id @default(autoincrement())
-	message   	String
-	senderID  	Int
-	senderNick	String
-
-	Channel   Channel   @relation(fields: [channelName], references: [Name])
-	channelName	String
-
-	CreatedAt DateTime  @default(now())
-}

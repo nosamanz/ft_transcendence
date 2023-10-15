@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import * as speakeasy from 'speakeasy';
 import { PrismaService } from 'src/prisma/prisma.service';""
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
-export class AuthanticatorService {
+export class TFAService {
 	constructor(
 		private prisma: PrismaService,
-		private userService: UserService,
-		private jwtService: JwtService) { }
+		private userService: UserService,) { }
 
 	getQR(user: any)
 	{

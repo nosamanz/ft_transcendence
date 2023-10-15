@@ -1,29 +1,20 @@
 import { Controller, Get, UseGuards, Post , Body, Res, Param, Req} from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Response } from 'express';
-import * as path from 'path'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { connectedClients } from './chat.gateway';
-import * as bcrypt from 'bcrypt';
-
-export let hashed1: string = "";
-export let hashed2: string = "";
+import { ChatChannelService } from './chat-channel.service';
 
 @Controller('chat')
 export class ChatController {
 	constructor(
 			private chatService: ChatService,
+			private chatChannelService: ChatChannelService,
 			private prisma: PrismaService,
 			private userService: UserService,
 	){}
-
-	@Get()
-	getChat(@Res() response: Response) {
-		const filePath = path.join(__dirname, '..', '..', '..', 'Front', 'html', 'chatting.html');
-		return response.sendFile(filePath);
-	}
 
 	@Get('/:channelName/messages')
 	@UseGuards(JwtGuard)
@@ -32,7 +23,6 @@ export class ChatController {
 		@Req() req: Request,
 		@Param('channelName') chname: string)
 	{
-		console.log("-------------------->");
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
 		//Lets find Channel
@@ -81,7 +71,7 @@ export class ChatController {
 		@Param('channelName') chname:string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.channelOp(userID, chname, destUser, "setadmin"));
+		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "setadmin"));
 	}
 
 	@Get('/:channelName/kick/:user')
@@ -93,7 +83,7 @@ export class ChatController {
 		@Param('channelName') chname: string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.channelOp(userID, chname, destUser, "kick"));
+		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "kick"));
 	}
 
 	@Get('/:channelName/mute/:user')
@@ -105,7 +95,7 @@ export class ChatController {
 		@Param('channelName') chname : string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.channelOp(userID, chname, destUser, "mute"));
+		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "mute"));
 	}
 
 	@Get('/:channelName/ban/:user')
@@ -117,7 +107,7 @@ export class ChatController {
 		@Param('channelName') chname:string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.channelOp(userID, chname, destUser, "ban"));
+		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "ban"));
 	}
 
 	@Get('/:channelName/create/:isDirect/:passwd')
@@ -131,14 +121,11 @@ export class ChatController {
 	{
 		let IsDirect = Boolean(isDirect);
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatService.createCh(userID, chname, passwd, IsDirect));
+		return res.send(await this.chatChannelService.createCh(userID, chname, passwd, IsDirect));
 	}
 
-	// @Post()
-	// async createUser(@Body('msg') msg: string) {
-		// console.log("From Controller: " + msg);
-		// }
-
+	// '/:channelName/inviteChannel'
+	//
 
 	@Get('connect')
     @UseGuards(JwtGuard)
@@ -146,8 +133,6 @@ export class ChatController {
 	{
       const userID: number = parseInt(req.body.toString(), 10);
       const socketID: string = req.headers['socket-id'];
-	//   console.log("socketID ----> " + socketID);
-	//   console.log("userID 	----> " + userID);
       if(!socketID || !userID)
       {
         console.log("SocketID or UserID couldn't find!");
@@ -163,33 +148,3 @@ export class ChatController {
       connectedClients[indexToUpdate].id = userID;
       }
 	}
-
-	// if (!(channel.AdminIDs.some((element) => element === userID)))
-	// {
-	// 	console.log("You are not Channel Admin !");
-	// 	res.send("You are not Channel Admin !");
-	// 	return res.send("You are not Channel Admin !");
-	// }
-	// const destuser = await this.prisma.user.findFirst({ where: { nick: destUser } })
-	// console.log(destuser.id);
-	// if ((channel.AdminIDs.some((element) => element === destuser.id)) || (channel.ChannelOwnerID === destuser.id))
-	// {
-	// 	console.log("Dest user is Admin or Channel Owner!");
-	// 	return res.send("Dest user is Admin !");
-	// }
-	// else if ((channel.BannedIDs.some((element) => element === destuser.id)))
-	// {
-	// 	console.log("Dest User Already Banned !");
-	// 	return;
-	// }
-	// channel.BannedIDs.push(destuser.id);
-	// console.log(channel.BannedIDs);
-	// try{
-	// 	await this.prisma.channel.update({
-	// 		where: { Name: chname },
-	// 		data: { BannedIDs: channel.BannedIDs}
-	// 	})
-	// }
-	// catch(error){
-	// 	console.log("Error ! While channel updating");
-	// }

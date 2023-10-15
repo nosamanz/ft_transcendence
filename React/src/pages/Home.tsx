@@ -22,8 +22,7 @@ socket.on('connect_error', (error) =>{
 	console.log('Bağlantı hatası', error);
 });
 
-const Home = ({setUser}) =>{
-	const user = setUser;
+const Home = ({user}) =>{
 	const [loaded, setLoaded] = useState(false);
 	const [selectedImage, setSelectesImage] = useState("");
 	const fileInput = document.getElementById('fileInput');
@@ -107,7 +106,7 @@ const Home = ({setUser}) =>{
 						<form>
 							<div className="formDiv">
 								<label>Nickname: </label>
-							<input type="text" name="name" placeholder={user} onChange={handleChange} className="formInput"></input>
+							<input type="text" name="name" placeholder={user.nick} onChange={handleChange} className="formInput"></input>
 							</div><div className="formDiv">
 								<label></label>
 							<input id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>

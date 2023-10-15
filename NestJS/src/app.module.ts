@@ -9,8 +9,8 @@ import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
-import { AuthanticatorModule } from './twofactorauth/authanticator.module';
-import { AuthanticatorService } from './twofactorauth/authanticator.service';
+import { TFAModule } from './auth/TFA/tfa.module';
+import { TFAService } from './auth/TFA/tfa.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AvatarController } from './avatar/avatar.controller';
 import { AvatarService } from './avatar/avatar.service';
@@ -22,10 +22,10 @@ import { AvatarModule } from './avatar/avatar.module';
   AuthModule,
   UserModule,
   PrismaModule,
-  AuthanticatorModule,
+  TFAModule,
   JwtModule,
   AvatarModule],
   controllers: [AppController, AvatarController],
-  providers: [UserService, ChatGateway, ChatService, AuthService, PrismaService, AuthanticatorService, JwtService, AvatarService],
+  providers: [UserService, ChatGateway, ChatService, AuthService, PrismaService, TFAService, JwtService, AvatarService],
 })
 export class AppModule {}

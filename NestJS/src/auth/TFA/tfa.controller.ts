@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Req, Res, UnauthorizedException, UseGuards, Headers } from '@nestjs/common';
-import { AuthanticatorService } from './authanticator.service';
+import { TFAService } from './tfa.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import * as qrcode from 'qrcode';
 import { UserService } from 'src/user/user.service';
@@ -8,15 +8,15 @@ import { Request } from 'express';
 
 @Controller('auth/tfa')
 @ApiBearerAuth()
-export class AuthanticatorController {
-	constructor(private authanticatorService: AuthanticatorService, private userService: UserService) { }
+export class TFAController {
+	constructor(private tfaService: TFAService, private userService: UserService) { }
 
 	@Get('QR')
 	@UseGuards(JwtGuard)
 	async getQR(@Req() req, @Res() res) {
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
-		const qrCode = await this.authanticatorService.getQR(user);
+		const qrCode = await this.tfaService.getQR(user);
 		const qrCodeBuffer = await qrcode.toBuffer(qrCode);
 		res.set('Content-type', 'image/png');
 		res.send(qrCodeBuffer);
@@ -27,7 +27,7 @@ export class AuthanticatorController {
 	async enableTwoFactor(@Req() req, @Res() res){
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
-		const tfa = await this.authanticatorService.generateTwoFactorAuthenticationSecret(user);
+		const tfa = await this.tfaService.generateTwoFactorAuthenticationSecret(user);
 		const qrCodeBuffer = await qrcode.toBuffer(tfa.qrCode);
 		res.set('Content-type', 'image/png');
 		res.send(qrCodeBuffer);
@@ -38,7 +38,7 @@ export class AuthanticatorController {
 	async disableTwoFactor(@Req() req, @Res() res) {
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
-		await this.authanticatorService.disableTwoFactorAuthentication(user);
+		await this.tfaService.disableTwoFactorAuthentication(user);
 	}
 
 	// jwt_token
@@ -52,9 +52,9 @@ export class AuthanticatorController {
 		const user = await this.userService.getUserByID(userID);
 		if (!user.TFAuth)
 			throw new UnauthorizedException();
-		const result = await this.authanticatorService.verifyTwoFactorAuthentication(code, user.TFSecret);
+		const result = await this.tfaService.verifyTwoFactorAuthentication(code, user.TFSecret);
 		if (result)
-			return await this.authanticatorService.Login(user);
+			return await this.tfaService.Login(user);
 		throw new UnauthorizedException();
 	}
 }

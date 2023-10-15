@@ -9,7 +9,7 @@ RUN mkdir /root/React
 COPY . /root/React
 WORKDIR /root/React
 
-RUN npm install react-scripts
+# RUN npm install react-scripts
 
-ENTRYPOINT ["npm", "start"]
-# ENTRYPOINT ["sleep", "1000000000000"]
+# ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["sleep", "1000000000000"]
