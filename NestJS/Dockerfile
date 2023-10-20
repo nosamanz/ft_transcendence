@@ -7,6 +7,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | b
 RUN npm install -g npm
 RUN apt install postgresql-client -y
 
+RUN mkdir -p /etc/ssl_volume
+
 RUN mkdir /root/Nestjs
 COPY . /root/Nestjs/
 WORKDIR /root/Nestjs/

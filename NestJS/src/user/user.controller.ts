@@ -152,6 +152,7 @@ export class UserController {
 		@Res() res: Response,
 		@Param('user') finduser: string)
 	{
+		console.log(finduser + " searching...");
 		const targetUser = await this.userService.getUserByNick(finduser, {
 			FriendRequests: true,
 			Friends: true,
@@ -166,6 +167,7 @@ export class UserController {
 		if (targetUser.Friends.find((element) => element.OtherUserID === user.id))
 			return res.send({res: -3, message: "The user is already your friend!"})
 
+		console.log(user.id + "otheruserid-----<");
 		await this.prisma.friendRequest.create({
 			data: {
 				OtherUserID: user.id,

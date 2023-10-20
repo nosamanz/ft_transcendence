@@ -3,12 +3,12 @@ import React, {useState, useEffect, Component} from "react";
 import io from "socket.io-client";
 import { cookies } from '../App';
 
-export const socket = io('http://10.12.14.1:80', {
+export const socket = io('https://10.12.14.1:80', {
 	transports: ['websocket']
 });
 
 socket.on("connect", async () => {
-	const response = await fetch('http://10.12.14.1:80/chat/connect', {
+	const response = await fetch('https://10.12.14.1:80/chat/connect', {
 		headers: {
 			'socket-id': socket.id,
 			'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
@@ -63,7 +63,7 @@ const Home = ({user}) =>{
 			const formData = new FormData();
 			console.log("File--- "+ reader?.reader.result)
 			formData.append('file', reader?.reader.result);
-			const responseImage = await fetch('http://10.12.14.1:80/avatar/upload', {
+			const responseImage = await fetch('https://10.12.14.1:80/avatar/upload', {
 				method: 'POST',
 				headers: {
 					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),

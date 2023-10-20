@@ -8,9 +8,12 @@ import Profile from './pages/Profile';
 import LeaderBoard from './pages/LeaderBoard';
 import Chat from './pages/Chat';
 import Cookies from 'universal-cookie';
+
+
 export const cookies = new Cookies();
 
 function App() {
+
 	const [currentChannel, setCurrentChannel] = useState("");
   const [user, setUser] = useState({res: "undefined"});
   useEffect(() => {
@@ -20,12 +23,13 @@ function App() {
         setUser({res: "undefined"});
         return;
       }
-      const responseUser = await fetch("http://10.12.14.1:80/user", {
+      const responseUser = await fetch("https://10.12.14.1:80/user", {
         headers: {
           'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
         }
       });
       const res = await responseUser.json();
+      console.log(res.ok);
       if(res.statusCode === 403)
       {
         setUser({res: "undefined"});
@@ -35,6 +39,7 @@ function App() {
 		}
 		fetchData();
 	}, []);
+  console.log(user.res);
   return (
     <BrowserRouter>
     <div className='body'>

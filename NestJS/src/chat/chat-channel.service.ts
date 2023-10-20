@@ -16,12 +16,16 @@ export class ChatChannelService {
 	}
 
 	private async checkPasswd(userPasswd, channel){
+		//check for brypt
+		if (channel.passwd === undefined)
+			return 1;
 		const channelPasswd = channel.passwd;
 		return bcrypt.compare(userPasswd, channelPasswd);
 	}
 
-	async createCh(userID, chname, passwd, IsDirect)
+	async createCh(userID, chname, passwd, isDirect)
 	{
+		console.log(isDirect);
 		try {
 			const channel = await this.prisma.channel.findFirst({ where: { Name: chname }});
 			if (channel){
@@ -33,6 +37,7 @@ export class ChatChannelService {
 				if (passwd !== "undefined")
 				{
 					passwd = await bcrypt.hash(passwd, 10);
+					console.log(passwd);
 				}
 				await this.prisma.channel.create({
 					data: {
@@ -40,7 +45,7 @@ export class ChatChannelService {
 						Password: passwd,
 						ChannelOwnerID: userID,
 						AdminIDs: [userID],
-						IsDirect: IsDirect,
+						IsDirect: isDirect,
 						IsInviteOnly: false,
 						Users : { connect: { id : userID } }
 					},

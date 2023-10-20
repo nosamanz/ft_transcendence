@@ -7,9 +7,12 @@ RUN npm install -g npm
 
 RUN mkdir /root/React
 COPY . /root/React
+COPY init.sh /root/React
 WORKDIR /root/React
 
-# RUN npm install react-scripts
+RUN apt install openssl -y
+RUN mkdir -p /etc/ssl_volume
 
 # ENTRYPOINT ["npm", "start"]
-ENTRYPOINT ["sleep", "1000000000000"]
+ENTRYPOINT [ "sh", "init.sh"]
+# ENTRYPOINT ["sleep", "1000000000000"]

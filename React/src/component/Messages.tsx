@@ -9,10 +9,11 @@ const Messages=({currentChannel}) =>{
     const [messagesReceived, setMessagesReceived] = useState([{}]);
     // data = {message: string, channelName: string, senderNick: string}
     socket.on('chat', async (data) => {
-        setMessagesReceived([...messagesReceived, data]);
+        if (data.channelName === currentChannel)
+            setMessagesReceived([...messagesReceived, data]);
     });
         const fetchData = async () =>{
-            const responseMessages = await fetch(`http://10.12.14.1:80/chat/${currentChannel}/messages`, {
+            const responseMessages = await fetch(`https://10.12.14.1:80/chat/${currentChannel}/messages`, {
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }

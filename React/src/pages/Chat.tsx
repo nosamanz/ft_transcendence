@@ -5,7 +5,6 @@ import MainBox from "../component/MainBox";
 import Friends from "../component/Friends";
 import Sidebar from "../component/Sidebar";
 import GroupSidebar from "../component/GroupSidebar";
-import { cookies } from "../App";
 
 
 const Chat = ({setCurrentChannel, currentChannel}) =>{

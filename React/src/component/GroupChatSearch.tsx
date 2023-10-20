@@ -6,7 +6,7 @@ const GroupChatSearch = ({setCurrentChannel}) =>{
     const [channelList, setChannelList] = useState([{}]);
     useEffect (() => {
         const fetchData = async () =>{
-            const responseChannels = await fetch(`http://10.12.14.1:80/user/channels`, {
+            const responseChannels = await fetch(`https://10.12.14.1:80/user/channels`, {
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                     'Content-Type': 'application/json'
@@ -19,7 +19,6 @@ const GroupChatSearch = ({setCurrentChannel}) =>{
         }
         fetchData();
     }, [])
-    // const channelList = [{Name: "123"},{Name: "321"}]
     return(
         <div className="chatSearch">
             <div className="searchForm">

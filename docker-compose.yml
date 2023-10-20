@@ -19,6 +19,7 @@ services:
     networks:
       - network
     volumes:
+      - ./ssl:/etc/ssl_volume
       - ./NestJS:/root/Nestjs
 
   postgres:
@@ -45,6 +46,7 @@ services:
     networks:
       - network
     volumes:
+      - ./ssl:/etc/ssl_volume
       - ./React:/root/React
 
 networks:

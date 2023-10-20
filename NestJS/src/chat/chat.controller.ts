@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Post , Body, Res, Param, Req} from '@nestjs/common';
+import { Controller, Get, UseGuards, Post , Body, Res, Param, Req, ParseBoolPipe, Query} from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -116,12 +116,11 @@ export class ChatController {
 		@Req() req: Request,
 		@Res() res: Response,
 		@Param('channelName') chname: string,
-		@Param('isDirect') isDirect: Boolean,
-		@Param('passwd') passwd: string)
-	{
-		let IsDirect = Boolean(isDirect);
+		@Param('isDirect', new ParseBoolPipe()) isDirect : boolean,
+		@Param('passwd') passwd: string
+	){
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatChannelService.createCh(userID, chname, passwd, IsDirect));
+		return res.send(await this.chatChannelService.createCh(userID, chname, passwd, isDirect));
 	}
 
 	// '/:channelName/inviteChannel'
