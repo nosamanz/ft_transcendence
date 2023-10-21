@@ -12,16 +12,17 @@ import * as fs from 'fs';
 export class AvatarController {
     constructor(private avatarService: AvatarService, private userService: UserService, private jwtService: JwtService) {}
 
+    // @UseInterceptors(FileInterceptor('body'))
     @Post('upload')
-    @UseInterceptors(FileInterceptor('file'))
     @UseGuards(JwtGuard)
     async uploadAvatar(
         @Req() req: Request,
         @Body() body: any,
         @Headers('authorization') JWT: string,
-        @UploadedFile() file: Express.Multer.File,
+        // @UploadedFile() file: Express.Multer.File,
     ) {
-        console.log("Musab");
+        console.log("Req");
+        console.log(body);
         const token = JWT.replace('Bearer ', '');
         const decode = this.jwtService.verify(token, jwtConstants);
         const userID: number = parseInt(decode.sub, 10);
@@ -33,11 +34,11 @@ export class AvatarController {
         if (!fs.existsSync(directoryPath)) {
             fs.mkdirSync(directoryPath, { recursive: true });
         }
-        await fs.writeFile(`${directoryPath}${AvatarFileName}`, file.buffer, (err) => {
-            if (err) {
-                console.error('Error writing file:', err);
-            }
-        });
+        // await fs.writeFile(`${directoryPath}${AvatarFileName}`, file.buffer, (err) => {
+        //     if (err) {
+        //         console.error('Error writing file:', err);
+        //     }
+        // });
 
         return { res: "File uploadad successfully!" };
     }

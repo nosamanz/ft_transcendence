@@ -23,7 +23,7 @@ function App() {
         setUser({res: "undefined"});
         return;
       }
-      const responseUser = await fetch("https://10.12.14.1:80/user", {
+      const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user`, {
         headers: {
           'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
         }
@@ -43,7 +43,7 @@ function App() {
   return (
     <BrowserRouter>
     <div className='body'>
-        <Navbar user = "We won this match"/>
+        <Navbar user={user}/>
         <Routes>
           {
             user.res !== "undefined" ? (<>

@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { Response } from 'express';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { userInfo } from 'os';
 
 @Controller('user')
 export class UserController {
@@ -82,9 +81,7 @@ export class UserController {
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
-
 		const targetUser = await this.userService.getUserByNick(friendName);
-
 		await this.prisma.friend.create({
 			data: {
 				OtherUserID: targetUser.id,
@@ -167,7 +164,6 @@ export class UserController {
 		if (targetUser.Friends.find((element) => element.OtherUserID === user.id))
 			return res.send({res: -3, message: "The user is already your friend!"})
 
-		console.log(user.id + "otheruserid-----<");
 		await this.prisma.friendRequest.create({
 			data: {
 				OtherUserID: user.id,

@@ -23,7 +23,7 @@ export const Login = ({setUser}) => {
 			}
 			else if(code)
 			{
-				const response = await fetch('https://10.12.14.1:80/auth/42/signin_intra', {
+				const response = await fetch(`https://${process.env.REACT_APP_IP}:80/auth/42/signin_intra`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export const Login = ({setUser}) => {
 					//TFA PAGE
 				}
 				console.log(responseData.token);
-				const responseUser = await fetch("https://10.12.14.1:80/user", {
+				const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user`, {
 					headers: {
 						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 					}
@@ -59,11 +59,7 @@ export const Login = ({setUser}) => {
 
 
 	const handleFTLogin = () => {
-		const reUri = process.env.REACT_APP_API;
-		console.log(reUri);
-		window.location.href=(reUri);
-
-		// window.location.href=('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-077b70076cf4de01892c573d0d5337b6b27cff2d6f67bb166eb7c187d1678e39&redirect_uri=https%3A%2F%2F10.12.14.1%3A3000&response_type=code');
+		window.location.href=(process.env.REACT_APP_API);
 	};
 
 	return (

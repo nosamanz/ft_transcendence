@@ -40,11 +40,17 @@ model History {
 	UserId        Int
 }
 
+model Image {
+	id     Int  @id @default(autoincrement())
+	User   User @relation(fields: [UserId], references: [id])
+	UserId Int  @unique
+}
+
 model User {
-	id              Int      @id // @unique idi!!!
+	id              Int      @id
 	login           String   @unique
 	nick            String   @unique
-	imgPath         String
+	img             Image?
 	TFAuth          Boolean
 	TFSecret        String
 	secretAscii     String

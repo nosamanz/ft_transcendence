@@ -7,7 +7,7 @@ const Profile = () => {
 	useEffect (() =>{
 		const fetchData = async () =>{
 
-			const responseUser = await fetch("https://10.12.14.1:80/user", {
+			const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user`, {
 				headers: {
 					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 				}

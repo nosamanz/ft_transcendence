@@ -8,7 +8,7 @@ const FriendsSidebar = () => {
     useEffect(() => {
 
         const fetchData = async () =>{
-                const responseMessages = await fetch(`https://10.12.14.1:80/user/friends`, {
+                const responseMessages = await fetch(`https://${process.env.REACT_APP_IP}:80/user/friends`, {
                     headers: {
                         'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                     }
