@@ -30,7 +30,7 @@ export class AuthService {
 				id:				UserInfo.id,
 				login:			UserInfo.login,
 				nick:			UserInfo.login,
-				imgPath:		"default/path",
+				IsFormSigned:	false,
 				TFAuth:			false,
 				TFSecret:		"Secret",
 				secretAscii:	"SecretAscii",

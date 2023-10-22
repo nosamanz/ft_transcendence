@@ -18,15 +18,37 @@ export class UserController {
 		return await this.userService.getUserByID(userID);
 	}
 
+	@Get('sign')
+	@UseGuards(JwtGuard)
+	async SignForm(
+		@Req() req: Request,)
+	{
+		const userID = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID)
+		await this.userService.signForm(user);
+	}
+
+	@Get('isSigned')
+	@UseGuards(JwtGuard)
+	async IsSignedForm(
+		@Res() res: any,
+		@Req() req: Request)
+	{
+		const userID = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID)
+		if (user.IsFormSigned === true)
+			return res.send(true);
+		return res.send(false);
+	}
+
 	@Get('changeNick/:nickToChange')
 	@UseGuards(JwtGuard)
 	async ChangeNick(
 		@Req() req: Request,
-		@Param('nickToChange') nickToChange: string)
+		@Param('nickToChange') nickToChange: string): Promise<{msg: string}>
 	{
-		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
-		await this.userService.updateUser({nick: nickToChange}, user);
+		const userID = parseInt(req.body.toString(), 10)
+		return ({msg: await this.userService.changeNick(userID, nickToChange)});
 	}
 
 

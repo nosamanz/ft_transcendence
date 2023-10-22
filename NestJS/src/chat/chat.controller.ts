@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Post , Body, Res, Param, Req, ParseBoolPipe, Query, ParseIntPipe} from '@nestjs/common';
+import { Controller, Get, UseGuards, Body, Res, Param, Req, ParseBoolPipe, Query, ParseIntPipe} from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';

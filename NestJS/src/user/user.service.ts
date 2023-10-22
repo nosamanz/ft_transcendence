@@ -6,7 +6,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class UserService
 {
-    constructor(private prisma: PrismaService,private jwtService: JwtService){}
+    constructor(
+        private prisma: PrismaService,
+        private jwtService: JwtService){}
 
     // undefined if couldn't verify the token or the header does not exist
     // {user}
@@ -56,7 +58,7 @@ export class UserService
         return user;
     }
 
-    async updateUser(userUpdateInformation: any, user: any) {
+    async updateUser(userUpdateInformation: any, user: any): Promise<number> {
         try
         {
             await this.prisma.user.update({
@@ -69,7 +71,9 @@ export class UserService
         catch(error)
         {
             console.log("Couldn't be updated!!(" + userUpdateInformation.nick + ")");
+            return -1;
         }
+        return 0;
     }
 
     async createToken(userId: number): Promise<string> {
@@ -94,6 +98,34 @@ export class UserService
         channels.forEach((element) => {
             element.Users = element.Users.filter((element) => element.id !== user.id)
         })
+        // channels.forEach((element) => {
+        //     element = {...element, img1: openImg()}
+        // })
+
         return (channels);
+    }
+
+    async changeNick(userId: number, nickToChange: string): Promise<string>
+    {
+		const user = await this.getUserByID(userId);
+        if (nickToChange === "" || nickToChange === user.nick)
+            return "Nick could not be changed!";
+        if (await this.updateUser({nick: nickToChange}, user) === -1)
+            return "Nick in use!!";
+        return "Nick is changed successfully.";
+    }
+
+    async signForm(user: any): Promise<boolean>
+    {
+        const userCh = await this.prisma.user.findFirst({
+            where: { id : user.id },
+        })
+        if (userCh.IsFormSigned === false)
+        {
+            await this.updateUser({IsFormSigned: true}, userCh)
+            return true;
+        }
+        else
+            return false;
     }
 }

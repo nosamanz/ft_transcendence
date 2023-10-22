@@ -24,98 +24,75 @@ socket.on('connect_error', (error) =>{
 
 const Home = ({user}) =>{
 	const [loaded, setLoaded] = useState(false);
+	const [reader, setReader] = useState<any>();
 	const [selectedImage, setSelectesImage] = useState("");
-	const fileInput = document.getElementById('fileInput');
+	const [nick, setNick] = useState("");
+	useEffect (() => {
+		const fetchData = async () =>{
+			const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/isSigned`, {
+				headers: {
+					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+            });
+            const IsSigned = await response.json();
+			if (IsSigned === true)
+			setLoaded(true);
+        }
+		if (loaded === false)
+        	fetchData();
+    }, [])
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
-		const {name, value} = e.target;
-		// setFormData({ ...formData, [name]:value});
+		setNick(e.target.value);
 	};
-	const [reader, setReader] = useState<{reader: any}>();
 	const handleImageChange = (e) =>{
-		// const file = e.target.files[0];
-
-		// const reader = new FileReader();
-		// reader.readAsDataURL(file);
-		// setReader({reader: reader});
-		// console.log("filto: ", e.target.files[0])
-		// if (file){
-		// 	setSelectesImage(URL.createObjectURL(file));
-		// 	// console.log("I'm here");
-		// 	// formData.append('file', file);
-		// }
-		// else
-		// {
-		// 	setSelectesImage("");
-		// }
 		const selectedFile = e.target.files[0];
-		console.log(e.target);
-		console.log(e.target.files);
-
-		// Create a new FileReader
 		const fileReader = new FileReader();
 
-		// Set up an event listener for when the file is loaded
-		 fileReader.onload = (ea: any) => {
-			// e.target.result contains the data URL of the file
-			console.log("merba");
-			console.log(ea.target);
-			console.log(ea.target.result);
+		fileReader.onload = (ea: any) => {
 			const dataURL = ea.target.result;
 
-			// Update the state with the data URL
 			setSelectesImage(URL.createObjectURL(selectedFile));
 			setReader(dataURL);
 		};
-
-
-		// Read the file as a data URL
 		fileReader.readAsDataURL(selectedFile);
-			}
+	}
 	const handleSubmit = async (e: React.FormEvent) =>{
 		e.preventDefault();
 
-		try{
-			// const response = await fetch('http://10.12.13.2:80/user/getForm', {
-			// 	method: 'POST',
-			// 	headers: {
-			// 		'Content-Type': 'application/json',
-			// 	},
-			// 	body: JSON.stringify(formData),
-			// });
-			// console.log(": " +formData.image);
-			const formData = new FormData();
-			console.log("File--- ")
-			console.log(reader);
-			formData.append('file', reader?.reader.result);
+		try {
+			const data = {};
+			data["file"] = reader;
+			data["nick"] = nick;
 			const responseImage = await fetch(`https://${process.env.REACT_APP_IP}:80/avatar/upload`, {
 				method: 'POST',
 				headers: {
 					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-					// 'authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4OTU5LCJpYXQiOjEzMzM0MTUwODc2fQ.nQc9al-VV2z-w9oYNrG7_6KgMqQUcfy3yqqLq9fdR28',
-					'Content-Type': 'multipart/form-data',
+					'Content-Type': 'application/json',
 				},
-				body: formData,
+				body: JSON.stringify( data ),
 			});
-
+			const responseImageGet = responseImage.json();
+			console.log(responseImageGet)
 			if (responseImage.ok){
-				console.log('Image submitted successfully');
+				setLoaded(true);
+				const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/sign`, {
+					headers: {
+						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+					}
+				});
+				console.log('Form submitted successfully');
 			}
 			else{
-				console.error('Image submission failed');
+				console.error('Form submission failed!');
 			}
-			// if (response.ok){
-				// 	console.log('Form submitted successfully');
-				// }
-				// else{
-					// 	console.error('Form submission failed');
-					// }
-				}catch(error){
-					console.error('An error occurred:', error);
-				}
-			};
+		}
+		catch(error){
+			console.error('An error occurred:', error);
+		}
+	};
 
-			return(
-				<div className="home">
+	return(
+		<div className="home">
 		{
 			loaded ? (
 				<div className="containerHome">
@@ -147,7 +124,6 @@ const Home = ({user}) =>{
 			)
 		}
 		</div>
-
 	)
 }
 

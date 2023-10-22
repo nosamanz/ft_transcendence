@@ -26,7 +26,7 @@ export class JwtGuard implements CanActivate {
 	catch(error)
 	{
 		console.log("Incorrect token!!");
-		return false
+		return false;
 	}
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Req, Res, UnauthorizedException, UseGuards, Headers } from '@nestjs/common';
+import { Controller, Get, Param,  Req, Res, UnauthorizedException, UseGuards, Headers } from '@nestjs/common';
 import { TFAService } from './tfa.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import * as qrcode from 'qrcode';
