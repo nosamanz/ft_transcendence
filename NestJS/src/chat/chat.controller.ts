@@ -9,7 +9,6 @@ import { ChatChannelService } from './chat-channel.service';
 @Controller('chat/:channelName')
 export class ChatChannelController {
 	constructor(
-			// private chatService: ChatService,
 			private chatChannelService: ChatChannelService,
 			private prisma: PrismaService,
 			private userService: UserService,
@@ -110,6 +109,18 @@ export class ChatChannelController {
 		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "ban"));
 	}
 
+	@Get('/inviteChannel/:user')
+	@UseGuards(JwtGuard)
+	async InviteUserToChannel(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('channelName') chname: string,
+		@Param(':user') destUser: string
+	){
+		const userID: number = parseInt(req.body.toString(), 10);
+		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"));
+	}
+
 	// ? invite only
 	@Get('/create/:isDirect/:passwd')
 	@UseGuards(JwtGuard)
@@ -122,41 +133,7 @@ export class ChatChannelController {
 	){
 		const userID: number = parseInt(req.body.toString(), 10);
 		return res.send(await this.chatChannelService.createCh(userID, chname, passwd, isDirect));
-	}
-
-
-	@Get('/inviteChannel/:user')
-	@UseGuards(JwtGuard)
-	async InviteUserToChannel(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('channelName') chname: string,
-		@Param(':user') passwd: string
-	){
-		const userID: number = parseInt(req.body.toString(), 10);
-		// return res.send(await this.chatChannelService.createCh(userID, chname, passwd, isDirect));
-	}
-
-	@Get('connect')
-    @UseGuards(JwtGuard)
-    bindSocket(@Req() req: Request): void
-	{
-      const userID: number = parseInt(req.body.toString(), 10);
-      const socketID: string = req.headers['socket-id'];
-      if(!socketID || !userID)
-      {
-        console.log("SocketID or UserID couldn't find!");
-        return;
-      }
-      const indexToUpdate = connectedClients.findIndex((clientInfo) => clientInfo.client.id === socketID);
-
-      if (indexToUpdate === -1) {
-        console.log("Client id couldn't be bind with userID!");
-        return;
-      }
-      console.log("UserID: " + userID +" binded with socket " + socketID);
-      connectedClients[indexToUpdate].id = userID;
-      }
+	 }
 	}
 
 	@Controller('chat')

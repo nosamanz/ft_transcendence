@@ -8,7 +8,7 @@ export class ChatChannelService {
 		private prisma: PrismaService,
 	){}
 
-	private async joinCh(userID, chname, channel){
+	private async joinCh(userID, chname){
 		await this.prisma.channel.update({
 			where:	{ Name: chname },
 			data:	{ Users: { connect: { id : userID }}}
@@ -23,6 +23,7 @@ export class ChatChannelService {
 		return await bcrypt.compare(userPasswd, channelPasswd);
 	}
 
+	
 	async createCh(userID, chname, passwd, isDirect)
 	{
 		try {
@@ -30,7 +31,7 @@ export class ChatChannelService {
 			if (channel){
 				if (await this.checkPasswd(passwd, channel) === false) { return "Incorrect Password"};
 				if (channel.IsInviteOnly && !channel.InvitedIDs.some((element) => element === userID)) {return "You are not invited to this channel."}
-				this.joinCh(userID, chname, channel);
+				this.joinCh(userID, chname);
 			}
 			else{
 				if (passwd !== "undefined")
@@ -56,14 +57,14 @@ export class ChatChannelService {
 			return "Error while performing channel operation"}
 	}
 
-	private async setAdmin(channel, destuser, chname){
+	private async setAdmin(channel, destuser){
 		if ((channel.AdminIDs.some((element) => element === destuser.id)))
 			return "Dest User is Already Admin!";
 		channel.AdminIDs.push(destuser.id);
 		console.log(channel.BannedIDs);
 		try{
 			await this.prisma.channel.update({
-				where: { Name: chname },
+				where: { Name: channel.Name},
 				data: { AdminIDs: channel.AdminIDs}
 			})
 		}
@@ -74,14 +75,14 @@ export class ChatChannelService {
 		return undefined;
 	}
 
-	private async ban(channel, destuser, chname){
+	private async ban(channel, destuser){
 		if ((channel.BannedIDs.some((element) => element === destuser.id)))
 			return "Dest User is Already Banned !";
 		channel.BannedIDs.push(destuser.id);
 		console.log(channel.BannedIDs);
 		try{
 			await this.prisma.channel.update({
-				where: { Name: chname },
+				where: { Name: channel.Name },
 				data: {
 					AdminIDs: {
 						set: channel.AdminIDs.filter(id => id !== destuser.id)
@@ -100,10 +101,11 @@ export class ChatChannelService {
 			return "Error ! While channel updating";
 		}
 	}
-	private async kick(channel, destuser, chname){
+
+	private async kick(channel, destuser){
 		try{
 			await this.prisma.channel.update({
-				where: { Name: chname },
+				where: { Name: channel.Name },
 				data: {
 					AdminIDs: {
 						set: channel.AdminIDs.filter(id => id !== destuser.id)
@@ -121,7 +123,7 @@ export class ChatChannelService {
 		}
 	}
 
-	private async mute(channel, destUser, chname)
+	private async mute(channel, destUser)
 	{
 		let status: string;
 		try{
@@ -132,7 +134,7 @@ export class ChatChannelService {
 			}
 			else { channel.MutedIDs.push(destUser.id)};
 			await this.prisma.channel.update({
-				where: {Name: chname},
+				where: {Name: channel.Name},
 				data: { MutedIDs: channel.MutedIDs }
 			})
 			return status;
@@ -142,8 +144,24 @@ export class ChatChannelService {
 		}
 	}
 
+	private async invite(channel, destUser)
+	{
+		try{
+			if ((channel.InvitedIDs.some((element) => element == destUser.id)))
+				return "The User Already Invited";
+			else { channel.InvitedIDs.push(destUser.id) }
+			await this.prisma.channel.update({
+				where: { Name: channel.Name },
+				data: { InvitedIDs: channel.InvitedIDs }
+			})
+		}catch(error){
+			return "Error ! While channel updating";
+		}
+	}
+
 	async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string>
 	{
+		//channel check ?
 		const channel = await this.prisma.channel.findFirst({
 			where: {
 				Name: chname
@@ -157,40 +175,44 @@ export class ChatChannelService {
 			console.log("You are not Channel Admin !");
 			return "You are not Channel Admin!";
 		}
-		const destuser = await channel.Users.find((element) => element.nick == destUser)
-		console.log("await destuser -> " + destuser.id);
-		if (destuser !== undefined){
+		const targetUser = await channel.Users.find((element) => element.nick == destUser)
+		console.log("await destuser -> " + targetUser.id);
+		if (targetUser !== undefined){
 			//If i am not channel owner i cant ban this user because he is admin or channelowner but if i am channel owner i can ban.
-			if (((channel.AdminIDs.some((element) => element === destuser.id)) || (channel.ChannelOwnerID === destuser.id))
+			if (((channel.AdminIDs.some((element) => element === targetUser.id)) || (channel.ChannelOwnerID === targetUser.id))
 				&& !(channel.ChannelOwnerID === userID))
 				return "Dest User is Admin or Channel Owner !";
 			else if (process === "ban")
 			{
-				const retBan = await this.ban(channel, destuser, chname);
+				const retBan = await this.ban(channel, targetUser);
 				console.log(retBan);
 				return (retBan !== undefined) ? retBan : ("The user has been successfully banned.");
 			}
 			else if (process === "setadmin")
 			{
-				const retSetAdmin = await this.setAdmin(channel, destuser, chname);
+				const retSetAdmin = await this.setAdmin(channel, targetUser);
 				console.log(retSetAdmin);
 				return (retSetAdmin !== undefined) ? retSetAdmin : ("The user has been successfully assigned as admin.");
 			}
 			else if (process === "kick")
 			{
-				const retKick = await this.kick(channel, destuser, chname);
+				const retKick = await this.kick(channel, targetUser);
 				console.log(retKick);
 				return (retKick !== undefined) ? retKick : ("The user has been successfully kicked.");
 			}
 			else if (process === "mute")
 			{
-				const retMute = await this.mute(channel, destuser, chname);
+				const retMute = await this.mute(channel, targetUser);
 				return (retMute !== undefined) ? retMute : ("The user has been successfully muted."); //mute&unmute
 			}
-		}else
-		{
-			console.log("The User not in the channel");
-			return "The User not in the channel";
 		}
+		else if (process === "invite")
+		{
+			const ret = await this.invite(channel, targetUser);
+			return const;
+		}
+		else
+			return "The User not in the channel";
+			
 	}
 }
