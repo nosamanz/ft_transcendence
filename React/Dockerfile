@@ -13,6 +13,8 @@ WORKDIR /root/React
 RUN apt install openssl -y
 RUN mkdir -p /etc/ssl_volume
 
+EXPOSE 3000
+
 # ENTRYPOINT ["npm", "start"]
 ENTRYPOINT [ "sh", "init.sh"]
 # ENTRYPOINT ["sleep", "1000000000000"]

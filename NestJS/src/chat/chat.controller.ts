@@ -1,22 +1,22 @@
 import { Controller, Get, UseGuards, Body, Res, Param, Req, ParseBoolPipe, Query, ParseIntPipe} from '@nestjs/common';
-import { ChatService } from './chat.service';
-import { Response } from 'express';
+import { Response, response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { connectedClients } from './chat.gateway';
 import { ChatChannelService } from './chat-channel.service';
 
-@Controller('chat')
+@Controller('chat/:channelName')
 export class ChatController {
 	constructor(
-			private chatService: ChatService,
+			// private chatService: ChatService,
 			private chatChannelService: ChatChannelService,
 			private prisma: PrismaService,
 			private userService: UserService,
 	){}
 
-	@Get('/:channelName/messages')
+
+	@Get('/messages')
 	@UseGuards(JwtGuard)
 	async getMessages(
 		@Res() response: Response,
@@ -62,7 +62,7 @@ export class ChatController {
 		return response.send(messages);
 	}
 
-	@Get('/:channelName/setAdmin/:user')
+	@Get('/setAdmin/:user')
 	@UseGuards(JwtGuard)
 	async getNewAdmin(
 		@Req() req: Request,
@@ -74,7 +74,7 @@ export class ChatController {
 		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "setadmin"));
 	}
 
-	@Get('/:channelName/kick/:user')
+	@Get('/kick/:user')
 	@UseGuards(JwtGuard)
 	async getKickedUser(
 		@Req() req: Request,
@@ -86,7 +86,7 @@ export class ChatController {
 		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "kick"));
 	}
 
-	@Get('/:channelName/mute/:user')
+	@Get('/mute/:user')
 	@UseGuards(JwtGuard)
 	async getMutedUser(
 		@Req() req: Request,
@@ -98,7 +98,7 @@ export class ChatController {
 		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "mute"));
 	}
 
-	@Get('/:channelName/ban/:user')
+	@Get('/ban/:user')
 	@UseGuards(JwtGuard)
 	async getBannedUser(
 		@Req() req: Request,
@@ -110,7 +110,8 @@ export class ChatController {
 		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "ban"));
 	}
 
-	@Get('/:channelName/create/:isDirect/:passwd')
+	// ? invite only
+	@Get('/create/:isDirect/:passwd')
 	@UseGuards(JwtGuard)
 	async getChannel(
 		@Req() req: Request,
@@ -123,8 +124,18 @@ export class ChatController {
 		return res.send(await this.chatChannelService.createCh(userID, chname, passwd, isDirect));
 	}
 
-	// '/:channelName/inviteChannel'
-	//
+
+	@Get('/inviteChannel/:user')
+	@UseGuards(JwtGuard)
+	async InviteUserToChannel(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('channelName') chname: string,
+		@Param(':user') passwd: string
+	){
+		const userID: number = parseInt(req.body.toString(), 10);
+		// return res.send(await this.chatChannelService.createCh(userID, chname, passwd, isDirect));
+	}
 
 	@Get('connect')
     @UseGuards(JwtGuard)

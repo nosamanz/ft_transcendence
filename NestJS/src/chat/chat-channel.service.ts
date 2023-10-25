@@ -15,21 +15,20 @@ export class ChatChannelService {
 		});
 	}
 
-	private async checkPasswd(userPasswd, channel){
+	private async checkPasswd(userPasswd, channel): Promise<boolean> {
 		//check for brypt
-		if (channel.passwd === undefined)
-			return 1;
-		const channelPasswd = channel.passwd;
-		return bcrypt.compare(userPasswd, channelPasswd);
+		if (channel.Password === undefined)
+			return true;
+		const channelPasswd = channel.Password;
+		return await bcrypt.compare(userPasswd, channelPasswd);
 	}
 
 	async createCh(userID, chname, passwd, isDirect)
 	{
-		console.log(isDirect);
 		try {
 			const channel = await this.prisma.channel.findFirst({ where: { Name: chname }});
 			if (channel){
-				if (!this.checkPasswd(passwd, channel)) { return "Incorrect Password"};
+				if (await this.checkPasswd(passwd, channel) === false) { return "Incorrect Password"};
 				if (channel.IsInviteOnly && !channel.InvitedIDs.some((element) => element === userID)) {return "You are not invited to this channel."}
 				this.joinCh(userID, chname, channel);
 			}
@@ -121,16 +120,22 @@ export class ChatChannelService {
 			return "Error ! While channel updating";
 		}
 	}
+
 	private async mute(channel, destUser, chname)
 	{
-		if ((channel.MutedIDs.some((element) => element == destUser.id)))
-			return "Dest User is Already Muted";
+		let status: string;
 		try{
-			channel.MutedIDs.push(destUser.id);
+			if ((channel.MutedIDs.some((element) => element == destUser.id)))
+			{
+				channel.MutedIDs = channel.MutedIDs.filter(element => element !== destUser.id);
+				status = "The User Unmuted.";
+			}
+			else { channel.MutedIDs.push(destUser.id)};
 			await this.prisma.channel.update({
 				where: {Name: chname},
 				data: { MutedIDs: channel.MutedIDs }
 			})
+			return status;
 		}catch(error){
 			console.log("Error ! While channel updating");
 			return "Error ! While channel updating";
@@ -180,8 +185,7 @@ export class ChatChannelService {
 			else if (process === "mute")
 			{
 				const retMute = await this.mute(channel, destuser, chname);
-				console.log(retMute);
-				return (retMute !== undefined) ? retMute : ("The user has been successfully muted.");
+				return (retMute !== undefined) ? retMute : ("The user has been successfully muted."); //mute&unmute
 			}
 		}else
 		{
