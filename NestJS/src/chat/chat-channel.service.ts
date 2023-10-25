@@ -23,8 +23,8 @@ export class ChatChannelService {
 		return await bcrypt.compare(userPasswd, channelPasswd);
 	}
 
-	
-	async createCh(userID, chname, passwd, isDirect)
+
+	async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 	{
 		try {
 			const channel = await this.prisma.channel.findFirst({ where: { Name: chname }});
@@ -46,7 +46,7 @@ export class ChatChannelService {
 						ChannelOwnerID: userID,
 						AdminIDs: [userID],
 						IsDirect: isDirect,
-						IsInviteOnly: false,
+						IsInviteOnly: isInviteOnly,
 						Users : { connect: { id : userID } }
 					},
 				})
@@ -57,10 +57,10 @@ export class ChatChannelService {
 			return "Error while performing channel operation"}
 	}
 
-	private async setAdmin(channel, destuser){
-		if ((channel.AdminIDs.some((element) => element === destuser.id)))
+	private async setAdmin(channel, targetUser){
+		if ((channel.AdminIDs.some((element) => element === targetUser.id)))
 			return "Dest User is Already Admin!";
-		channel.AdminIDs.push(destuser.id);
+		channel.AdminIDs.push(targetUser.id);
 		console.log(channel.BannedIDs);
 		try{
 			await this.prisma.channel.update({
@@ -75,22 +75,22 @@ export class ChatChannelService {
 		return undefined;
 	}
 
-	private async ban(channel, destuser){
-		if ((channel.BannedIDs.some((element) => element === destuser.id)))
+	private async ban(channel, targetUser){
+		if ((channel.BannedIDs.some((element) => element === targetUser.id)))
 			return "Dest User is Already Banned !";
-		channel.BannedIDs.push(destuser.id);
+		channel.BannedIDs.push(targetUser.id);
 		console.log(channel.BannedIDs);
 		try{
 			await this.prisma.channel.update({
 				where: { Name: channel.Name },
 				data: {
 					AdminIDs: {
-						set: channel.AdminIDs.filter(id => id !== destuser.id)
+						set: channel.AdminIDs.filter(id => id !== targetUser.id)
 					},
 					BannedIDs: channel.BannedIDs,
 					Users: {
 						disconnect: {
-							id: destuser.id
+							id: targetUser.id
 						}
 					}
 				}
@@ -102,17 +102,17 @@ export class ChatChannelService {
 		}
 	}
 
-	private async kick(channel, destuser){
+	private async kick(channel, targetUser){
 		try{
 			await this.prisma.channel.update({
 				where: { Name: channel.Name },
 				data: {
 					AdminIDs: {
-						set: channel.AdminIDs.filter(id => id !== destuser.id)
+						set: channel.AdminIDs.filter(id => id !== targetUser.id)
 					},
 					Users: {
 						disconnect: {
-							id: destuser.id
+							id: targetUser.id
 						}
 					}
 				}
@@ -123,16 +123,16 @@ export class ChatChannelService {
 		}
 	}
 
-	private async mute(channel, destUser)
+	private async mute(channel, targetUser)
 	{
 		let status: string;
 		try{
-			if ((channel.MutedIDs.some((element) => element == destUser.id)))
+			if ((channel.MutedIDs.some((element) => element == targetUser.id)))
 			{
-				channel.MutedIDs = channel.MutedIDs.filter(element => element !== destUser.id);
+				channel.MutedIDs = channel.MutedIDs.filter(element => element !== targetUser.id);
 				status = "The User Unmuted.";
 			}
-			else { channel.MutedIDs.push(destUser.id)};
+			else { channel.MutedIDs.push(targetUser.id)};
 			await this.prisma.channel.update({
 				where: {Name: channel.Name},
 				data: { MutedIDs: channel.MutedIDs }
@@ -144,12 +144,12 @@ export class ChatChannelService {
 		}
 	}
 
-	private async invite(channel, destUser)
+	private async invite(channel, targetUser)
 	{
 		try{
-			if ((channel.InvitedIDs.some((element) => element == destUser.id)))
+			if ((channel.InvitedIDs.some((element) => element == targetUser.id)))
 				return "The User Already Invited";
-			else { channel.InvitedIDs.push(destUser.id) }
+			else { channel.InvitedIDs.push(targetUser.id) }
 			await this.prisma.channel.update({
 				where: { Name: channel.Name },
 				data: { InvitedIDs: channel.InvitedIDs }
@@ -209,10 +209,10 @@ export class ChatChannelService {
 		else if (process === "invite")
 		{
 			const ret = await this.invite(channel, targetUser);
-			return const;
+			return (ret !== undefined) ? ret : ("The user has been successfully invited");
 		}
 		else
 			return "The User not in the channel";
-			
+
 	}
 }

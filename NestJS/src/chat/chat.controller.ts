@@ -14,7 +14,6 @@ export class ChatChannelController {
 			private userService: UserService,
 	){}
 
-
 	@Get('/messages')
 	@UseGuards(JwtGuard)
 	async getMessages(
@@ -108,7 +107,26 @@ export class ChatChannelController {
 		const userID: number = parseInt(req.body.toString(), 10);
 		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "ban"));
 	}
+	// import fs from 'fs';
 
+	// const dizinYolu = '/path/to/your/directory'; // Dizin yolunu kendi dizin yolunuzla değiştirin
+
+	// // Dizinde bulunan dosyaları listeleme fonksiyonu
+	// function listeleDosyalari(dizinYolu: string) {
+	//   fs.readdir(dizinYolu, (hata, dosyalar) => {
+	// 	if (hata) {
+	// 	  console.error(`Dizin okuma hatası: ${hata}`);
+	// 	  return;
+	// 	}
+
+	// 	console.log(`Dizin içinde bulunan dosyalar:`);
+	// 	dosyalar.forEach((dosya) => {
+	// 	  console.log(dosya);
+	// 	});
+	//   });
+	// }
+
+	// listeleDosyalari(dizinYolu);
 	@Get('/inviteChannel/:user')
 	@UseGuards(JwtGuard)
 	async InviteUserToChannel(
@@ -122,17 +140,18 @@ export class ChatChannelController {
 	}
 
 	// ? invite only
-	@Get('/create/:isDirect/:passwd')
+	@Get('/create/:isDirect/:isInviteOnly/:passwd')
 	@UseGuards(JwtGuard)
 	async getChannel(
 		@Req() req: Request,
 		@Res() res: Response,
 		@Param('channelName') chname: string,
 		@Param('isDirect', new ParseBoolPipe()) isDirect : boolean,
+		@Param('isInviteOnly', new ParseBoolPipe()) isInviteOnly : boolean,
 		@Param('passwd') passwd: string
 	){
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatChannelService.createCh(userID, chname, passwd, isDirect));
+		return res.send(await this.chatChannelService.createCh(userID, chname, passwd, isDirect, isInviteOnly));
 	 }
 	}
 

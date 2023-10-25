@@ -11,8 +11,16 @@ export class AuthService {
 		const UserInfo = await this.getUserFromApi(code);
 
 		console.log("Welcome " + UserInfo.login);
-		const user = await this.userService.getUserByLogin(UserInfo.login);
-		var token: string;
+		let user: any;
+		try
+		{
+			user = await this.userService.getUserByLogin(UserInfo.login);
+		}
+		catch(error)
+		{
+			console.log("Database does not contain that user.");
+		}
+		let token: string;
 		if(user)
 		{
 			if(user.TFAuth === true)
