@@ -1,0 +1,33 @@
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="postgresql://postgres:1234@postgres:5432/user"
+
+# oozcan
+UID="u-s4t2ud-077b70076cf4de01892c573d0d5337b6b27cff2d6f67bb166eb7c187d1678e39"
+SECRET="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"
+REDIRECT_URI="https://10.12.14.1:3000"
+    
+# mkardes-home
+# UID="u-s4t2ud-1e9345bd0f188cbf6ea133d34d409ed07f37fbba9d21545290ef189f90ad6766"
+# SECRET="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"
+# REDIRECT_URI="http://192.168.0.24:3000"
+
+# mkardes
+# UID="u-s4t2ud-1ac189a1ac1117464f8555d8d0b0e6844a651c1096ed44f6dd359e09db2e189a"
+# SECRET="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"
+# REDIRECT_URI="https://10.12.14.3:3000"
+
+# oozcan-home
+# UID="u-s4t2ud-2efb8e35e72cfc3b377dfdb80aac110c029634cf909427c2688390f156d89f58"
+# SECRET="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"
+# REDIRECT_URI="https://192.168.96.1:3000"
+
+# # ebattal
+# UID="u-s4t2ud-0dff09232cc19d63eddef69c79f3a0c8768211166a3f17ccd964784640988f0f"
+# SECRET="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"
+# REDIRECT_URI="http://10.12.14.5:3000"
+
