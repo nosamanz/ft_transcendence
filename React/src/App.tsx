@@ -23,15 +23,15 @@ function App() {
         setUser({res: "undefined"});
         return;
       }
-      const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user`, {
+      const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user/checkJWT`, {
         headers: {
           'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
         }
       });
       const res = await responseUser.json();
-      console.log(res.ok);
-      if(res.statusCode === 403)
+      if(res === false)
       {
+        cookies.remove("jwt_authorization");
         setUser({res: "undefined"});
         return;
       }

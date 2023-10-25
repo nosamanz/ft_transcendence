@@ -1,15 +1,35 @@
-import { Controller, Get, Post , Body, Res, UseGuards, Req, Param} from '@nestjs/common';
+import { Controller, Get, Post , Body, Res, UseGuards, Req, Param, Headers} from '@nestjs/common';
 import { UserService } from './user.service';
 import { Response } from 'express';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { jwtConstants } from 'src/jwtconstants';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('user')
 export class UserController {
 	constructor(
+		private jwtService: JwtService,
 		private userService: UserService,
 		private prisma: PrismaService)
 	{}
+
+	@Get('checkJWT')
+	async CheckJWT(@Res() res: any, @Headers("authorization") jwt: string): Promise<any>{
+		const token = jwt.replace('Bearer ', '');
+		let user: any;
+		try
+		{
+			const userID = this.jwtService.verify(token, jwtConstants);
+			user = await this.userService.getUserByID(userID);
+		}
+		catch(error)
+		{
+			console.log("Hata var user.controller.ts 28 e bak!!!");
+			return res.send(false);
+		}
+		return res.send(user);
+	}
 
 	@Get()
 	@UseGuards(JwtGuard)
