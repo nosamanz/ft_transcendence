@@ -49,7 +49,7 @@ export const Login = ({setUser}) => {
 					}
 				});
 				const UserData = await responseUser.json();
-				setUser(UserData.nick);
+				setUser(UserData);
 				console.log(cookies.get("jwt_authorization"));
 				console.log(UserData);
 			}

@@ -136,7 +136,8 @@ export class ChatChannelController {
 		@Param(':user') destUser: string
 	){
 		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"));
+		console.log(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"))
+		// return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"));
 	}
 
 	// ? invite only

@@ -161,7 +161,7 @@ export class ChatChannelService {
 
 	async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string>
 	{
-		//channel check ?
+
 		const channel = await this.prisma.channel.findFirst({
 			where: {
 				Name: chname
@@ -176,7 +176,7 @@ export class ChatChannelService {
 			return "You are not Channel Admin!";
 		}
 		const targetUser = await channel.Users.find((element) => element.nick == destUser)
-		console.log("await destuser -> " + targetUser.id);
+		// console.log("await destuser -> " + targetUser.id);
 		if (targetUser !== undefined){
 			//If i am not channel owner i cant ban this user because he is admin or channelowner but if i am channel owner i can ban.
 			if (((channel.AdminIDs.some((element) => element === targetUser.id)) || (channel.ChannelOwnerID === targetUser.id))
@@ -206,9 +206,12 @@ export class ChatChannelService {
 				return (retMute !== undefined) ? retMute : ("The user has been successfully muted."); //mute&unmute
 			}
 		}
-		else if (process === "invite")
+		else if (process === "inviteCh")
 		{
-			const ret = await this.invite(channel, targetUser);
+			const foundUser = await this.prisma.user.findFirst({
+				where: {nick: destUser}
+			})
+			const ret = await this.invite(channel, foundUser);
 			return (ret !== undefined) ? ret : ("The user has been successfully invited");
 		}
 		else
