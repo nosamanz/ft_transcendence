@@ -12,6 +12,7 @@ WORKDIR /root/React
 
 RUN apt install openssl -y
 RUN mkdir -p /etc/ssl_volume
+RUN npm install react-scripts
 
 EXPOSE 3000
 

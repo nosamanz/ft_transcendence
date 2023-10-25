@@ -7,7 +7,7 @@ import { connectedClients } from './chat.gateway';
 import { ChatChannelService } from './chat-channel.service';
 
 @Controller('chat/:channelName')
-export class ChatController {
+export class ChatChannelController {
 	constructor(
 			// private chatService: ChatService,
 			private chatChannelService: ChatChannelService,
@@ -158,3 +158,27 @@ export class ChatController {
       connectedClients[indexToUpdate].id = userID;
       }
 	}
+
+	@Controller('chat')
+	export class ChatController {
+	@Get('connect')
+	@UseGuards(JwtGuard)
+	bindSocket(@Req() req: Request): void
+	{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const socketID: string = req.headers['socket-id'];
+		if(!socketID || !userID)
+		{
+			console.log("SocketID or UserID couldn't find!");
+			return;
+		}
+		const indexToUpdate = connectedClients.findIndex((clientInfo) => clientInfo.client.id === socketID);
+
+		if (indexToUpdate === -1) {
+			console.log("Client id couldn't be bind with userID!");
+			return;
+		}
+		console.log("UserID: " + userID +" binded with socket " + socketID);
+		connectedClients[indexToUpdate].id = userID;
+	}
+}
