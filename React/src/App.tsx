@@ -31,7 +31,7 @@ function App() {
       const res = await responseUser.json();
       if(res === false)
       {
-        cookies.remove("jwt_authorization");
+        cookies.remove('jwt_authorization')
         setUser({res: "undefined"});
         return;
       }

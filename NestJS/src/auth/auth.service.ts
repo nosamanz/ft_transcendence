@@ -7,8 +7,9 @@ import { UserService } from 'src/user/user.service';
 export class AuthService {
 	constructor( private prisma: PrismaService, private userService: UserService) {}
 
-	async signin_intra(code: string): Promise<{token: string, result: number} | number | {user_id: number, result: number}> {
-		const UserInfo = await this.getUserFromApi(code);
+	async signin_intra(data: any): Promise<{token: string, result: number} | number | {user_id: number, result: number}> {
+		console.log("Mer");
+		const UserInfo = await this.getUserFromApi(data);
 
 		console.log("Welcome " + UserInfo.login);
 		let user: any;
@@ -65,14 +66,14 @@ export class AuthService {
 
 	}
 
-	async getUserFromApi(code: string): Promise<any>{
+	async getUserFromApi(data: any): Promise<any>{
 		const form = new FormData();
-		form.append('grant_type', 'authorization_code');
-		form.append('client_id', process.env.UID);
-		form.append('client_secret', process.env.SECRET);
-		form.append('code', code);
-		form.append('redirect_uri', process.env.REDIRECT_URI);
-
+		form.append('grant_type', 		data['grant_type']);
+		form.append('client_id', 		data['client_id']);
+		form.append('client_secret', 	data['client_secret']);
+		form.append('code', 			data['code']);
+		form.append('redirect_uri', 	data['redirect_uri']);
+		
 		const responseToken = await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',
 			body: form

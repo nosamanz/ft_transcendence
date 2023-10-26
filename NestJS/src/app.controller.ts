@@ -9,11 +9,6 @@ import { UserService } from './user/user.service';
 export class AppController {
 	constructor(private prisma: PrismaService, private userService: UserService){}
 
-	@Get('')
-	getUsers(@Res() response : Response){
-		const filePath = path.join(__dirname, '..' ,'..', 'Front', 'html', 'index.html');
-		return response.sendFile(filePath);
-	}
 	@Get('leaderboard')
 	@UseGuards(JwtGuard)
 	async getLeaderboard(@Res() response : Response){

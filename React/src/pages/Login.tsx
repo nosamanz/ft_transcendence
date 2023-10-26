@@ -9,20 +9,21 @@ import { cookies } from '../App';
 
 export const Login = ({setUser}) => {
 	const [data, setData] = useState("");
-	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const params = new URLSearchParams(window.location.search);
 			const code = params.get('code');
-			const data = {};
-			data["data"] = code;
 
-			if (!loaded) {
-				setLoaded(true);
-			}
-			else if(code)
+			if(code)
 			{
+				const data = {}
+				data['grant_type']= 'authorization_code';
+				data['client_id']= process.env.REACT_APP_UID;
+				data['client_secret']= process.env.REACT_APP_SECRET;
+				data['code']= code;
+				data['redirect_uri']= process.env.REACT_APP_REDIRECT_URI;
+				
 				const response = await fetch(`https://${process.env.REACT_APP_IP}:80/auth/42/signin_intra`, {
 					method: 'POST',
 					headers: {
@@ -55,7 +56,7 @@ export const Login = ({setUser}) => {
 			}
 		}
 		fetchData();
-	}, [loaded]);
+	}, []);
 
 
 	const handleFTLogin = () => {

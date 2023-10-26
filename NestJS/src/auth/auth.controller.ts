@@ -8,24 +8,17 @@ import * as path from 'path';
 export class AuthController {
 	constructor(private authService: AuthService, private userService: UserService){}
 
-	@Get('getcode')
-	getUsers(@Res() response : Response){
-		const filePath = path.join(__dirname, '..', '..' ,'..', 'Front', 'html', 'auth.html');
-		return response.sendFile(filePath);
-	}
-
 	// {Jwt_Token, 0} The new user has been saved in database and the token has been created.
 	// {Jwt_Token, 1} The user has already been saved in database and the token has been created.
 	// {user_id, 2} The user should be redirected to the TFA page.
 	// // 3 The user has already have a jwt.
 	@Post('signin_intra')
-	async signin_intra(@Headers('authorization') head: string, @Body() info: any) {
-		console.log("Post: " + info.data);
+	async signin_intra(@Headers('authorization') head: string, @Body() data: any) {
 		// const user = await this.userService.getUserByJWT(head);
 		// if(user !== undefined)
 		// 	return(3);
-		if(!info)
+		if(!data)
 			return("404 Not Found");
-		return (this.authService.signin_intra(info.data));
+		return (this.authService.signin_intra(data));
 	}
 }
