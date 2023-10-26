@@ -37,8 +37,7 @@ services:
 
   react:
     container_name: react
-    image: reac
-    #build: ./React
+    build: ./React
     restart: always
     depends_on:
       - nest
