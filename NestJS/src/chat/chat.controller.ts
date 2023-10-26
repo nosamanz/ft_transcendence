@@ -1,5 +1,5 @@
-import { Controller, Get, UseGuards, Body, Res, Param, Req, ParseBoolPipe, Query, ParseIntPipe} from '@nestjs/common';
-import { Response, response } from 'express';
+import { Controller, Get, UseGuards, Res, Param, Req, ParseBoolPipe} from '@nestjs/common';
+import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
@@ -8,174 +8,156 @@ import { ChatChannelService } from './chat-channel.service';
 
 @Controller('chat/:channelName')
 export class ChatChannelController {
-	constructor(
-			private chatChannelService: ChatChannelService,
-			private prisma: PrismaService,
-			private userService: UserService,
-	){}
+    constructor(
+            private chatChannelService: ChatChannelService,
+            private prisma: PrismaService,
+            private userService: UserService,
+    ){}
 
-	@Get('/messages')
-	@UseGuards(JwtGuard)
-	async getMessages(
-		@Res() response: Response,
-		@Req() req: Request,
-		@Param('channelName') chname: string)
-	{
-		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
-		//Lets find Channel
-		const channel = await this.prisma.channel.findFirst({
-			where: {
-				Name: chname,
-			},
-			select: {
-				messages: true,//order
-				Users: {
-					where: {
-						id: userID
-					},
-					select: {
-						id: true,
-						IgnoredUsers: true,
-					}
-				},
-				BannedIDs: true,
-				MutedIDs: true,
-			}
-		});
-		let messages = channel.messages;
+    @Get('/messages')
+    @UseGuards(JwtGuard)
+    async getMessages(
+        @Res() response: Response,
+        @Req() req: Request,
+        @Param('channelName') chname: string)
+    {
+        const userID: number = parseInt(req.body.toString(), 10);
+        const user = await this.userService.getUserByID(userID);
+        //Lets find Channel
+        const channel = await this.prisma.channel.findFirst({
+            where: {
+                Name: chname,
+            },
+            select: {
+                messages: true,//order
+                Users: {
+                    where: {
+                        id: userID
+                    },
+                    select: {
+                        id: true,
+                        IgnoredUsers: true,
+                    }
+                },
+                BannedIDs: true,
+                MutedIDs: true,
+            }
+        });
+        let messages = channel.messages;
 
-		channel.messages.forEach((message) => console.log("Mes: "+ message.senderID + "  " + message.message))
-		channel.BannedIDs.forEach((id) => console.log("Banned: "+ id))
-		channel.MutedIDs.forEach((id) => console.log("Muted: "+ id))
+        channel.messages.forEach((message) => console.log("Mes: "+ message.senderID + "  " + message.message))
+        channel.BannedIDs.forEach((id) => console.log("Banned: "+ id))
+        channel.MutedIDs.forEach((id) => console.log("Muted: "+ id))
 
-		messages = messages.filter(
-			message => (
-				message.senderID !== channel.MutedIDs.find((element) => element === message.senderID) &&
-				message.senderID !== channel.BannedIDs.find((element) => element === message.senderID)
-				// message.senderID !== user.IgnoredUsers.some((element) => element.OtherUserID === message.senderID)!!!
-					)
-				)
-		messages.forEach((message) => console.log("Mes Send: "+ message.senderID + "  " + message.message))
-		return response.send(messages);
-	}
+        messages = messages.filter(
+            message => (
+                message.senderID !== channel.MutedIDs.find((element) => element === message.senderID) &&
+                message.senderID !== channel.BannedIDs.find((element) => element === message.senderID)
+                // message.senderID !== user.IgnoredUsers.some((element) => element.OtherUserID === message.senderID)!!!
+                    )
+                )
+        messages.forEach((message) => console.log("Mes Send: "+ message.senderID + "  " + message.message))
+        return response.send(messages);
+    }
 
-	@Get('/setAdmin/:user')
-	@UseGuards(JwtGuard)
-	async getNewAdmin(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('user') destUser: string,
-		@Param('channelName') chname:string)
-	{
-		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "setadmin"));
-	}
+    @Get('/setAdmin/:user')
+    @UseGuards(JwtGuard)
+    async getNewAdmin(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('user') destUser: string,
+        @Param('channelName') chname:string)
+    {
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "setadmin"));
+    }
 
-	@Get('/kick/:user')
-	@UseGuards(JwtGuard)
-	async getKickedUser(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('user') destUser: string,
-		@Param('channelName') chname: string)
-	{
-		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "kick"));
-	}
+    @Get('/kick/:user')
+    @UseGuards(JwtGuard)
+    async getKickedUser(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('user') destUser: string,
+        @Param('channelName') chname: string)
+    {
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "kick"));
+    }
 
-	@Get('/mute/:user')
-	@UseGuards(JwtGuard)
-	async getMutedUser(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('user') destUser: string,
-		@Param('channelName') chname : string)
-	{
-		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "mute"));
-	}
+    @Get('/mute/:user')
+    @UseGuards(JwtGuard)
+    async getMutedUser(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('user') destUser: string,
+        @Param('channelName') chname : string)
+    {
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "mute"));
+    }
 
-	@Get('/ban/:user')
-	@UseGuards(JwtGuard)
-	async getBannedUser(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('user') destUser: string,
-		@Param('channelName') chname:string)
-	{
-		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "ban"));
-	}
-	// import fs from 'fs';
+    @Get('/ban/:user')
+    @UseGuards(JwtGuard)
+    async getBannedUser(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('user') destUser: string,
+        @Param('channelName') chname:string)
+    {
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "ban"));
+    }
 
-	// const dizinYolu = '/path/to/your/directory'; // Dizin yolunu kendi dizin yolunuzla değiştirin
+    @Get('/inviteChannel/:user')
+    @UseGuards(JwtGuard)
+    async InviteUserToChannel(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('channelName') chname: string,
+        @Param(':user') destUser: string
+    ){
+        const userID: number = parseInt(req.body.toString(), 10);
+        console.log(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"))
+        // return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"));
+    }
 
-	// // Dizinde bulunan dosyaları listeleme fonksiyonu
-	// function listeleDosyalari(dizinYolu: string) {
-	//   fs.readdir(dizinYolu, (hata, dosyalar) => {
-	// 	if (hata) {
-	// 	  console.error(`Dizin okuma hatası: ${hata}`);
-	// 	  return;
-	// 	}
+    // ? invite only
+    // IMPORTANT: When we request to this part of the chat fill the :isDirect and :isInviteOnly (do not make request with undefined except for passwd part)
+    @Get('/create/:isDirect/:isInviteOnly/:passwd')
+    @UseGuards(JwtGuard)
+    async getChannel(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('channelName') chname: string,
+        @Param('isDirect', new ParseBoolPipe()) isDirect : boolean,
+        @Param('isInviteOnly', new ParseBoolPipe()) isInviteOnly : boolean,
+        @Param('passwd') passwd: string
+    ){
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send({res: await this.chatChannelService.createCh(userID, chname, passwd, isDirect, isInviteOnly)});
+    }
+}
 
-	// 	console.log(`Dizin içinde bulunan dosyalar:`);
-	// 	dosyalar.forEach((dosya) => {
-	// 	  console.log(dosya);
-	// 	});
-	//   });
-	// }
+@Controller('chat')
+export class ChatController {
+    @Get('connect')
+    @UseGuards(JwtGuard)
+    bindSocket(@Req() req: Request): void
+    {
+        const userID: number = parseInt(req.body.toString(), 10);
+        const socketID: string = req.headers['socket-id'];
+        if(!socketID || !userID)
+        {
+            console.log("SocketID or UserID couldn't find!");
+            return;
+        }
+        const indexToUpdate = connectedClients.findIndex((clientInfo) => clientInfo.client.id === socketID);
 
-	// listeleDosyalari(dizinYolu);
-	@Get('/inviteChannel/:user')
-	@UseGuards(JwtGuard)
-	async InviteUserToChannel(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('channelName') chname: string,
-		@Param(':user') destUser: string
-	){
-		const userID: number = parseInt(req.body.toString(), 10);
-		console.log(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"))
-		// return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"));
-	}
-
-	// ? invite only
-	@Get('/create/:isDirect/:isInviteOnly/:passwd')
-	@UseGuards(JwtGuard)
-	async getChannel(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('channelName') chname: string,
-		@Param('isDirect', new ParseBoolPipe()) isDirect : boolean,
-		@Param('isInviteOnly', new ParseBoolPipe()) isInviteOnly : boolean,
-		@Param('passwd') passwd: string
-	){
-		const userID: number = parseInt(req.body.toString(), 10);
-		return res.send(await this.chatChannelService.createCh(userID, chname, passwd, isDirect, isInviteOnly));
-	 }
-	}
-
-	@Controller('chat')
-	export class ChatController {
-	@Get('connect')
-	@UseGuards(JwtGuard)
-	bindSocket(@Req() req: Request): void
-	{
-		const userID: number = parseInt(req.body.toString(), 10);
-		const socketID: string = req.headers['socket-id'];
-		if(!socketID || !userID)
-		{
-			console.log("SocketID or UserID couldn't find!");
-			return;
-		}
-		const indexToUpdate = connectedClients.findIndex((clientInfo) => clientInfo.client.id === socketID);
-
-		if (indexToUpdate === -1) {
-			console.log("Client id couldn't be bind with userID!");
-			return;
-		}
-		console.log("UserID: " + userID +" binded with socket " + socketID);
-		connectedClients[indexToUpdate].id = userID;
-	}
+        if (indexToUpdate === -1) {
+            console.log("Client id couldn't be bind with userID!");
+            return;
+        }
+        console.log("UserID: " + userID +" binded with socket " + socketID);
+        connectedClients[indexToUpdate].id = userID;
+    }
 }

@@ -15,7 +15,8 @@ export class AvatarService {
             fs.mkdirSync(directoryPath, { recursive: true });
         }
 
-        //Hint: !! delete thwe old one
+        //Hint: !! delete thwe old one          
+        this.deleteTheOldestOne(directoryPath, userID.toString());
         await fs.writeFile(`${directoryPath}/${AvatarFileName}`, base64Image, { encoding: 'base64' }, (err) => {
             if (err) {
                 return 'Error writing file:' + err;
@@ -23,4 +24,19 @@ export class AvatarService {
         });
         return "File uploadad successfully!";
 	}
+    async deleteTheOldestOne(directoryPath: string, id: string){
+        fs.readdir(directoryPath, (error, files) => {
+            if (error) {
+              console.error(`Error reading directory.`);
+              return;
+            }
+        
+            files.forEach((file) => {
+                if (file.split('.')[0] === id)
+                {
+                    fs.unlinkSync(directoryPath + "/" + file);
+                }
+            });
+        });
+    }
 }

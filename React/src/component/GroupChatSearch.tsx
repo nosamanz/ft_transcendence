@@ -12,15 +12,20 @@ const GroupChatSearch = ({setCurrentChannel}) =>{
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(responseChannels)
             const CHs = await responseChannels.json();
-            console.log(CHs)
             setChannelList(CHs);
         }
         fetchData();
     }, [])
+    const HandleClick = async () => {
+        const updatedChannels = [...channelList, { Name: "publicchat3" }];
+    
+        // Set the state with the new array
+        setChannelList(updatedChannels);
+    }
     return(
         <div className="chatSearch">
+            <button onClick={HandleClick} className="Btn">Add Channel</button>
             <div className="searchForm">
                 <input className="searchInput" type="text" placeholder="find a user" />
             </div>
