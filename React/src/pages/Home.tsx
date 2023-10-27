@@ -63,7 +63,7 @@ const Home = ({user}) =>{
 			const data = {};
 			data["file"] = reader;
 			data["nick"] = nick;
-			const responseImage = await fetch(`https://${process.env.REACT_APP_IP}:80/avatar/upload`, {
+			const responseImage = await fetch(`https://${process.env.REACT_APP_IP}:80/user/form`, {
 				method: 'POST',
 				headers: {
 					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
@@ -71,7 +71,9 @@ const Home = ({user}) =>{
 				},
 				body: JSON.stringify( data ),
 			});
+			console.log("response1");
 			const responseImageGet = responseImage.json();
+			console.log("response2");
 			console.log(responseImageGet)
 			if (responseImage.ok){
 				setLoaded(true);

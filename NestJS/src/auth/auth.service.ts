@@ -43,6 +43,7 @@ export class AuthService {
 				TFAuth:			false,
 				TFSecret:		"Secret",
 				secretAscii:	"SecretAscii",
+				ImageExt:		"",
 				WinCount:    	0,
 				LoseCount:   	0,
 				LatterLevel: 	0,

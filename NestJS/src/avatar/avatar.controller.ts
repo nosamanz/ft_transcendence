@@ -16,23 +16,22 @@ export class AvatarController {
         @Headers('authorization') JWT: string,
     ) {
         //JWT CONTROL
+        let userID: number;
         try{
             const token = JWT.replace('Bearer ', '');
             const decode = this.jwtService.verify(token, jwtConstants);
-            const userID: number = parseInt(decode.sub, 10);
-            const file = body.file;
-            const ret: { nick: string, image: string } = { nick: "", image: "" };
-            ret.nick = await this.userService.changeNick(userID, body.nick);
-            ret.image = await this.avatarService.changeAvatar(file, userID);
-            return res.send(ret);
+            userID = parseInt(decode.sub, 10);
         }
         catch(error)
         {
             console.log("Incorrect token!!");
-		    return ;
+		    return res.send("Incorrect token!!");
         }
+        try
+        {
+            const file: any = body.file;
+            return res.send(await this.avatarService.changeAvatar(file, userID));
+        }
+        catch(error) { console.log("Avatar upload error!"); return res.send("Avatar upload error!"); }
     }
 }
-
-//curl http://10.12.14.1:80/avatar/upload -F 'file=@./default.jpeg' -F 'name=test' -F 'gel=ali' -H "authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4OTUxLCJpYXQiOjEzMzM0MTUwODc2fQ.O5pJAZCwSgDnErj5MRZpMMEIOgwgDHNXFaYCwwJqExw"
-//curl -X POST http://10.12.14.1:80/avatar/upload -F 'file=@./default.jpeg'  -H "authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4OTUxLCJpYXQiOjEzMzM0MTUwODc2fQ.O5pJAZCwSgDnErj5MRZpMMEIOgwgDHNXFaYCwwJqExw"

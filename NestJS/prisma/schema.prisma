@@ -51,6 +51,7 @@ model User {
 	WinCount        Int
 	LoseCount       Int
 	LatterLevel     Int
+	ImageExt		String
 	FriendRequests  FriendRequest[]
 	Achievements    Achievements?
 	Friends         Friend[]

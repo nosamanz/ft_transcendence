@@ -13,6 +13,17 @@ export class ChatChannelController {
             private prisma: PrismaService,
             private userService: UserService,
     ){}
+    
+    @Get('/users')
+    @UseGuards(JwtGuard)
+    async getUsersInChannel(
+        @Res() res: Response,
+        @Req() req: Request,
+        @Param('channelName') chname: string)
+    {
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send(await this.chatChannelService.getUsersInCh(chname, userID));
+    }
 
     @Get('/messages')
     @UseGuards(JwtGuard)

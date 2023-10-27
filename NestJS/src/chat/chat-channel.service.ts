@@ -8,6 +8,21 @@ export class ChatChannelService {
         private prisma: PrismaService,
     ){}
 
+    async getUsersInCh(chname:string, userID: number)
+    {
+        let channel = await this.prisma.channel.findFirst({
+            where: { Name: chname },
+            select: {
+                Users: {
+                    select: { id: true , nick: true},
+                }
+            }
+        })
+        let users = channel.Users;
+        users = users.filter( (element) => element.id !== userID)
+        return users;
+    }
+    
     private async joinCh(userID, chname){
         await this.prisma.channel.update({
             where:  { Name: chname },

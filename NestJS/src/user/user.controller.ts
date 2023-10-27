@@ -5,11 +5,13 @@ import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { jwtConstants } from 'src/jwtconstants';
 import { JwtService } from '@nestjs/jwt';
+import { AvatarService } from 'src/avatar/avatar.service';
 
 @Controller('user')
 export class UserController {
 	constructor(
 		private jwtService: JwtService,
+		private avatarService: AvatarService,
 		private userService: UserService,
 		private prisma: PrismaService)
 	{}
@@ -42,7 +44,7 @@ export class UserController {
 	{
 		const userID = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID)
-		await this.userService.signForm(user);
+		// await this.userService.signForm(user);
 	}
 
 	@Get('isSigned')
@@ -229,22 +231,33 @@ export class UserController {
 		return res.send(friendrequests);
 	}
 
-	@Post('getForm')
-	@UseGuards(JwtGuard)
-	async getForm(@Req() req: Request, @Body() info: any){
-		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
-
-		let UpdateInfo: {nick?: any,imgPath?: any} = {};
-		// img yerele kaydet
-		const imgPath = "path"
-
-		if (info.nick !== undefined)
-			UpdateInfo.nick = info.nick;
-		if (info.img !== undefined)
-			UpdateInfo.imgPath = imgPath;
-
-		await this.userService.updateUser(UpdateInfo, user);
-	}
+	@Post('form')
+    async uploadAvatar(
+        @Res() res: any,
+        @Body() body: any,
+        @Headers('authorization') JWT: string,
+    ) {
+        //JWT CONTROL
+		let userID: number;
+        try{
+            const token = JWT.replace('Bearer ', '');
+            const decode = this.jwtService.verify(token, jwtConstants);
+            userID = parseInt(decode.sub, 10);
+        }
+        catch(error)
+        {
+			console.log("Incorrect token!!");
+		    return ;
+        }
+		try
+		{
+			const file = body.file;
+			const ret: { nick: string, image: string } = { nick: "", image: "" };
+			ret.nick = await this.userService.changeNick(userID, body.nick);
+			ret.image = await this.avatarService.changeAvatar(file, userID);
+			return res.send(ret);
+		}
+		catch(error){ console.log("Posting form error!") }
+    }
 
 }
