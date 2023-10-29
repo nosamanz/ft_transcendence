@@ -13,8 +13,7 @@ export class UserController {
 		private jwtService: JwtService,
 		private avatarService: AvatarService,
 		private userService: UserService,
-		private prisma: PrismaService)
-	{}
+		private prisma: PrismaService){}
 
 	@Get('checkJWT')
 	async CheckJWT(@Res() res: any, @Headers("authorization") jwt: string): Promise<any>{
@@ -44,7 +43,7 @@ export class UserController {
 	{
 		const userID = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID)
-		// await this.userService.signForm(user);
+		await this.userService.signForm(user);
 	}
 
 	@Get('isSigned')

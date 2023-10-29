@@ -98,9 +98,10 @@ export class UserService
         channels.forEach((element) => {
             element.Users = element.Users.filter((element) => element.id !== user.id)
         })
-        // channels.forEach((element) => {
-        //     element = {...element, img1: openImg()}
-        // })
+        if (isDirect === true)
+        channels.forEach((element) => {
+            // element = {...element, imgBuffer: openImg()}
+        })
 
         return (channels);
     }

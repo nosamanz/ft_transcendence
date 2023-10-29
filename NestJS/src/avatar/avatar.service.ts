@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AvatarService {
+    constructor (private prisma: PrismaService){}
 
 	async changeAvatar(file: any, userID: number)
 	{
@@ -10,10 +12,16 @@ export class AvatarService {
         if(file === undefined)
         {
             let res: string;
-            fs.copyFile("./default.jpeg", `${directoryPath}${userID}.jpeg`, (err) => {
+            fs.copyFile("./default.jpeg", `${directoryPath}${userID}.jpeg`, async (err) => {
                 if (err) {
                     res = 'Error copying the image';
                 } else {
+                    await this.prisma.user.update({
+                        where: {
+                            id: userID
+                        },
+                        data: { ImageExt: ".jpeg" }
+                    });
                     res = 'Default.jpeg saved as image successfully.';
                 }
             });
@@ -22,31 +30,40 @@ export class AvatarService {
 		const ext = file.substring(file.indexOf('/') + 1, file.indexOf(';'));
         const AvatarFileName = userID + '.' + ext;
         const base64Image = file.split(';base64,').pop();
-
+        
         if (!fs.existsSync(directoryPath)) {
             fs.mkdirSync(directoryPath, { recursive: true });
         }
         //Hint: !! delete thwe old one          
-        await this.deleteTheOldestWriteNew(directoryPath, userID.toString(), AvatarFileName, base64Image);
+        await this.deleteTheOldestWriteNew(directoryPath, userID, AvatarFileName, base64Image);
         console.log(`${directoryPath}${AvatarFileName}`);
+        await this.prisma.user.update({
+            where: {
+                id: userID
+            },
+            data: { ImageExt: "." + ext }
+        });
+        console.log("File uploadad successfully!");
         return "File uploadad successfully!";
 	}
 
-    async deleteTheOldestWriteNew(directoryPath: string, id: string, AvatarFileName: string, base64Image: any){
-        fs.readdir(directoryPath, async (error, files) => {
-            if (error) {
-              console.error(`Error reading directory.`);
-              return;
-            }
+    async deleteTheOldestWriteNew(directoryPath: string, id: number, AvatarFileName: string, base64Image: any){
+        const user = await this.prisma.user.findFirst({ where: { id: id, }});
+        await fs.unlinkSync(directoryPath + "/" + user.id.toString() + user.ImageExt);
+        // fs.readdir(directoryPath, async (error, files) => {
+        //     if (error) {
+        //       console.error(`Error reading directory.`);
+        //       return;
+        //     }
         
-            files.forEach(async (file) => {
-                if (file.split('.')[0] === id)
-                {
-                    await fs.unlinkSync(directoryPath + "/" + file);
-                }
-            });
-            try { await fs.writeFileSync(`${directoryPath}${AvatarFileName}`, base64Image, { encoding: 'base64' });}
-            catch(error) { return "Write error!" }
-        });
+        //     files.forEach(async (file) => {
+        //         if (file.split('.')[0] === id)
+        //         {
+        //             await fs.unlinkSync(directoryPath + "/" + file);
+        //         }
+        //     });
+        //     try { await fs.writeFileSync(`${directoryPath}${AvatarFileName}`, base64Image, { encoding: 'base64' });}
+        //     catch(error) { return "Write error!" }
+        // });
     }
 }

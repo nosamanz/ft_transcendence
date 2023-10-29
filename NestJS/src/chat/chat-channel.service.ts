@@ -8,20 +8,6 @@ export class ChatChannelService {
         private prisma: PrismaService,
     ){}
 
-    async getUsersInCh(chname:string, userID: number)
-    {
-        let channel = await this.prisma.channel.findFirst({
-            where: { Name: chname },
-            select: {
-                Users: {
-                    select: { id: true , nick: true},
-                }
-            }
-        })
-        let users = channel.Users;
-        users = users.filter( (element) => element.id !== userID)
-        return users;
-    }
     
     private async joinCh(userID, chname){
         await this.prisma.channel.update({
@@ -29,54 +15,103 @@ export class ChatChannelService {
             data:   { Users: { connect: { id : userID }}}
         });
     }
-
+    
     private async checkPasswd(userPasswd, channel): Promise<boolean> {
         //check for brypt
         if (channel.Password === "undefined")
-            return true;
-        const channelPasswd = channel.Password;
-        return await bcrypt.compare(userPasswd, channelPasswd);
-    }
+        return true;
+    const channelPasswd = channel.Password;
+    return await bcrypt.compare(userPasswd, channelPasswd);
+}
 
-
-    async createCh(userID, chname, passwd, isDirect, isInviteOnly)
-    {
-        try {
-            const channel = await this.prisma.channel.findFirst({ where: { Name: chname }});
-            if (channel){
-                if (await this.checkPasswd(passwd, channel) === false) { return "Incorrect Password"};
-                if (channel.IsInviteOnly && !channel.InvitedIDs.some((element) => element === userID)) {return "You are not invited to this channel."}
-                if (channel.BannedIDs.some((element) => element === userID)) { return "You are banned from this channel" };
-                this.joinCh(userID, chname);
-            }
-            else{
-                if (passwd !== "undefined")
-                {
-                    passwd = await bcrypt.hash(passwd, 10);
-                    console.log(passwd);
-                }
-                await this.prisma.channel.create({
-                    data: {
-                        Name: chname,
-                        Password: passwd,
-                        ChannelOwnerID: userID,
-                        AdminIDs: [userID],
-                        IsDirect: isDirect,
-                        IsInviteOnly: isInviteOnly,
-                        Users : { connect: { id : userID } }
-                    },
+async leaveChannel(chname: string, userID: number)
+{
+    try {
+        const channel = await this.prisma.channel.update({
+                where: { Name: chname },
+                data: { Users: { disconnect: { id : userID } } },
+                include: { Users: true },
+            })
+            
+            if (channel.Users.length === 0)
+            {
+                await this.prisma.message.deleteMany({
+                    where: { channelName: chname },
                 })
-
+                await this.prisma.channel.delete({
+                    where: { Name: chname },
+                })
+                return;
             }
-        }catch(error){
-            console.log(error);
-            return "Error while performing channel operation"}
-    }
+            
+            if ( channel.AdminIDs.some( element => element === userID ))
+            {
+                let data: any;
+                const adminId = channel.AdminIDs.filter( element => element !== userID );
+                if (channel.AdminIDs.length > 1) {
+                    if (channel.ChannelOwnerID === userID)
+                    data = { AdminIDs: adminId, ChannelOwnerID: adminId[0]}
+                else
+                data = { AdminIDs: adminId };
+        }
+        else {
+            if (channel.ChannelOwnerID === userID)
+            data = { AdminIDs: [channel.Users[0].id] , ChannelOwnerID: channel.Users[0].id };
+        else
+        data = { AdminIDs: [channel.Users[0].id] };
+}
+await this.prisma.channel.update({
+    where: { Name: chname },
+    data: data
+})
+}
+}
+catch (error){
+    console.log(error);
+    return "Error while leaving channel";
+}
 
+}
+
+async createCh(userID, chname, passwd, isDirect, isInviteOnly)
+{
+    try {
+        const channel = await this.prisma.channel.findFirst({ where: { Name: chname }, include: { Users: true }});
+        if (channel){
+            if (await this.checkPasswd(passwd, channel) === false) { return "Incorrect Password"};
+            if (channel.IsInviteOnly && !channel.InvitedIDs.some((element) => element === userID)) {return "You are not invited to this channel."}
+            if (channel.BannedIDs.some((element) => element === userID)) { return "You are banned from this channel" };
+            if (isDirect && channel.Users.length === 2) { return "This is a priv channel you can not access."};
+            this.joinCh(userID, chname);
+        }
+        else{
+            if (passwd !== "undefined")
+            {
+                passwd = await bcrypt.hash(passwd, 10);
+                console.log(passwd);
+            }
+            await this.prisma.channel.create({
+                data: {
+                    Name: chname,
+                    Password: passwd,
+                    ChannelOwnerID: userID,
+                    AdminIDs: [userID],
+                    IsDirect: isDirect,
+                    IsInviteOnly: isInviteOnly,
+                    Users : { connect: { id : userID } }
+                },
+            })
+            
+        }
+    }catch(error){
+        console.log(error);
+        return "Error while performing channel operation"}
+    }
+    
     private async setAdmin(channel, targetUser){
         if ((channel.AdminIDs.some((element) => element === targetUser.id)))
-            return "Dest User is Already Admin!";
-        channel.AdminIDs.push(targetUser.id);
+        return "Dest User is Already Admin!";
+    channel.AdminIDs.push(targetUser.id);
         console.log(channel.BannedIDs);
         try{
             await this.prisma.channel.update({
@@ -90,55 +125,55 @@ export class ChatChannelService {
         }
         return undefined;
     }
-
+    
     private async ban(channel, targetUser){
         if ((channel.BannedIDs.some((element) => element === targetUser.id)))
-            return "Dest User is Already Banned !";
-        channel.BannedIDs.push(targetUser.id);
-        console.log(channel.BannedIDs);
-        try{
-            await this.prisma.channel.update({
-                where: { Name: channel.Name },
-                data: {
-                    AdminIDs: {
-                        set: channel.AdminIDs.filter(id => id !== targetUser.id)
-                    },
-                    BannedIDs: channel.BannedIDs,
-                    Users: {
-                        disconnect: {
-                            id: targetUser.id
-                        }
+        return "Dest User is Already Banned !";
+    channel.BannedIDs.push(targetUser.id);
+    console.log(channel.BannedIDs);
+    try{
+        await this.prisma.channel.update({
+            where: { Name: channel.Name },
+            data: {
+                AdminIDs: {
+                    set: channel.AdminIDs.filter(id => id !== targetUser.id)
+                },
+                BannedIDs: channel.BannedIDs,
+                Users: {
+                    disconnect: {
+                        id: targetUser.id
                     }
                 }
-            })
-        }
-        catch(error){
-            console.log("Error ! While channel updating");
-            return "Error ! While channel updating";
-        }
+            }
+        })
     }
+    catch(error){
+        console.log("Error ! While channel updating");
+        return "Error ! While channel updating";
+    }
+}
 
-    private async kick(channel, targetUser){
-        try{
-            await this.prisma.channel.update({
-                where: { Name: channel.Name },
-                data: {
-                    AdminIDs: {
-                        set: channel.AdminIDs.filter(id => id !== targetUser.id)
-                    },
-                    Users: {
-                        disconnect: {
-                            id: targetUser.id
-                        }
+private async kick(channel, targetUser){
+    try{
+        await this.prisma.channel.update({
+            where: { Name: channel.Name },
+            data: {
+                AdminIDs: {
+                    set: channel.AdminIDs.filter(id => id !== targetUser.id)
+                },
+                Users: {
+                    disconnect: {
+                        id: targetUser.id
                     }
                 }
-            })
-        }catch(error){
-            console.log("Error ! While channel updating");
-            return "Error ! While channel updating";
-        }
+            }
+        })
+    }catch(error){
+        console.log("Error ! While channel updating");
+        return "Error ! While channel updating";
     }
-
+    }
+    
     private async mute(channel, targetUser)
     {
         let status: string;
@@ -159,49 +194,49 @@ export class ChatChannelService {
             return "Error ! While channel updating";
         }
     }
-
+    
     private async invite(channel, targetUser)
     {
         if (!channel.IsInviteOnly)
-            return "The Channel is not Invite Only";
-        try{
-            if ((channel.InvitedIDs.some((element) => element == targetUser.id)) || (channel.Users.some((element => element.nick == targetUser.nick))))
-                return "The User Already Invited or on Channel";
-            else { channel.InvitedIDs.push(targetUser.id) }
-            await this.prisma.channel.update({
-                where: { Name: channel.Name },
-                data: { InvitedIDs: channel.InvitedIDs }
-            })
-        }catch(error){
-            return "Error ! While channel updating";
-        }
-    }
+        return "The Channel is not Invite Only";
+    try{
+        if ((channel.InvitedIDs.some((element) => element == targetUser.id)) || (channel.Users.some((element => element.nick == targetUser.nick))))
+        return "The User Already Invited or on Channel";
+    else { channel.InvitedIDs.push(targetUser.id) }
+    await this.prisma.channel.update({
+        where: { Name: channel.Name },
+        data: { InvitedIDs: channel.InvitedIDs }
+    })
+}catch(error){
+    return "Error ! While channel updating";
+}
+}
 
-    async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string>
+async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string>
+{
+    
+    const channel = await this.prisma.channel.findFirst({
+        where: {
+            Name: chname
+        },
+        include: {
+            Users: true,
+        }
+    });
+    if (!(channel.AdminIDs.some((element) => element === userID)))
     {
-
-        const channel = await this.prisma.channel.findFirst({
-            where: {
-                Name: chname
-            },
-            include: {
-                Users: true,
-            }
-        });
-        if (!(channel.AdminIDs.some((element) => element === userID)))
-        {
-            console.log("You are not Channel Admin !");
-            return "You are not Channel Admin!";
-        }
-        const targetUser = await channel.Users.find((element) => element.nick == destUser)
-        if (targetUser !== undefined){
-            //If i am not channel owner i cant ban this user because he is admin or channelowner but if i am channel owner i can ban.
-            if (((channel.AdminIDs.some((element) => element === targetUser.id)) || (channel.ChannelOwnerID === targetUser.id))
-                && !(channel.ChannelOwnerID === userID))
-                return "Dest User is Admin or Channel Owner !";
-            else if (process === "ban")
-            {
-                const retBan = await this.ban(channel, targetUser);
+        console.log("You are not Channel Admin !");
+        return "You are not Channel Admin!";
+    }
+    const targetUser = await channel.Users.find((element) => element.nick == destUser)
+    if (targetUser !== undefined){
+        //If i am not channel owner i cant ban this user because he is admin or channelowner but if i am channel owner i can ban.
+        if (((channel.AdminIDs.some((element) => element === targetUser.id)) || (channel.ChannelOwnerID === targetUser.id))
+        && !(channel.ChannelOwnerID === userID))
+    return "Dest User is Admin or Channel Owner !";
+    else if (process === "ban")
+    {
+        const retBan = await this.ban(channel, targetUser);
                 console.log(retBan);
                 return (retBan !== undefined) ? retBan : ("The user has been successfully banned.");
             }
@@ -232,7 +267,20 @@ export class ChatChannelService {
             return (ret !== undefined) ? ret : ("The user has been successfully invited.");
         }
         else
-            return "The User not in the channel";
-
+        return "The User not in the channel";
+    }
+    async getUsersInCh(chname:string, userID: number)
+    {
+        let channel = await this.prisma.channel.findFirst({
+            where: { Name: chname },
+            select: {
+                Users: {
+                    select: { id: true , nick: true},
+                }
+            }
+        })
+        let users = channel.Users;
+        users = users.filter( (element) => element.id !== userID)
+        return users;
     }
 }

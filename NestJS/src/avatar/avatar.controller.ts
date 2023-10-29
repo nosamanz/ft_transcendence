@@ -9,6 +9,7 @@ import { merge } from 'rxjs';
 export class AvatarController {
     constructor(private avatarService: AvatarService, private userService: UserService, private jwtService: JwtService) {}
 
+    // 75 kb den küçükler
     @Post('upload')
     async uploadAvatar(
         @Res() res: any,
