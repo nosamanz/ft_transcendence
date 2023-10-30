@@ -160,6 +160,44 @@ export class ChatChannelController {
         const userID: number = parseInt(req.body.toString(), 10);
         return res.send({res: await this.chatChannelService.createCh(userID, chname, passwd, isDirect, isInviteOnly)});
     }
+
+
+    //CHANNEL PASSWORD OP.
+
+    @Get('/setChannelPassword/:password')
+    @UseGuards(JwtGuard)
+    async setChannelPassword(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('channelName') chname: string,
+        @Param('password') password: string
+    ){
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send({res: await this.chatChannelService.channelPasswordOp(userID, chname, "set", password)});
+    }
+
+    @Get('/changeChannelPassword/:password')
+    @UseGuards(JwtGuard)
+    async changeChannelPassword(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('channelName') chname: string,
+        @Param('password') password: string
+    ){
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send({res: await this.chatChannelService.channelPasswordOp(userID, chname, "change", password)});
+    }
+
+    @Get('/removeChannelPassword')
+    @UseGuards(JwtGuard)
+    async removeChannelPassword(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('channelName') chname: string,
+    ){
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send({res: await this.chatChannelService.channelPasswordOp(userID, chname, "remove")});
+    }
 }
 
 @Controller('chat')

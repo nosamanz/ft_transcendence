@@ -50,6 +50,7 @@ CREATE TABLE "User" (
     "WinCount" INTEGER NOT NULL,
     "LoseCount" INTEGER NOT NULL,
     "LatterLevel" INTEGER NOT NULL,
+    "ImageExt" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
