@@ -5,6 +5,7 @@ import { UserService } from 'src/user/user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { connectedClients } from './chat.gateway';
 import { ChatChannelService } from './chat-channel.service';
+import { Ignore } from '@prisma/client';
 
 @Controller('chat/:channelName')
 export class ChatChannelController {
@@ -13,7 +14,6 @@ export class ChatChannelController {
             private prisma: PrismaService,
             private userService: UserService,
     ){}
-    
 
     @Get('/leave')
     @UseGuards(JwtGuard)
@@ -46,7 +46,8 @@ export class ChatChannelController {
         @Param('channelName') chname: string)
     {
         const userID: number = parseInt(req.body.toString(), 10);
-        const user = await this.userService.getUserByID(userID);
+        const include = { IgnoredUsers: true};
+        const user = await this.userService.getUserByID(userID, include);
         //Lets find Channel
         const channel = await this.prisma.channel.findFirst({
             where: {
@@ -72,14 +73,17 @@ export class ChatChannelController {
         channel.messages.forEach((message) => console.log("Mes: "+ message.senderID + "  " + message.message))
         channel.BannedIDs.forEach((id) => console.log("Banned: "+ id))
         channel.MutedIDs.forEach((id) => console.log("Muted: "+ id))
+        user.IgnoredUsers.forEach((element) => console.log("ignored: "+ element.OtherUserID))
 
         messages = messages.filter(
             message => (
                 message.senderID !== channel.MutedIDs.find((element) => element === message.senderID) &&
                 message.senderID !== channel.BannedIDs.find((element) => element === message.senderID)
-                // message.senderID !== user.IgnoredUsers.some((element) => element.OtherUserID === message.senderID)!!!
                     )
                 )
+        const ignored = user.IgnoredUsers.find((element) => element.OtherUserID)
+        if (ignored)
+            messages = messages.filter(element => element.senderID !== ignored.OtherUserID)
         messages.forEach((message) => console.log("Mes Send: "+ message.senderID + "  " + message.message))
         return response.send(messages);
     }
