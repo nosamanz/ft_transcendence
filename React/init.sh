@@ -5,5 +5,5 @@ openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 \
 cp /etc/ssl_volume/domain.key /etc/ssl_volume/domain_key.pem
 cp /etc/ssl_volume/domain.crt /etc/ssl_volume/domain_crt.pem
 
-
-sleep 100000000000
+npm install react-scripts
+npm start

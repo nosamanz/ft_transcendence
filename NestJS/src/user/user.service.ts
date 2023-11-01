@@ -2,6 +2,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/jwtconstants';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as fs from 'fs';
 
 @Injectable()
 export class UserService
@@ -98,12 +99,22 @@ export class UserService
         channels.forEach((element) => {
             element.Users = element.Users.filter((element) => element.id !== user.id)
         })
+        let channelsWithImages: any[] = [{}];
         if (isDirect === true)
-        channels.forEach((element) => {
-            // element = {...element, imgBuffer: openImg()}
-        })
-
-        return (channels);
+        {
+            channels.forEach(async (element) => {
+                let otherUser: any;
+                element.Users.forEach((element) => {
+                        if(element.id !== user.id)
+                            otherUser = element;
+                })
+                const imagePath: string = "./Avatars/" + otherUser.id + otherUser.ImageExt;
+                const imgBuffer = fs.readFileSync(imagePath);
+                channelsWithImages.push({...element, imgBuffer: imgBuffer});
+            })
+        }
+        console.log(channelsWithImages);
+        return (isDirect === true ? channelsWithImages : channels);
     }
 
     async changeNick(userId: number, nickToChange: string): Promise<string>

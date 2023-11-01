@@ -15,6 +15,18 @@ export class UserController {
 		private userService: UserService,
 		private prisma: PrismaService){}
 
+	@Get('profile/:nick')
+	@UseGuards(JwtGuard)
+	async getProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
+		// data  = {}
+		const user = await this.userService.getUserByNick(nick);
+
+		console.log(user.nick);
+		console.log(user.WinCount);
+		console.log(user.LoseCount);
+		return response.send(user);
+	}
+
 	@Get('checkJWT')
 	async CheckJWT(@Res() res: any, @Headers("authorization") jwt: string): Promise<any>{
 		const token = jwt.replace('Bearer ', '');
@@ -258,5 +270,6 @@ export class UserController {
 		}
 		catch(error){ console.log("Posting form error!") }
     }
+
 
 }

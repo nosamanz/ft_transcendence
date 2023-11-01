@@ -30,11 +30,11 @@ export class AvatarService {
 		const ext = file.substring(file.indexOf('/') + 1, file.indexOf(';'));
         const AvatarFileName = userID + '.' + ext;
         const base64Image = file.split(';base64,').pop();
-        
+
         if (!fs.existsSync(directoryPath)) {
             fs.mkdirSync(directoryPath, { recursive: true });
         }
-        //Hint: !! delete thwe old one          
+        //Hint: !! delete thwe old one
         await this.deleteTheOldestWriteNew(directoryPath, userID, AvatarFileName, base64Image);
         console.log(`${directoryPath}${AvatarFileName}`);
         await this.prisma.user.update({
@@ -49,21 +49,23 @@ export class AvatarService {
 
     async deleteTheOldestWriteNew(directoryPath: string, id: number, AvatarFileName: string, base64Image: any){
         const user = await this.prisma.user.findFirst({ where: { id: id, }});
-        await fs.unlinkSync(directoryPath + "/" + user.id.toString() + user.ImageExt);
+        // if there is no file that means that there is no extention Uyarı:::!!!!
+        if(user.ImageExt)
+            await fs.unlinkSync(directoryPath + "/" + user.id.toString() + user.ImageExt);
         // fs.readdir(directoryPath, async (error, files) => {
         //     if (error) {
         //       console.error(`Error reading directory.`);
         //       return;
         //     }
-        
+
         //     files.forEach(async (file) => {
         //         if (file.split('.')[0] === id)
         //         {
         //             await fs.unlinkSync(directoryPath + "/" + file);
         //         }
         //     });
-        //     try { await fs.writeFileSync(`${directoryPath}${AvatarFileName}`, base64Image, { encoding: 'base64' });}
-        //     catch(error) { return "Write error!" }
+        try { await fs.writeFileSync(`${directoryPath}${AvatarFileName}`, base64Image, { encoding: 'base64' });}
+        catch(error) { return "Write error!" }
         // });
     }
 }

@@ -20,16 +20,4 @@ export class AppController {
 		})
 		return response.send(users);
 	}
-	// @Get('profile')
-	// @UseGuards(JwtGuard)
-	// async getProfile(@Res() response : Response, @Req() req : Request){
-	// 	console.log("profile");
-	// 	// const userID: number = parseInt(req.body.toString(), 10);
-	// 	// const userProfile = this.userService.getUserByID(userID);
-	// 	const user = await this.prisma.user.
-
-
-	// 	return response.send(userProfile);
-	// }
-
 }
