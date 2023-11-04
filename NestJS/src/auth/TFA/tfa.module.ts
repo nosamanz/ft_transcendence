@@ -5,6 +5,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { jwtConstants } from '../../jwtconstants';
 import { PrismaModule } from 'src/prisma/prisma.module'
 import { UserService } from 'src/user/user.service';
+import { AvatarService } from 'src/avatar/avatar.service';
 
 @Module({
 	imports:[
@@ -14,7 +15,7 @@ import { UserService } from 'src/user/user.service';
 			signOptions: { expiresIn: '3000s' },
 		}),],
 	controllers: [TFAController],
-	providers: [TFAService, UserService, JwtService],
+	providers: [TFAService, UserService, JwtService, AvatarService],
 	exports:[TFAService]
 })
 export class TFAModule {}

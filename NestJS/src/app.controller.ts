@@ -1,13 +1,14 @@
 import { Controller, Get, Res, Req, UseGuards} from '@nestjs/common';
 import { Response} from 'express';
-import * as path from 'path'
 import { JwtGuard } from './auth/strategies/jwt/jwt.guard';
+import { AvatarService } from './avatar/avatar.service';
 import { PrismaService } from './prisma/prisma.service';
-import { UserService } from './user/user.service';
 
 @Controller()
 export class AppController {
-	constructor(private prisma: PrismaService, private userService: UserService){}
+	constructor(
+		private prisma: PrismaService,
+		private avatarService: AvatarService){}
 
 	@Get('leaderboard')
 	@UseGuards(JwtGuard)
@@ -18,6 +19,10 @@ export class AppController {
 				LatterLevel: 'desc',
 			}
 		})
-		return response.send(users);
+		let retUsers: any[] = [];
+		users.forEach((element) => {
+			retUsers.push({...element, imgBuffer: this.avatarService.OpenImgFromUser(element)});
+		})
+		return response.send(retUsers);
 	}
 }

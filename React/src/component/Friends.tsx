@@ -6,7 +6,6 @@ const FriendsSidebar = () => {
     const [friendLists, setFriendLists] = useState([{}]);
 
     useEffect(() => {
-
         const fetchData = async () =>{
                 const responseMessages = await fetch(`https://${process.env.REACT_APP_IP}:80/user/friends`, {
                     headers: {
@@ -18,7 +17,7 @@ const FriendsSidebar = () => {
             fetchData();
     }, [])
 	return(
-        <div>
+        <div className="friendContainer">
             <div className="sidebarNav">
                 <span className="sidebarLogo">Friends</span>
             </div>

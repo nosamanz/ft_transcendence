@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import image from "../images/avatar1.png"
+import image from "../images/group.jpeg"
 
 import PopUp from "./ChannelPopUp"
 
@@ -30,7 +30,7 @@ const Channel = ({channel, setCurrentChannel}) =>{
 				<span>{channel.Name}</span>
 			</div>
             <div  style={{left: popUpPosition.left, top:popUpPosition.top}}>
-                {isPopOpen && <PopUp channel={channel.Name} />}
+                {isPopOpen && <PopUp channel={channel} />}
             </div>
 		</div>
     )

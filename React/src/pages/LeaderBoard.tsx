@@ -1,16 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { cookies } from "../App";
 import LeaderBoardProfile from "../component/LeaderBoardProfile";
-import { Leaderboard } from "../database/database";
+import TFA from "../component/TFA";
 
 const LeaderBoard = () =>{
+	const [Users, setUsers] = useState([]);
+	useEffect (() => {
+        const fetchData = async () =>{
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/leaderboard`, {
+                headers: {
+                    'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+            });
+            const resUsers = await response.json();
+			setUsers(resUsers);
+        }
+        fetchData();
+    }, [])
+	const closeTfa = (is: Boolean) =>
+	{
+
+	}
 	return(
 		<div className="leaderBoard">
 			<div className="lBh1">
 				<h1>LeaderBoard</h1>
+				<TFA closeTFA={closeTfa}/>
 			</div>
-			<LeaderBoardProfile LeaderBoard={Leaderboard} />
-
-
+				{Users.map((user, index) => (
+					<LeaderBoardProfile key={index} index={index} user={user} />
+				))}
 		</div>
 	)
 }

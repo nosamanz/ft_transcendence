@@ -3,10 +3,7 @@ import React from "react";
 const SidebarNav = () =>{
     return(
         <div className="sidebarNav">
-            <span className="sidebarLogo">Chat</span>
-            <div className="sidebarUser">
-                User
-            </div>
+            <span className="sidebarLogo">PrivChat</span>
         </div>
     )
 }

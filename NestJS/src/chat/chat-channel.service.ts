@@ -10,10 +10,11 @@ export class ChatChannelService {
 
 
 	private async joinCh(userID, chname){
-		await this.prisma.channel.update({
+		const channel = await this.prisma.channel.update({
 			where:  { Name: chname },
 			data:   { Users: { connect: { id : userID }}}
 		});
+		return channel;
 	}
 
 	private async checkPasswd(userPasswd, channel): Promise<boolean> {
@@ -83,15 +84,14 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 			if (channel.BannedIDs.some((element) => element === userID)) { return "You are banned from this channel" };
 			if (isDirect && channel.Users.length === 2) { return "This is a priv channel you can not access."};
 			if (channel.Users.some(element => element.id === userID)) { return "You are already in channel."};
-			this.joinCh(userID, chname);
+			return this.joinCh(userID, chname);
 		}
 		else{
 			if (passwd !== "undefined")
 			{
 				passwd = await bcrypt.hash(passwd, 10);
-				console.log(passwd);
 			}
-			await this.prisma.channel.create({
+			const channel = await this.prisma.channel.create({
 				data: {
 					Name: chname,
 					Password: passwd,
@@ -102,10 +102,11 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 					Users : { connect: { id : userID } }
 				},
 			})
+			console.log(channel.Name);
+			return channel;
 
 		}
 	}catch(error){
-		console.log(error);
 		return "Error while performing channel operation"}
 	}
 
@@ -227,7 +228,7 @@ async channelOp(userID: number, chname: string , destUser: string, process : str
 	if (!(channel.AdminIDs.some((element) => element === userID)))
 	{
 		console.log("You are not Channel Admin !");
-		return "You are not Channel Admin!";
+		return "Err: You are not Channel Admin!";
 	}
 	const targetUser = await channel.Users.find((element) => element.nick == destUser)
 	if (targetUser !== undefined)

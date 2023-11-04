@@ -8,9 +8,7 @@ export class AuthService {
 	constructor( private prisma: PrismaService, private userService: UserService) {}
 
 	async signin_intra(data: any): Promise<{token: string, result: number} | number | {user_id: number, result: number}> {
-		console.log("Mer");
 		const UserInfo = await this.getUserFromApi(data);
-
 		console.log("Welcome " + UserInfo.login);
 		let user: any;
 		try
@@ -74,11 +72,12 @@ export class AuthService {
 		form.append('client_secret', 	data['client_secret']);
 		form.append('code', 			data['code']);
 		form.append('redirect_uri', 	data['redirect_uri']);
-		
+
 		const responseToken = await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',
 			body: form
-		});
+		})
+		console.log(responseToken.ok);
 		const dataToken = await responseToken.json();
 		const responseInfo = await fetch('https://api.intra.42.fr/v2/me', {
 			headers: {

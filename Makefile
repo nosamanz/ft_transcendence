@@ -16,6 +16,7 @@ clean:
 
 fclean: down
 	docker system prune -af
+	docker volume prune -af
 #	sudo rm -rf $(USER_HOME)/data/*
 
 .PHONY: all down re clean fclean

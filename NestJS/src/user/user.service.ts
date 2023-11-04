@@ -3,12 +3,14 @@ import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/jwtconstants';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as fs from 'fs';
+import { AvatarService } from 'src/avatar/avatar.service';
 
 @Injectable()
 export class UserService
 {
     constructor(
         private prisma: PrismaService,
+        private avatarService: AvatarService,
         private jwtService: JwtService){}
 
     // undefined if couldn't verify the token or the header does not exist
@@ -99,7 +101,7 @@ export class UserService
         channels.forEach((element) => {
             element.Users = element.Users.filter((element) => element.id !== user.id)
         })
-        let channelsWithImages: any[] = [{}];
+        let channelsWithImages: any[] = [];
         if (isDirect === true)
         {
             channels.forEach(async (element) => {
@@ -108,12 +110,9 @@ export class UserService
                         if(element.id !== user.id)
                             otherUser = element;
                 })
-                const imagePath: string = "./Avatars/" + otherUser.id + otherUser.ImageExt;
-                const imgBuffer = fs.readFileSync(imagePath);
-                channelsWithImages.push({...element, imgBuffer: imgBuffer});
+                channelsWithImages.push({...element, imgBuffer: this.avatarService.OpenImgFromUser(otherUser)});
             })
         }
-        console.log(channelsWithImages);
         return (isDirect === true ? channelsWithImages : channels);
     }
 

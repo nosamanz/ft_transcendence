@@ -52,20 +52,13 @@ export class AvatarService {
         // if there is no file that means that there is no extention Uyarı:::!!!!
         if(user.ImageExt)
             await fs.unlinkSync(directoryPath + "/" + user.id.toString() + user.ImageExt);
-        // fs.readdir(directoryPath, async (error, files) => {
-        //     if (error) {
-        //       console.error(`Error reading directory.`);
-        //       return;
-        //     }
-
-        //     files.forEach(async (file) => {
-        //         if (file.split('.')[0] === id)
-        //         {
-        //             await fs.unlinkSync(directoryPath + "/" + file);
-        //         }
-        //     });
         try { await fs.writeFileSync(`${directoryPath}${AvatarFileName}`, base64Image, { encoding: 'base64' });}
         catch(error) { return "Write error!" }
-        // });
+    }
+
+    OpenImgFromUser(user: any): any{
+        const imagePath: string = "./Avatars/" + user.id + user.ImageExt;
+        const imgBuffer = fs.readFileSync(imagePath).toString('base64');
+        return imgBuffer;
     }
 }

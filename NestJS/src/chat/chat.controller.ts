@@ -162,9 +162,10 @@ export class ChatChannelController {
         @Param('passwd') passwd: string
     ){
         const userID: number = parseInt(req.body.toString(), 10);
-        return res.send({res: await this.chatChannelService.createCh(userID, chname, passwd, isDirect, isInviteOnly)});
+        const ch =  await this.chatChannelService.createCh(userID, chname, passwd, isDirect, isInviteOnly);
+        return res.send(ch);
+        // return res.send({res: await this.chatChannelService.createCh(userID, chname, passwd, isDirect, isInviteOnly)});
     }
-
 
     //CHANNEL PASSWORD OP.
 

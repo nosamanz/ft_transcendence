@@ -2,6 +2,7 @@ import React, {useState, useEffect, Component} from "react";
 // import { cookies } from "../App";
 import io from "socket.io-client";
 import { cookies } from '../App';
+import Game from "../component/Game";
 
 export const socket = io(`https://${process.env.REACT_APP_IP}:80`, {
 	transports: ['websocket']
@@ -97,8 +98,7 @@ const Home = ({user}) =>{
 		<div className="home">
 		{
 			loaded ? (
-				<div className="containerHome">
-				</div>
+				<Game user={user}/>
 			)
 			:
 			(

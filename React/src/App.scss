@@ -381,8 +381,7 @@
 			border-radius: 50px;
 			z-index: 0;
 			.pIconBlock{
-				position:relative;
-				top:1px;
+				border: 1px  solid white;
 				.addIcon{
 					position:absolute;
 					text-align: center;
@@ -395,7 +394,7 @@
 				}
 				.toogleContainer{
 					position: absolute;
-					left:65%;
+					left: 70%;
 					text-align: center;
 					#toogle{display: none;}
 					.toogle-checkbox{
@@ -568,10 +567,6 @@
 				color:#93BFCF;
 				.sidebarLogo{
 					font-weight: bolder;
-				.sidebarUser{
-					display: flex;
-					gap: 10px;
-				}
 				}
 			}
 			.chatSearch{
@@ -620,8 +615,8 @@
 						justify-content: center;
 						padding: 15px;
 						text-align: center;
-					  border: 1px solid #ccc;
-					  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+						border: 1px solid #ccc;
+						box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
 					  .groupOnePerson{
 						background-color: #6096B4;
 						margin-top: 10px;
@@ -661,17 +656,42 @@
 			height: calc(100vh - 310px);
 			.channelCreate{
 				position:fixed;
+				display: flex;
 				top: 50%;
 				left: 50%;
 				transform: translate(-50%, -50%);
 				background-color: white;
 				padding: 20px;
-				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+				box-shadow: 2px 4px 1px 1px rgba(0, 0, 0, 0.2);
 				z-index: 1000;
 				display: flex;
+				border-radius: 25px;
 				width: 500px;
 				height: 500px;
+				align-items: center;
+				justify-content: center;
 				z-index: 2;
+				.channelCreateX{
+					display: flex;
+					direction: rtl;
+					button{
+						height: 50px;
+						width: 50px;
+					}
+				}
+				.channelForm{
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					margin: 10px;
+				}
+				input{
+					height: 30px;
+					width: 150px;
+				}
+				label{
+					height: 50px;
+				}
 			}
 			.messageBox{
 				.messageBoxInfo{
@@ -687,7 +707,8 @@
 					display: flex;
 					gap: 10px;
 					.messageBoxIconImage{
-						height: 24px;
+						height: 32px;
+						width: 32px;
 						cursor: pointer;
 					}
 				}
@@ -786,37 +807,59 @@
 		}
 	}
 	.friends{
-		flex: .5;
+		width: 15%;
 		height: calc(100% - 100px);
-		margin-left: 20px;
+		margin-left: 1%;
 		border: 1px solid white;
 		border-radius: 10px;
 		display: flex;
 		overflow: hidden;
-		.friendsMain{
-			height: 100%;
-			background-color:#3F72AF ;
-		}
-		.sidebarNav{
-			width: 500px;
-			display: flex;
-			align-items: center;
-			background-color: #112D4E;
-			height: 50px;
-			padding: 10px;
-			justify-content: space-between;
-			color:#93BFCF;
-			.sidebarLogo{
-				font-weight: bolder;
+		.friendContainer{
+			width: 100%;
+			.friendsMain{
+				width:100%;
+				height: 100%;
+				background-color:#3F72AF ;
+					.friendOnePerson > div:first-child{
+						text-align: left;
+					}
+					.friendOnePerson{
+						padding: 10px;
+						height: 50px;
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						.friendIcons{
+							text-align: right;
+						}
+						img{
+							height: 24px;
+							width: 24px;
+							margin: 1px;
+							padding: 2px;
+						}
+					}
 			}
-		}
-		.searchInput{
-			background-color: transparent;
-			border: none;
-			color: white;
-			outline: none;
-			&::placeholder{
-				color: lightgray;
+			.sidebarNav{
+				display: flex;
+				align-items: center;
+				background-color: #112D4E;
+				height: 50px;
+				padding: 10px;
+				justify-content: space-between;
+				color:#93BFCF;
+				.sidebarLogo{
+					font-weight: bolder;
+				}
+			}
+			.searchInput{
+				background-color: transparent;
+				border: none;
+				color: white;
+				outline: none;
+				&::placeholder{
+					color: lightgray;
+				}
 			}
 		}
 
@@ -876,8 +919,8 @@
 	padding-bottom: 20px;
 }
 .tfa-img{
-	width: 200px;
-	height: 200px;
+	width: 178px;
+	height: 178px;
 	box-shadow: 0px 0px 20px 1px rgba(0,0,0,0.1);
 	gap: 10px;
 	border-radius: 10px;

@@ -3,7 +3,7 @@ import PrivChannel from "./PrivChannel";
 import { cookies } from "../App";
 
 const ChatSearch = ({setCurrentChannel}) =>{
-    const [channelList, setChannelList] = useState([{}]);
+    const [channelList, setChannelList] = useState([]);
     useEffect (() => {
         const fetchData = async () =>{
             const responseChannels = await fetch(`https://${process.env.REACT_APP_IP}:80/user/privChannels`, {
@@ -16,15 +16,17 @@ const ChatSearch = ({setCurrentChannel}) =>{
         }
         fetchData();
     }, [])
-    // const channelList = [{Name: "Priv1"}, {Name: "Priv2"}];
+
+    useEffect(() => {
+      }, [channelList]);
     return(
         <div className="chatSearch">
-            <div className="searchForm">
+            {/* <div className="searchForm">
                 <input className="searchInput" type="text" placeholder="find a user" />
-            </div>
-                 {channelList.map((channel, index) => (
-                     <PrivChannel key={index} channel={channel} setCurrentChannel={setCurrentChannel} />
-                 ))}
+            </div> */}
+                {channelList.map((channel, index) => (
+                    <PrivChannel key={index} channel={channel} setCurrentChannel={setCurrentChannel} />
+                ))}
         </div>
     )
 

@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { jwtConstants } from 'src/jwtconstants';
 import { JwtService } from '@nestjs/jwt';
 import { AvatarService } from 'src/avatar/avatar.service';
+import * as fs from 'fs';
 
 @Controller('user')
 export class UserController {
@@ -17,14 +18,18 @@ export class UserController {
 
 	@Get('profile/:nick')
 	@UseGuards(JwtGuard)
-	async getProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
-		// data  = {}
+	async getOtherProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
 		const user = await this.userService.getUserByNick(nick);
-
-		console.log(user.nick);
-		console.log(user.WinCount);
-		console.log(user.LoseCount);
 		return response.send(user);
+	}
+
+	@Get('profile')
+	@UseGuards(JwtGuard)
+	async getUserProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
+		const userID = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID);
+		const retUser = { ...user, imgBuffer: this.avatarService.OpenImgFromUser(user)};
+		return response.send(retUser);
 	}
 
 	@Get('checkJWT')
@@ -178,7 +183,6 @@ export class UserController {
 		@Res() res: Response)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		// const user = await this.userService.getUserByID(userID);
 		const friends = await this.prisma.user.findFirst({
 			where: { id : userID},
 			select : {
@@ -190,7 +194,6 @@ export class UserController {
 				},
 			}
 		})
-		console.log(friends.Friends);
 		return res.send(friends.Friends);
 	}
 

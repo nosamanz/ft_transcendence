@@ -15,6 +15,8 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AvatarController } from './avatar/avatar.controller';
 import { AvatarService } from './avatar/avatar.service';
 import { AvatarModule } from './avatar/avatar.module';
+import { GameGateway } from './game/game.gateway';
+import { GameService } from './game/game.service';
 
 @Module({
   imports: [
@@ -26,6 +28,6 @@ import { AvatarModule } from './avatar/avatar.module';
   JwtModule,
   AvatarModule],
   controllers: [AppController, AvatarController],
-  providers: [UserService, ChatGateway, ChatService, AuthService, PrismaService, TFAService, JwtService, AvatarService],
+  providers: [UserService, ChatGateway, ChatService, GameGateway, GameService, AuthService, PrismaService, TFAService, JwtService, AvatarService],
 })
 export class AppModule {}

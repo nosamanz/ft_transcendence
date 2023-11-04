@@ -64,7 +64,7 @@ export class TFAService {
 	async Login(user: any): Promise<{res: number, code: string}> {
 		if (user.TFAuth === false)
 		{
-			this.prisma.user.update({
+			await this.prisma.user.update({
 				where: {
 					id: user.id,
 				},
