@@ -25,7 +25,6 @@ const LeaderBoard = () =>{
 		<div className="leaderBoard">
 			<div className="lBh1">
 				<h1>LeaderBoard</h1>
-				<TFA closeTFA={closeTfa}/>
 			</div>
 				{Users.map((user, index) => (
 					<LeaderBoardProfile key={index} index={index} user={user} />

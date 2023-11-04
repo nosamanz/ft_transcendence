@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import { cookies } from "../App";
-import { UseChannelContext } from "../Context/ChannelContext";
 
-const ChannelCreate = ({setPopOpen}) =>{
+const ChannelCreate = ({setPopOpen, channelList, setChannelList}) =>{
 	const [inputValue, setInputValue] = useState<string>("");
 	const [pass, setPass] = useState<string>("undefined");
 	const [inv, setInv] = useState<boolean>(false);
-
-	const { channelList, setChannelList } = UseChannelContext();
 
 	const send = async () =>{
 		const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${inputValue}/create/false/${inv}/${pass}`, {
@@ -16,7 +13,6 @@ const ChannelCreate = ({setPopOpen}) =>{
                 'Content-Type': 'application/json'
 			}
 		})
-
 		const ch = await response.json();
 		const UpdateChannel = [...channelList, ch]
 		setChannelList(UpdateChannel);

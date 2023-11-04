@@ -6,37 +6,37 @@ import { UseChannelContext, TChannel } from "../Context/ChannelContext";
 
 // const GroupChatSearch = ({setCurrentChannel}) =>{
 //     const [channelList, setChannelList] = useState([{}]);
-//     useEffect (() => {
-//         const fetchData = async () =>{
-//             const responseChannels = await fetch(`https://${process.env.REACT_APP_IP}:80/user/channels`, {
-//                 headers: {
-//                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-//                     'Content-Type': 'application/json'
-//                 }
-//             });
-//             const CHs = await responseChannels.json();
-//             setChannelList(CHs);
-//         }
-//         fetchData();
-//     }, [])
 //     return(
-//         <div className="chatSearch">
-//             <button onClick={HandleClick} className="Btn">Add Channel</button>
-//             <div className="searchForm">
-//                 <input className="searchInput" type="text" placeholder="find a user" />
-//             </div>
-//             {channelList.map((channel, index) => (
-//                 <Channel key={index} channel={channel} setCurrentChannel={setCurrentChannel} />
-//             ))}
-//         </div>
-//     )
-// }
+  //         <div className="chatSearch">
+  //             <button onClick={HandleClick} className="Btn">Add Channel</button>
+  //             <div className="searchForm">
+  //                 <input className="searchInput" type="text" placeholder="find a user" />
+  //             </div>
+  //             {channelList.map((channel, index) => (
+    //                 <Channel key={index} channel={channel} setCurrentChannel={setCurrentChannel} />
+    //             ))}
+    //         </div>
+    //     )
+    // }
 
 // export default GroupChatSearch;
 
 const GroupChatSearch = ({ setCurrentChannel }) => {
-  const { channelList, setChannelList } = UseChannelContext();
+  const [channelList, setChannelList] = useState([]);
 
+  useEffect (() => {
+      const fetchData = async () =>{
+          const responseChannels = await fetch(`https://${process.env.REACT_APP_IP}:80/user/channels`, {
+              headers: {
+                  'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                  'Content-Type': 'application/json'
+              }
+          });
+          const CHs = await responseChannels.json();
+          setChannelList(CHs);
+      }
+      fetchData();
+  }, [])
   return (
     <div className="chatSearch">
       {/* <div className="searchForm">

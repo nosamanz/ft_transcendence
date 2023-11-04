@@ -7,16 +7,12 @@ import Sidebar from "../component/Sidebar";
 import GroupSidebar from "../component/GroupSidebar";
 import { cookies } from "../App";
 
-import ChannelProvider from "../Context/ChannelContext";
 import { UseChannelContext } from "../Context/ChannelContext";
 
 
 
 const Chat = ({setCurrentChannel, currentChannel}) =>{
     const [user, setUser] = useState({res: "undefined"});
-    const [nick, setNick] = useState<string>("");
-
-    const { channelList, setChannelList } = UseChannelContext();
 
     useEffect(() =>{
         const fetchData =async () => {
@@ -33,11 +29,9 @@ const Chat = ({setCurrentChannel, currentChannel}) =>{
     return(
         <div className="chat">
             <div className="chatContainer">
-                <ChannelProvider>
                     <Sidebar setCurrentChannel={setCurrentChannel} />
                     <MainBox currentChannel={currentChannel}  user={user}/>
                     <GroupSidebar  setCurrentChannel={setCurrentChannel}  />
-                </ChannelProvider>
             </div>
             <div className="friends">
                 <Friends />

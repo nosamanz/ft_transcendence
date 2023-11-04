@@ -565,6 +565,59 @@
 				padding: 10px;
 				justify-content: space-between;
 				color:#93BFCF;
+				.messageBoxIcon{
+					display: flex;
+					gap: 10px;
+					.messageBoxIconImage{
+						height: 32px;
+						width: 32px;
+						cursor: pointer;
+					}
+				}
+				.channelCreate{
+					position:fixed;
+					display: flex;
+					top: 50%;
+					left: 42%;
+					transform: translate(-50%, -50%);
+					background-color: rgba(133, 133, 133, 0.963);
+					padding: 20px;
+					box-shadow: 2px 4px 1px 1px rgba(0, 0, 0, 0.2);
+					z-index: 1000;
+					display: flex;
+					border-radius: 25px;
+					width: 400px;
+					height: 400px;
+					align-items: center;
+					justify-content: center;
+					z-index: 2;
+					.channelCreateX{
+						display: flex;
+						direction: rtl;
+						button{
+							height: 50px;
+							width: 50px;
+						}
+					}
+					.channelForm{
+						display: flex;
+						flex-direction: row;
+						align-items: center;
+						margin: 10px;
+					}
+					input{
+						height: 30px;
+						width: 150px;
+					}
+					label{
+						height: 50px;
+					}
+					button{
+						align-self: center;
+						height: 50px;
+						width: 100px;
+					}
+				}
 				.sidebarLogo{
 					font-weight: bolder;
 				}
@@ -654,45 +707,6 @@
 		.mainBox{
 			width: 60%;
 			height: calc(100vh - 310px);
-			.channelCreate{
-				position:fixed;
-				display: flex;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				background-color: white;
-				padding: 20px;
-				box-shadow: 2px 4px 1px 1px rgba(0, 0, 0, 0.2);
-				z-index: 1000;
-				display: flex;
-				border-radius: 25px;
-				width: 500px;
-				height: 500px;
-				align-items: center;
-				justify-content: center;
-				z-index: 2;
-				.channelCreateX{
-					display: flex;
-					direction: rtl;
-					button{
-						height: 50px;
-						width: 50px;
-					}
-				}
-				.channelForm{
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					margin: 10px;
-				}
-				input{
-					height: 30px;
-					width: 150px;
-				}
-				label{
-					height: 50px;
-				}
-			}
 			.messageBox{
 				.messageBoxInfo{
 					height: 50px;
@@ -702,15 +716,6 @@
 					justify-content: space-between;
 					padding: 10px;
 					color: lightslategray;
-				}
-				.messageBoxIcon{
-					display: flex;
-					gap: 10px;
-					.messageBoxIconImage{
-						height: 32px;
-						width: 32px;
-						cursor: pointer;
-					}
 				}
 				.messages{
 					background-color:#DBE2EF;
@@ -945,3 +950,77 @@
 	box-shadow: 2px 5px 20px 1px rgba(0,0,0,0.1);
 	border-radius: 5px;
 }
+
+.toggle-switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+  }
+
+  .toggle-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+  }
+
+  .slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	border-radius: 34px;
+	transition: 0.4s;
+  }
+
+  .slider:before {
+	content: '';
+	position: absolute;
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	border-radius: 50%;
+	transition: 0.4s;
+  }
+
+  input:checked + .slider {
+	background-color: #2196F3;
+  }
+
+  input:checked + .slider:before {
+	transform: translateX(26px);
+  }
+
+  /* On state label */
+  .on-label {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	transform: translateY(-50%);
+	font-size: 14px;
+	color: white;
+	display: none;
+  }
+
+  input:checked + .slider + .on-label {
+	display: block;
+  }
+
+  /* Off state label */
+  .off-label {
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	transform: translateY(-50%);
+	font-size: 14px;
+	color: #555;
+  }
+
+  input:checked + .slider + .on-label + .off-label {
+	display: none;
+  }

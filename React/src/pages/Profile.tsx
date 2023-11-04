@@ -2,11 +2,12 @@ import React, {useEffect, useState} from "react";
 import image from "../images/free-photo1.jpeg"
 import { cookies } from "../App";
 import TFA from "../component/TFA";
+import ToggleSwitch from "../component/ToggleSwitch";
 
 const Profile = () => {
 	const [user, setUser] = useState({imgBuffer: undefined});
 	const [isTFAPopUp, setIsTFAPopUp] = useState<boolean>(false);
-	const [isTFA, setIsTFA] = useState<boolean>(false);
+	const [toggleState, setToggleState] = useState<boolean>(false);
     const [QR, setQR] = useState("");
 	let tfa: boolean = false;
 
@@ -18,40 +19,38 @@ const Profile = () => {
 				}
 			});
 			const resUser = await responseUser.json()
-			setIsTFA(resUser.TFAuth);
+			setToggleState(resUser.TFAuth);
 			setUser(resUser);
 		}
 		fetchData();
 	}, [])
 
-	const handleChange = async () => {
-		tfa = tfa === true ? false : true;
-		const response = await fetch(`https://${process.env.REACT_APP_IP}:80/auth/tfa/${tfa === true ? "enable" : "disable"}`, {
-			headers: {
-				'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-			}
-		})
-		const qrCodeImageData = await response.blob();
-		const imageUrl = URL.createObjectURL(qrCodeImageData);
-		setIsTFAPopUp(true);
-		setIsTFA(true);
-		console.log(imageUrl)
-		setQR(imageUrl)
-		// if (resTFA.mes === "Disabled")
-		// 	setIsTFA(false);
-		// else
-		// {
-		// }
-	}
-	const [value, setValue] = useState(false);
-	const handleSliderChange = (newValue) => {
-		setValue(newValue);
-	  };
+	const handleToggleChange = async (isChecked: boolean) => {
+		if (isChecked === true)
+		{
+			const response = await fetch(`https://${process.env.REACT_APP_IP}:80/auth/tfa/enable`, {
+				headers: {
+					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+				}
+			})
+			const qrCodeImageData = await response.blob();
+			const imageUrl = URL.createObjectURL(qrCodeImageData);
+			setQR(imageUrl);
+			setIsTFAPopUp(true);
+		}
+		else
+			await fetch(`https://${process.env.REACT_APP_IP}:80/auth/tfa/disable`, {
+				headers: {
+					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+				}
+			})
+		setToggleState(isChecked);
+	};
 	return(
 		<div className="Profile">
 			{
 				isTFAPopUp === true ?
-				(<TFA qr={QR} setIsTFA={setIsTFA} setIsTFAPopUp={setIsTFAPopUp} />):(
+				(<TFA qr={QR} setIsTFA={setToggleState} setIsTFAPopUp={setIsTFAPopUp} />):(
 					<div className="profile">
 						<div className="profileH1">
 							<h1>Profile</h1>
@@ -69,15 +68,7 @@ const Profile = () => {
 										</svg>
 									</div>
 									<div className="toogleContainer">
-										<input id="toogle" className="toggle-checkbox" type="checkbox" /* checked={isTFA} */ onChange={handleChange} />
-										<label for="toogle" className="toogle-label">
-											<input
-												type="checkbox"
-												checked={value}
-												onChange={handleSliderChange}
-											/>
-											<span className="slider round"></span>
-										</label>
+										<ToggleSwitch checked={toggleState} onChange={handleToggleChange} />
 									</div>
 								</div>
 								<div className="pValueBlock">

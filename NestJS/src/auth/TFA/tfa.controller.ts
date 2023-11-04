@@ -38,8 +38,8 @@ export class TFAController {
 	async disableTwoFactor(@Req() req, @Res() res) {
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
-		await this.tfaService.disableTwoFactorAuthentication(user)
-		return res.send({mes: "Disabled"});
+		await this.tfaService.disableTwoFactorAuthentication(user);
+		return res.send({mes: "Disabled!"})
 	}
 
 	// jwt_token
@@ -51,7 +51,7 @@ export class TFAController {
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
-		console.log(code)
+		console.log(user)
 		const result = await this.tfaService.verifyTwoFactorAuthentication(code, user.TFSecret);
 		console.log(result)
 		if (result)

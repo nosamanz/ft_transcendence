@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import GroupSidebarNav from "./GroupSidebarNav";
 import GroupChatSearch from "./GroupChatSearch";
-import ChannelProvider from "../Context/ChannelContext";
 
 const GroupSidebar = ({setCurrentChannel}) =>{
+    const [ channelList, setChannelList ] = useState([]);
     return(
         <div className="sidebar">
-            <GroupSidebarNav/>
+            <GroupSidebarNav channelList={channelList} setChannelList={setChannelList}/>
             <GroupChatSearch setCurrentChannel={setCurrentChannel}/>
         </div>
     )

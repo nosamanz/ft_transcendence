@@ -7,13 +7,7 @@ import { UseChannelContext } from "../Context/ChannelContext";
 
 const ChannelPopUp = ({channel}) =>{
 
-	const { channelList, setChannelList } = UseChannelContext();
-
-	// const [clientList, setClientList] = useState([{}]);
-	const cli = channelList.find(element => element.Name === channel.Name)?.Users;
-	// console.log("CLIENTS");
-	// console.log(cli);
-	const [clientList, setClientList] =  useState([{cli}]);
+	const [clientList, setClientList] =  useState([]);
 
 	useEffect ( () => {
 		const fetchData = async () =>{
@@ -27,7 +21,7 @@ const ChannelPopUp = ({channel}) =>{
 			setClientList(chCli);
 		}
 		fetchData();
-	}, [])
+	}, [clientList])
 
 return(
     <div className="channelPopUp">

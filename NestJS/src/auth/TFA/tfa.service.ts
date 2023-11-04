@@ -49,7 +49,7 @@ export class TFAService {
 				TFSecret: "",
 				secretAscii: ""
 			},
-		  })
+		})
 	}
 
 	async verifyTwoFactorAuthentication(twoFactorCode: string, userSecret: string): Promise<boolean> {
