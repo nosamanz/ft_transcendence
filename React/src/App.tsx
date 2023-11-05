@@ -16,6 +16,7 @@ function App() {
 
 	const [currentChannel, setCurrentChannel] = useState("");
   const [user, setUser] = useState({res: "undefined"});
+	const [isTFAStatus, setIsTFAStatus] = useState(false);
   useEffect(() => {
 		const fetchData = async () => {
       if ( cookies.get("jwt_authorization") === "undefined")
@@ -29,6 +30,10 @@ function App() {
         }
       });
       const res = await responseUser.json();
+      if ( cookies.get("TFAStatus") === "Passed" || res.TFAuth === false)
+        setIsTFAStatus(true);
+      if (res.TFAuth === true)
+        setIsTFAStatus(false);
       if(res === false)
       {
         cookies.remove('jwt_authorization')
@@ -39,21 +44,21 @@ function App() {
 		}
 		fetchData();
 	}, []);
-  console.log(user.res);
   return (
     <BrowserRouter>
     <div className='body'>
         <Navbar user={user}/>
         <Routes>
           {
-            user.res !== "undefined" ? (<>
-            <Route path='/' element = {<Home user={user}/>} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/leaderboard" element={<LeaderBoard />} />
-            <Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel}currentChannel={currentChannel} />}/>
+            user.res !== "undefined" && isTFAStatus !== true ?
+            (<>
+              <Route path='/*' element = {<Home user={user}/>} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/leaderboard" element={<LeaderBoard />} />
+              <Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel}currentChannel={currentChannel} />}/>
+            </>) : (<>
+              <Route path='/*' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus}/>}/>
             </>
-              ) : (
-                <Route path='/' element = {<Login setUser = {setUser}/>} />
             )
           }
         </Routes>

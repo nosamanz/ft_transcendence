@@ -21,9 +21,7 @@ import { UseChannelContext, TChannel } from "../Context/ChannelContext";
 
 // export default GroupChatSearch;
 
-const GroupChatSearch = ({ setCurrentChannel }) => {
-  const [channelList, setChannelList] = useState([]);
-
+const GroupChatSearch = ({ channelList, setChannelList, setCurrentChannel }) => {
   useEffect (() => {
       const fetchData = async () =>{
           const responseChannels = await fetch(`https://${process.env.REACT_APP_IP}:80/user/channels`, {
@@ -36,7 +34,7 @@ const GroupChatSearch = ({ setCurrentChannel }) => {
           setChannelList(CHs);
       }
       fetchData();
-  }, [])
+  }, [channelList])
   return (
     <div className="chatSearch">
       {/* <div className="searchForm">

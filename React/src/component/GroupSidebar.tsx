@@ -7,7 +7,7 @@ const GroupSidebar = ({setCurrentChannel}) =>{
     return(
         <div className="sidebar">
             <GroupSidebarNav channelList={channelList} setChannelList={setChannelList}/>
-            <GroupChatSearch setCurrentChannel={setCurrentChannel}/>
+            <GroupChatSearch channelList={channelList} setChannelList={setChannelList} setCurrentChannel={setCurrentChannel}/>
         </div>
     )
 

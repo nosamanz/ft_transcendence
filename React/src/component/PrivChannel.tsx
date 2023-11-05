@@ -2,11 +2,9 @@ import React from "react";
 import image from "../images/avatar1.png"
 
 const PrivChannel = ({channel, setCurrentChannel}) =>{
-	const HandleClick = async () => {
+    const HandleClick = async () => {
         setCurrentChannel(channel.Name);
     }
-    console.log("Al");
-    console.log(channel);
     return(
         <div className="userChat">
 			    <img className="searchChatImage" src={`data:image/png;base64,${channel.imgBuffer}`}/>

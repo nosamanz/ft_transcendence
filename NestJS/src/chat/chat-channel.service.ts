@@ -82,7 +82,7 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 			if (await this.checkPasswd(passwd, channel) === false) { return "Incorrect Password"};
 			if (channel.IsInviteOnly && !channel.InvitedIDs.some((element) => element === userID)) {return "You are not invited to this channel."}
 			if (channel.BannedIDs.some((element) => element === userID)) { return "You are banned from this channel" };
-			if (isDirect && channel.Users.length === 2) { return "This is a priv channel you can not access."};
+			if (channel.IsDirect && channel.Users.length === 2) { return "This is a priv channel you can not access."};
 			if (channel.Users.some(element => element.id === userID)) { return "You are already in channel."};
 			return this.joinCh(userID, chname);
 		}

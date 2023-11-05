@@ -82,7 +82,7 @@ export class GameService {
             //{
             //    waitNewBallCount--;
             //}
-        }, 1 ); // 60 FPS
+        }, 16 ); // 60 FPS
 	}
 
     paddleCollision(e: any): any{

@@ -2,7 +2,6 @@ import React from "react";
 
 
 const Message = ({message, user}) =>{
-    console.log("user Nick " + user.nick + " sendernick " + message.senderNick);
     return(
         <div>
             {

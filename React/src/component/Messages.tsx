@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Message from "./Message";
 import { cookies } from "../App";
 import { socket } from "../pages/Home";
@@ -12,6 +12,7 @@ const Messages=({currentChannel, user}) =>{
         if (data.channelName === currentChannel)
             setMessagesReceived([...messagesReceived, data]);
     });
+    useEffect(() => {
         const fetchData = async () =>{
             const responseMessages = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${currentChannel}/messages`, {
                 headers: {
@@ -21,10 +22,11 @@ const Messages=({currentChannel, user}) =>{
             const Mess:  {message: string, channelName: string, senderNick: string}[] =await responseMessages.json()
             setMessagesReceived(Mess);
         }
-        if(currentChannel !== "" && (oldCurrentChannel !== currentChannel)){
+        if(currentChannel !== ""){
             fetchData();
-            oldCurrentChannel = currentChannel;
         }
+    },[currentChannel])
+
     return(
         <div className="messages">
             {messagesReceived.map((message, index) => (

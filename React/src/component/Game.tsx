@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import io from "socket.io-client";
 import Canvas from './Canvas';
+import L42 from '../images/42icon.png';
 
 let rivalID: string = "";
 
@@ -49,7 +50,9 @@ const Game = ({user}) => {
         <div className='oyun'>
         {
             state === 0 ? (
-                <button onClick={handleClick} className="paddle">Play</button>
+                <div className="PlayButton" onClick={handleClick}>
+                    PLAY
+                </div>
             )
             : state === 1 ? (
                 <div>

@@ -95,23 +95,3 @@ const Profile = () => {
 }
 
 export default Profile;
-// [
-// 	{
-// 		nick: makrdes,
-// 		win_count: 12,
-// 		looe_count: 12,
-// 		latterLevel: 290,
-// 	},
-// 	{
-// 		nick: ebattal,
-// 		win_count: 12,
-// 		looe_count: 12,
-// 		latterLevel: 290,
-// 	},
-// 	{
-// 		nick:oozcan,
-// 		win_count: 12,
-// 		looe_count: 12,
-// 		latterLevel: 290,
-// 	}
-// ]

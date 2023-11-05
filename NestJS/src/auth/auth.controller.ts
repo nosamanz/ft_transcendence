@@ -10,7 +10,7 @@ export class AuthController {
 
 	// {Jwt_Token, 0} The new user has been saved in database and the token has been created.
 	// {Jwt_Token, 1} The user has already been saved in database and the token has been created.
-	// {user_id, 2} The user should be redirected to the TFA page.
+	// {Jwt_Token, 2} The user should be redirected to the TFA page.
 	// // 3 The user has already have a jwt.
 	@Post('signin_intra')
 	async signin_intra(@Headers('authorization') head: string, @Body() data: any) {

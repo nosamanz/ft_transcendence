@@ -61,7 +61,7 @@ export class TFAService {
 		return verified;
 	}
 
-	async Login(user: any): Promise<{res: number, code: string}> {
+	async Login(user: any): Promise<{res: number, code: string} | {res: number}> {
 		if (user.TFAuth === false)
 		{
 			await this.prisma.user.update({
@@ -75,6 +75,6 @@ export class TFAService {
 			return {res: 1, code: "TFA is enabled."};
 		}
 		console.log("You successfully logged in!!");
-		return {res: 0, code: await this.userService.createToken(user.id)};
+		return {res: 0};
 	}
 }

@@ -7,7 +7,7 @@ import { UserService } from 'src/user/user.service';
 export class AuthService {
 	constructor( private prisma: PrismaService, private userService: UserService) {}
 
-	async signin_intra(data: any): Promise<{token: string, result: number} | number | {user_id: number, result: number}> {
+	async signin_intra(data: any): Promise<{token: string, result: number} | number> {
 		const UserInfo = await this.getUserFromApi(data);
 		console.log("Welcome " + UserInfo.login);
 		let user: any;
@@ -22,13 +22,13 @@ export class AuthService {
 		let token: string;
 		if(user)
 		{
+			token = await this.userService.createToken(UserInfo.id);
 			if(user.TFAuth === true)
 			{
 				console.log("You are redirecting to the TFA page ");
-				return ({user_id: UserInfo.id, result: 2});
+				return ({token: token, result: 2});
 			}
 			console.log("Successfully Logged In");
-			token = await this.userService.createToken(UserInfo.id);
 			return ({token: token, result: 1});
 		}
 		token = await this.userService.createToken(UserInfo.id);
