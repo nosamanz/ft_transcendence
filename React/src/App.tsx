@@ -45,7 +45,7 @@ function App() {
 		fetchData();
 	}, []);
   return (
-    <BrowserRouter>
+    <BrowserRouter> 
     <div className='body'>
         <Navbar user={user}/>
         <Routes>

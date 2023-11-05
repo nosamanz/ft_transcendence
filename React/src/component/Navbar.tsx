@@ -4,9 +4,15 @@ import Login from "../pages/Login";
 import PersonIcon from '@mui/icons-material/Person';
 import Profile from "../pages/Profile";
 import LeaderBoard from "../pages/LeaderBoard";
+import { cookies } from "../App";
 
 
 const Navbar = ({user}) => {
+    const HandleDisconnection = () => {
+        console.log("Merva")
+        cookies.remove("jwt_authorization");
+        cookies.remove("TFAStatus");
+    }
     return (
         <div className="navbar">
             <span className="logo"><Link to="/" className="link">TRANSCENDENCE</Link></span>
@@ -19,7 +25,7 @@ const Navbar = ({user}) => {
                  <li className="listItem"><Link className="link" to="/profile">Profile</Link></li>
                  <li className="listItem"><Link className="link" to="/leaderboard">LeaderBoard</Link></li>
                  <li className="listItem"><Link className="link" to="/chat">Chat</Link></li>
-                 <li className="listItem">Logout</li>
+                 <li className="listItem" onClick={HandleDisconnection}><Link className="link" to="/">Logout</Link></li>
              </ul>
             ) : (null)}
 
