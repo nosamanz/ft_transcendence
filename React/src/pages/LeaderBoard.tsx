@@ -14,12 +14,12 @@ const LeaderBoard = () =>{
             });
             const resUsers = await response.json();
 			setUsers(resUsers);
+			console.log(resUsers);
         }
         fetchData();
     }, [])
 	const closeTfa = (is: Boolean) =>
 	{
-
 	}
 	return(
 		<div className="leaderBoard">

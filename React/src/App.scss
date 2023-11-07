@@ -336,13 +336,13 @@
 }
 
 .profile{
-	height: calc(100vh - 3em);
+	height: calc(100vh - 56px);
 	display: block;
+	padding-top: 100px;
 	.profileH1{
 		display: flex;
 		justify-content: center;
-		margin-top: 2px;
-
+		padding-bottom: 80px;
 	}
 	.profileContainer{
 		display: flex;
@@ -380,61 +380,71 @@
 			border-radius: 50px;
 			z-index: 0;
 			.pIconBlock{
-				border: 1px  solid white;
-				.addIcon{
-					position:absolute;
-					text-align: center;
-					left: 60%;
-					.addPerson{
-						width: 32px;
-						height: 32px;
-						user-select: none;
-					}
-				}
-				.toogleContainer{
-					position: absolute;
-					left: 70%;
-					text-align: center;
-					#toogle{display: none;}
-					.toogle-checkbox{
-						width: 90px;
-						height: 32px;
-						background-color: white;
-						position: relative;
-
-					}
-					.toogle-p{
-						font-weight: bold;
-						font-size: small;
-						align-items: center;
-					}
-					.toogle-label{
-						display: inline-block;
-						align-items: center;
-						width: 60px;
-						height: 32px;
-						background-color: #ccc;
-						border-radius: 20px;
-						position: relative;
+				width: 100%;
+				display: flex;
+				padding-right: 20%;
+				padding-bottom: 5%;
+				justify-content: end;
+				.pIconBlockPosition{
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					.addIcon{
+						padding-right: 15px;
 						cursor: pointer;
+						.addPerson{
+							width: 32px;
+							height: 32px;
+							user-select: none;
+						}
 					}
-					.toogle-label::before{
-						content: "";
-						position: absolute;
-						top: 1px;
-						left: 1px;
-						width: 30px;
-						height: 30px;
-						background-color: white;
-						border-radius: 50%;
-						transition: transform 0.3s;
-					}
-					#toogle:checked + .toogle-label{
-						background-color: #112D4E;
-					}
-					#toogle:checked + .toogle-label::before{
-						transform:  translateX(20px);
-						left: 8px;
+					.toogleContainer{
+						text-align: center;
+						display: flex;
+						justify-content: center;
+						#toogle{display: none;}
+						.toogle-checkbox{
+							width: 90px;
+							height: 32px;
+							background-color: white;
+							position: relative;
+						}
+						.toogle-p-Div{
+							display: flex;
+							padding-top: 8px;
+							justify-content: center;
+							.toogle-p{
+								font-weight: bold;
+								font-size: small;
+							}
+						}
+						.toogle-label{
+							display: inline-block;
+							width: 64px;
+							height: 32px;
+							background-color: #ccc;
+							border-radius: 20px;
+							position: relative;
+							cursor: pointer;
+						}
+						.toogle-label::before{
+							content: "";
+							position: absolute;
+							top: 1px;
+							left: 1px;
+							width: 30px;
+							height: 30px;
+							background-color: white;
+							border-radius: 50%;
+							transition: transform 0.3s;
+						}
+						#toogle:checked + .toogle-label{
+							background-color: #112D4E;
+						}
+						#toogle:checked + .toogle-label::before{
+							transform:  translateX(24px);
+							left: 8px;
+						}
 					}
 				}
 			}
@@ -622,7 +632,6 @@
 				}
 			}
 			.chatSearch{
-				border-bottom: 1px solid gray;
 				.searchForm{
 					padding: 10px;
 					.searchInput{
@@ -635,25 +644,51 @@
 						}
 					}
 				}
+
 				.userChat{
+					border-bottom: 1px solid gray;
 					padding: 10px;
 					display: flex;
 					align-items: center;
 					gap: 10px;
 					color: white;
-					.searchChatImage{
-						width: 50px;
-						height: 50px;
-						border-radius: 50%;
-						object-fit: cover;
-
-					}
-					.userChatInfo{
-						font-weight: bold;
-					}
-					&:hover{
+					width: 100%;
+					.userChatChannel{
+						width: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						.userChatInfo{
+							font-weight: bold;
+							display: flex;
+							align-items: center;
+							.chatInfoSpan{
+								padding: 5%;
+							}
+							.searchChatImage{
+								width: 50px;
+								height: 50px;
+								border-radius: 50%;
+								object-fit: cover;
+							}
+						}
+						.leaveChatXButton{
+							width: 24px;
+							height: 24px;
+							align-items: center;
+							display: flex;
+							padding: 5px;
+							img{
+								height: 32px;
+								width: 32px;
+							}
+						}
+					}&:hover{
 						background-color: #1a4371;
 					}
+
+
+
 					.channelPopUp{
 						// display: flex;
 						position: fixed;
@@ -698,6 +733,14 @@
 						font-weight: 900;
 						margin-bottom: 30px;
 						justify-content: center;
+					}
+					.settingGroup{
+						width: 24px;
+						height: 24px;
+					}
+					.channelPageUp{
+						justify-content: space-between;
+						display: flex;
 					}
 					}
 				}
@@ -868,6 +911,12 @@
 		}
 
 	}
+}
+.tfa_visible{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: calc(100vh - 56px);
 }
 
 .tfa-block{

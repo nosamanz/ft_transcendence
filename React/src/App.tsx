@@ -30,7 +30,7 @@ function App() {
         }
       });
       const res = await responseUser.json();
-      if ( cookies.get("TFAStatus") === "Passed" || res.TFAuth === false)
+      if ( cookies.get("TFAStatus") === "Passed" && res.TFAuth === false)
         setIsTFAStatus(true);
       if (res.TFAuth === true)
         setIsTFAStatus(false);
@@ -45,7 +45,7 @@ function App() {
 		fetchData();
 	}, []);
   return (
-    <BrowserRouter> 
+    <BrowserRouter>
     <div className='body'>
         <Navbar user={user}/>
         <Routes>

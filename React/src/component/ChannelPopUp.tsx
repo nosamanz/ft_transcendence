@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { cookies } from "../App";
 import ChannelPopUpList  from "./ChannelPopUpList";
+import setting from "../images/setting.png";
 
 import { UseChannelContext } from "../Context/ChannelContext";
 
@@ -23,13 +24,23 @@ const ChannelPopUp = ({channel}) =>{
 		fetchData();
 	}, [clientList])
 
+	const clickSetting = () =>{
+
+	}
+
 return(
     <div className="channelPopUp">
         <div className="channelPopUpPage">
-            <span className="groupName">{channel.Name}</span>
-			{clientList.map((client, index) => (
-				<ChannelPopUpList key={index} client={client} channel={channel}/>
-			))}
+			<div className="channelPageUp">
+            	<span className="groupName">{channel.Name}</span>
+				<img onClick={clickSetting} className="settingGroup" src={setting} alt=""/>
+			</div>
+			<div>
+				{clientList.map((client, index) => (
+					<ChannelPopUpList key={index} client={client} channel={channel}/>
+				))}
+
+			</div>
 
         </div>
     </div>
