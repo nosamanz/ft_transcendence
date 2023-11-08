@@ -7,12 +7,10 @@ import ToggleSwitch from "../component/ToggleSwitch";
 import { useLocation, useParams } from "react-router-dom";
 
 const Profile = () => {
+
 	const location = useLocation();
-	console.log(location);
 	const searchParams = new URLSearchParams(location.search);
 	const nick = searchParams.get('nick');
-
-	console.log(nick);
 
 	const [user, setUser] = useState({imgBuffer: undefined});
 	const [isTFAPopUp, setIsTFAPopUp] = useState<boolean>(false);
@@ -21,7 +19,7 @@ const Profile = () => {
 	let tfa: boolean = false;
 
 	useEffect (() =>{
-		if (nick)
+		if (nick !== null)
 		{
 			const fetchData = async () =>{
 				const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user/profile/${nick}`, {
@@ -47,7 +45,7 @@ const Profile = () => {
 			}
 			fetchData();
 		}
-	}, [])
+	}, [nick])
 
 	const handleToggleChange = async (isChecked: boolean) => {
 		if (isChecked === true)
@@ -88,13 +86,16 @@ const Profile = () => {
 								<img className="pTopBlockImage" src={`data:image/png;base64,${user.imgBuffer}`} alt="pImage"/>
 							</div>
 							<div className="pBottomBlock">
-								<div className="pIconBlock">
-									<div className="pIconBlockPosition">
-										<div className="toogleContainer">
-											<ToggleSwitch checked={toggleState} onChange={handleToggleChange} />
+								{nick === null ? (
+									<div className="pIconBlock">
+										<div className="pIconBlockPosition">
+											<div className="toogleContainer">
+												<ToggleSwitch checked={toggleState} onChange={handleToggleChange} />
+											</div>
 										</div>
 									</div>
-								</div>
+								):
+								(null)}
 								<div className="pValueBlock">
 									<div className="leftBlock">
 										<div className="pRowBlock">Nick</div>

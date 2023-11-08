@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import L42 from '../images/42icon.png';
-// import { Button } from 'react-bootstrap';
 import { cookies } from '../App';
 import TFAVerify from '../component/TFAVerify';
+import { socket } from './Home';
 
 export const Login = ({setUser, isTFAStatus, setIsTFAStatus}) => {
 
@@ -28,6 +28,12 @@ export const Login = ({setUser, isTFAStatus, setIsTFAStatus}) => {
 					body: JSON.stringify( data ), // Assuming code is an object
 				});
 				const responseData = await response.json();
+				await fetch(`https://${process.env.REACT_APP_IP}:80/chat/connect`, {
+					headers: {
+						'socket-id': socket.id,
+						'authorization': 'Bearer ' + responseData.token,
+					},
+				});
 				// {token: Jwt_Token, result: 0} The new user has been saved in database and the token has been created.
 				// {token: Jwt_Token, result: 1} The user has already been saved in database and the token has been created.
 				// {token: Jwt_Token, result: 2} The user should be redirected to the TFA page.

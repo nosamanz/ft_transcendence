@@ -9,7 +9,7 @@ const Chat = ({setCurrentChannel, currentChannel}) =>{
     const [user, setUser] = useState({res: "undefined"});
 
     useEffect(() =>{
-        const fetchData =async () => {
+        const fetchData = async () => {
             const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user/checkJWT`,{
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),

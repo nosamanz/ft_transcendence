@@ -6,8 +6,11 @@ const InputBox = ( {currentChannel} ) =>{
 
   const [inputValue, setInputValue] = useState<string>("");
   const HandleClick = async () => {
-    socket.emit('chat', {message: inputValue, channelName: currentChannel});
+    if (inputValue){
+      socket.emit('chat', {message: inputValue, channelName: currentChannel});
+    }
     dValue.value = '';
+    setInputValue('');
   }
   const change = (e) =>{
     setInputValue(e.target.value);
@@ -17,6 +20,7 @@ const InputBox = ( {currentChannel} ) =>{
     {
       HandleClick();
       dValue.value = '';
+      setInputValue('');
     }
   }
     return(

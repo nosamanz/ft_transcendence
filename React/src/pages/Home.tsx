@@ -9,12 +9,16 @@ export const socket = io(`https://${process.env.REACT_APP_IP}:80`, {
 });
 
 socket.on("connect", async () => {
-	const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/connect`, {
-		headers: {
-			'socket-id': socket.id,
-			'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-		},
-	});
+	const token = cookies.get("jwt_authorization");
+	console.log(token);
+	if (token !== undefined){
+		await fetch(`https://${process.env.REACT_APP_IP}:80/chat/connect`, {
+			headers: {
+				'socket-id': socket.id,
+				'authorization': 'Bearer ' + token,
+			},
+		});
+	}
 	// socket.emit("chat", {channelName: "123", message: "Geldim"})
 	// console.log("RESPONSE-"+response.ok);
 });

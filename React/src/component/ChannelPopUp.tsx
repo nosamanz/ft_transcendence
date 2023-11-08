@@ -10,6 +10,7 @@ const ChannelPopUp = ({channel}) =>{
 	const [popChannel, setPopChannel] =  useState({Users: []});
     const [checkMute, setCheckMute] = useState<boolean>();
 	const [isPopOpen, setPopOpen] = useState<boolean>(false);
+	const channelName = channel.Name;
 
 	useEffect ( () => {
 		console.log("Geldi");
@@ -45,7 +46,7 @@ return(
 			</div>
 
         </div>
-		{/* {isPopOpen && <ChannelSetting setPopOpen={setPopOpen} channelList={} setChannelList={}></ChannelSetting>} */}
+		{isPopOpen && <ChannelSetting setPopOpen={setPopOpen} channelName={channelName}></ChannelSetting>}
     </div>
 )
 }

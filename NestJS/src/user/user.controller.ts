@@ -6,7 +6,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { jwtConstants } from 'src/jwtconstants';
 import { JwtService } from '@nestjs/jwt';
 import { AvatarService } from 'src/avatar/avatar.service';
-import * as fs from 'fs';
 
 @Controller('user')
 export class UserController {
@@ -43,6 +42,8 @@ export class UserController {
 			user = await this.userService.getUserByID(userID);
 		}
 		catch(error) { return res.send(false); }
+		if (user === null)
+			return res.send(false);
 		return res.send(user);
 	}
 

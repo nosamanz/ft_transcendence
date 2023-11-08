@@ -644,7 +644,6 @@
 						}
 					}
 				}
-
 				.userChat{
 					border-bottom: 1px solid gray;
 					padding: 10px;
@@ -686,8 +685,6 @@
 					}&:hover{
 						background-color: #1a4371;
 					}
-
-
 
 					.channelPopUp{
 						// display: flex;
@@ -867,6 +864,28 @@
 				width:100%;
 				height: 100%;
 				background-color:#3F72AF ;
+				.friendSearchForm{
+					padding: 10px;
+					display: flex;
+					justify-content: space-around;
+					.searchInput{
+						background-color: transparent;
+						font-size: medium;
+						border: none;
+						color: white;
+						outline: none;
+						&::placeholder{
+							color: lightgray;
+						}
+					}
+					.searchButton{
+						background-color:transparent;
+						img{
+							width: 32px;
+							height: 32px;
+						}
+					}
+				}
 					.friendOnePerson > div:first-child{
 						text-align: left;
 					}
@@ -880,8 +899,8 @@
 							text-align: right;
 						}
 						img{
-							height: 24px;
-							width: 24px;
+							height: 32px;
+							width: 32px;
 							margin: 1px;
 							padding: 2px;
 						}
@@ -899,18 +918,27 @@
 					font-weight: bolder;
 				}
 			}
-			.searchInput{
-				background-color: transparent;
-				border: none;
-				color: white;
-				outline: none;
-				&::placeholder{
-					color: lightgray;
-				}
-			}
 		}
 
 	}
+}
+.channelSetting{
+	position:absolute;
+	display: flex;
+	top: 50%;
+	left: 42%;
+	transform: translate(-50%, -50%);
+	background-color: rgba(133, 133, 133, 0.963);
+	padding: 20px;
+	box-shadow: 2px 4px 1px 1px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+	display: flex;
+	border-radius: 25px;
+	width: 400px;
+	height: 400px;
+	align-items: center;
+	justify-content: center;
+	z-index: 3;
 }
 .tfa_visible{
 	display: flex;
