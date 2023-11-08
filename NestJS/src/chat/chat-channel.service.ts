@@ -326,4 +326,13 @@ async channelOp(userID: number, chname: string , destUser: string, process : str
 		users = users.filter( (element) => element.id !== userID)
 		return users;
 	}
+	
+	async getChannel(userID: number, chname: string) : Promise<any> {
+        const channel = await this.prisma.channel.findFirst({
+            where: { Name : chname },
+			include: { Users: true}
+        })
+		channel.Users = channel.Users.filter((element) => element.id !== userID);
+        return (channel);
+    }
 }

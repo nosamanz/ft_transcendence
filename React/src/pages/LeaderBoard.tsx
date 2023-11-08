@@ -14,7 +14,6 @@ const LeaderBoard = () =>{
             });
             const resUsers = await response.json();
 			setUsers(resUsers);
-			console.log(resUsers);
         }
         fetchData();
     }, [])

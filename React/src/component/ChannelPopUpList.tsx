@@ -8,9 +8,7 @@ import ban from "../images/ban.png"
 import kick from "../images/kick.png"
 import { cookies } from "../App";
 
-const ChannelPopUpList = ({client, channel}) =>{
-
-    const [checkMute, setCheckMute] = useState<boolean>();
+const ChannelPopUpList = ({client, channel, checkMute, setCheckMute}) =>{
 
     useEffect(() => {
         if (channel.MutedIDs.some(element => element === client.id))
@@ -36,7 +34,7 @@ const ChannelPopUpList = ({client, channel}) =>{
                 console.log(res);
                 if (!res.error)
                 {
-                    if ((e.target).id === mute)
+                    if ((e.target).id === "mute")
                     {
                         changeMute();
                     }

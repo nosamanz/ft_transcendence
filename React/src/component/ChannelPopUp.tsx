@@ -2,27 +2,32 @@ import React, {useEffect, useState} from "react";
 import { cookies } from "../App";
 import ChannelPopUpList  from "./ChannelPopUpList";
 import setting from "../images/setting.png";
+import ChannelSetting from "./ChannelSetting";
+
 
 const ChannelPopUp = ({channel}) =>{
 
-	const [clientList, setClientList] =  useState([]);
+	const [popChannel, setPopChannel] =  useState({Users: []});
+    const [checkMute, setCheckMute] = useState<boolean>();
+	const [isPopOpen, setPopOpen] = useState<boolean>(false);
 
 	useEffect ( () => {
+		console.log("Geldi");
 		const fetchData = async () =>{
-			const responseClients =await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channel.Name}/users`, {
+			const responseClients =await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channel.Name}`, {
 				headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                     'Content-Type': 'application/json'
                 }
 			});
-			const chCli = await responseClients.json();
-			setClientList(chCli);
+			const resPopChannel = await responseClients.json();
+			setPopChannel(resPopChannel);
 		}
 		fetchData();
-	}, [clientList])
+	}, [checkMute])
 
 	const clickSetting = () =>{
-
+		setPopOpen(true);
 	}
 
 return(
@@ -33,13 +38,14 @@ return(
 				<img onClick={clickSetting} className="settingGroup" src={setting} alt=""/>
 			</div>
 			<div>
-				{clientList.map((client, index) => (
-					<ChannelPopUpList key={index} client={client} channel={channel}/>
+				{popChannel.Users.map((client, index) => (
+					<ChannelPopUpList key={index} client={client} channel={popChannel} checkMute={checkMute} setCheckMute={setCheckMute}/>
 				))}
 
 			</div>
 
         </div>
+		{/* {isPopOpen && <ChannelSetting setPopOpen={setPopOpen} channelList={} setChannelList={}></ChannelSetting>} */}
     </div>
 )
 }

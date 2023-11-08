@@ -4,8 +4,16 @@ import addPerson from "../images/addPerson.png"
 import { cookies } from "../App";
 import TFA from "../component/TFA";
 import ToggleSwitch from "../component/ToggleSwitch";
+import { useLocation, useParams } from "react-router-dom";
 
 const Profile = () => {
+	const location = useLocation();
+	console.log(location);
+	const searchParams = new URLSearchParams(location.search);
+	const nick = searchParams.get('nick');
+
+	console.log(nick);
+
 	const [user, setUser] = useState({imgBuffer: undefined});
 	const [isTFAPopUp, setIsTFAPopUp] = useState<boolean>(false);
 	const [toggleState, setToggleState] = useState<boolean>(false);
@@ -13,17 +21,32 @@ const Profile = () => {
 	let tfa: boolean = false;
 
 	useEffect (() =>{
-		const fetchData = async () =>{
-			const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user/profile`, {
-				headers: {
-					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-				}
-			});
-			const resUser = await responseUser.json()
-			setToggleState(resUser.TFAuth);
-			setUser(resUser);
+		if (nick)
+		{
+			const fetchData = async () =>{
+				const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user/profile/${nick}`, {
+					headers: {
+						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+					}
+				});
+				const resUser = await responseUser.json();
+				setUser(resUser);
+			}
+			fetchData();
 		}
-		fetchData();
+		else{
+			const fetchData = async () =>{
+				const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user/profile`, {
+					headers: {
+						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+					}
+				});
+				const resUser = await responseUser.json()
+				setToggleState(resUser.TFAuth);
+				setUser(resUser);
+			}
+			fetchData();
+		}
 	}, [])
 
 	const handleToggleChange = async (isChecked: boolean) => {
@@ -67,9 +90,6 @@ const Profile = () => {
 							<div className="pBottomBlock">
 								<div className="pIconBlock">
 									<div className="pIconBlockPosition">
-										<div className="addIcon">
-											<img className="addPerson" src={addPerson} alt="addPerson" />
-										</div>
 										<div className="toogleContainer">
 											<ToggleSwitch checked={toggleState} onChange={handleToggleChange} />
 										</div>

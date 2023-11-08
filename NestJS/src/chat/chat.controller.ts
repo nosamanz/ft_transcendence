@@ -15,6 +15,16 @@ export class ChatChannelController {
             private userService: UserService,
     ){}
 
+    @Get()
+    @UseGuards(JwtGuard)
+    async getChannel(
+        @Res() res: Response,
+        @Req() req: Request,
+        @Param('channelName') chname: string){
+        const userID: number = parseInt(req.body.toString(), 10);
+        return res.send(await this.chatChannelService.getChannel(userID, chname));
+    }
+
     @Get('/leave')
     @UseGuards(JwtGuard)
     async getLeave(
@@ -169,7 +179,7 @@ export class ChatChannelController {
     // IMPORTANT: When we request to this part of the chat fill the :isDirect and :isInviteOnly (do not make request with undefined except for passwd part)
     @Get('/create/:isDirect/:isInviteOnly/:passwd')
     @UseGuards(JwtGuard)
-    async getChannel(
+    async createChannel(
         @Req() req: Request,
         @Res() res: Response,
         @Param('channelName') chname: string,
