@@ -110,30 +110,23 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 		return "Error while performing channel operation"}
 	}
 
-	private async setAdmin(channel, targetUser){
+	private async setAdmin(channel, targetUser) : Promise<string> {
 		if ((channel.AdminIDs.some((element) => element === targetUser.id)))
-		return "Dest User is Already Admin!";
-	channel.AdminIDs.push(targetUser.id);
-		console.log(channel.BannedIDs);
-		try{
-			await this.prisma.channel.update({
-				where: { Name: channel.Name},
-				data: { AdminIDs: channel.AdminIDs}
-			})
-		}
-		catch(error){
-			console.log("Error ! While channel updating");
-			return "Error ! While channel updating";
-		}
-		return undefined;
+			throw "Dest User is Already Admin!";
+		channel.AdminIDs.push(targetUser.id);
+		await this.prisma.channel.update({
+			where: { Name: channel.Name },
+			data: { AdminIDs: channel.AdminIDs }
+		})
+		return "The user has been successfully assigned as admin."
 	}
 
-	private async ban(channel, targetUser){
+	private async ban(channel, targetUser)
+	{
 		if ((channel.BannedIDs.some((element) => element === targetUser.id)))
-		return "Dest User is Already Banned !";
-	channel.BannedIDs.push(targetUser.id);
-	console.log(channel.BannedIDs);
-	try{
+			throw "Dest User is Already Banned !";
+		channel.BannedIDs.push(targetUser.id);
+		console.log(channel.BannedIDs);
 		await this.prisma.channel.update({
 			where: { Name: channel.Name },
 			data: {
@@ -148,53 +141,44 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 				}
 			}
 		})
+		return ("The user has been successfully banned.");
 	}
-	catch(error){
-		console.log("Error ! While channel updating");
-		return "Error ! While channel updating";
-	}
-}
 
-private async kick(channel, targetUser){
-	try{
+	private async kick(channel, targetUser) : Promise<string>
+	{
 		await this.prisma.channel.update({
-			where: { Name: channel.Name },
-			data: {
-				AdminIDs: {
-					set: channel.AdminIDs.filter(id => id !== targetUser.id)
-				},
-				Users: {
-					disconnect: {
-						id: targetUser.id
-					}
+		where: { Name: channel.Name },
+		data: {
+			AdminIDs: {
+				set: channel.AdminIDs.filter(id => id !== targetUser.id)
+			},
+			Users: {
+				disconnect: {
+					id: targetUser.id
 				}
 			}
-		})
-	}catch(error){
-		console.log("Error ! While channel updating");
-		return "Error ! While channel updating";
-	}
+		}})
+		return "The user has been successfully kicked.";
 	}
 
 	private async mute(channel, targetUser)
 	{
 		let status: string;
-		try{
-			if ((channel.MutedIDs.some((element) => element == targetUser.id)))
-			{
-				channel.MutedIDs = channel.MutedIDs.filter(element => element !== targetUser.id);
-				status = "The User Unmuted.";
-			}
-			else { channel.MutedIDs.push(targetUser.id)};
-			await this.prisma.channel.update({
-				where: {Name: channel.Name},
-				data: { MutedIDs: channel.MutedIDs }
-			})
-			return status;
-		}catch(error){
-			console.log("Error ! While channel updating");
-			return "Error ! While channel updating";
+		if ((channel.MutedIDs.some((element) => element == targetUser.id)))
+		{
+			channel.MutedIDs = channel.MutedIDs.filter(element => element !== targetUser.id);
+			status = "The User Unmuted.";
 		}
+		else {
+			status = "The user has been successfully muted.";
+			channel.MutedIDs.push(targetUser.id)
+		};
+		await this.prisma.channel.update({
+			where: { Name: channel.Name },
+			data: { MutedIDs: channel.MutedIDs }
+		})
+		console.log(status)
+		return status;
 	}
 
 	private async invite(channel, targetUser)
@@ -216,7 +200,6 @@ private async kick(channel, targetUser){
 
 async channelOp(userID: number, chname: string , destUser: string, process : string) : Promise<string>
 {
-
 	const channel = await this.prisma.channel.findFirst({
 		where: {
 			Name: chname
@@ -227,38 +210,30 @@ async channelOp(userID: number, chname: string , destUser: string, process : str
 	});
 	if (!(channel.AdminIDs.some((element) => element === userID)))
 	{
-		console.log("You are not Channel Admin !");
-		return "Err: You are not Channel Admin!";
+		throw "Err: You are not Channel Admin!";
 	}
-	const targetUser = await channel.Users.find((element) => element.nick == destUser)
+	const targetUser = await channel.Users.find((element) => element.nick === destUser)
 	if (targetUser !== undefined)
 	{
 		//If i am not channel owner i cant ban this user because he is admin or channelowner but if i am channel owner i can ban.
 		if (((channel.AdminIDs.some((element) => element === targetUser.id)) || (channel.ChannelOwnerID === targetUser.id))
 			&& !(channel.ChannelOwnerID === userID))
-			return "Dest User is Admin or Channel Owner !";
+			throw "Dest User is Admin or Channel Owner !";
 		else if (process === "ban")
 		{
-			const retBan = await this.ban(channel, targetUser);
-			console.log(retBan);
-			return (retBan !== undefined) ? retBan : ("The user has been successfully banned.");
+			return (await this.ban(channel, targetUser));
 		}
 		else if (process === "setadmin")
 		{
-			const retSetAdmin = await this.setAdmin(channel, targetUser);
-			console.log(retSetAdmin);
-			return (retSetAdmin !== undefined) ? retSetAdmin : ("The user has been successfully assigned as admin.");
+			return (await this.setAdmin(channel, targetUser));
 		}
 		else if (process === "kick")
 		{
-			const retKick = await this.kick(channel, targetUser);
-			console.log(retKick);
-			return (retKick !== undefined) ? retKick : ("The user has been successfully kicked.");
+			return (await this.kick(channel, targetUser));
 		}
 		else if (process === "mute")
 		{
-			const retMute = await this.mute(channel, targetUser);
-			return (retMute !== undefined) ? retMute : ("The user has been successfully muted."); //mute&unmute
+			return (await this.mute(channel, targetUser));
 		}
 	}
 	else if (process === "inviteCh")

@@ -97,7 +97,10 @@ export class ChatChannelController {
         @Param('channelName') chname:string)
     {
         const userID: number = parseInt(req.body.toString(), 10);
-        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "setadmin"));
+        try{
+            return res.send({msg: await this.chatChannelService.channelOp(userID, chname, destUser, "setadmin")});
+        }catch(error){
+            return res.status(580).json({error: error}) }
     }
 
     @Get('/kick/:user')
@@ -109,7 +112,12 @@ export class ChatChannelController {
         @Param('channelName') chname: string)
     {
         const userID: number = parseInt(req.body.toString(), 10);
-        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "kick"));
+        try{
+            return res.send({msg: await this.chatChannelService.channelOp(userID, chname, destUser, "kick")});
+        }catch(error){
+            return res.status(580).json({error: error});
+        }
+
     }
 
     @Get('/mute/:user')
@@ -121,7 +129,11 @@ export class ChatChannelController {
         @Param('channelName') chname : string)
     {
         const userID: number = parseInt(req.body.toString(), 10);
-        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "mute"));
+        try{
+            return res.send({msg: await this.chatChannelService.channelOp(userID, chname, destUser, "mute")});
+        }catch(error){
+            return res.status(580).json({error: error});
+        }
     }
 
     @Get('/ban/:user')
@@ -133,7 +145,11 @@ export class ChatChannelController {
         @Param('channelName') chname:string)
     {
         const userID: number = parseInt(req.body.toString(), 10);
-        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "ban"));
+        try{
+            return res.send({msg: await this.chatChannelService.channelOp(userID, chname, destUser, "ban")});
+        }catch(error){
+            return res.status(580).json({error: error});
+        }
     }
 
     @Get('/inviteChannel/:user')

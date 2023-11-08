@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from "react";
-import MessageBox from "../component/MessageBox";
-import InputBox from "../component/InputBox";
 import MainBox from "../component/MainBox";
 import Friends from "../component/Friends";
 import Sidebar from "../component/Sidebar";
 import GroupSidebar from "../component/GroupSidebar";
 import { cookies } from "../App";
-
-import { UseChannelContext } from "../Context/ChannelContext";
-
-
 
 const Chat = ({setCurrentChannel, currentChannel}) =>{
     const [user, setUser] = useState({res: "undefined"});

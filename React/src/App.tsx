@@ -47,17 +47,17 @@ function App() {
   return (
     <BrowserRouter>
     <div className='body'>
-        <Navbar user={user}/>
+        <Navbar user={user} setUser={setUser}/>
         <Routes>
           {
             user.res !== "undefined" && isTFAStatus !== true ?
             (<>
-              <Route path='/*' element = {<Home user={user}/>} />
+              <Route path='/' element = {<Home user={user}/>} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/leaderboard" element={<LeaderBoard />} />
               <Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel}currentChannel={currentChannel} />}/>
             </>) : (<>
-              <Route path='/*' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus}/>}/>
+              <Route path='/' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus}/>}/>
             </>
             )
           }

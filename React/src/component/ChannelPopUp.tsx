@@ -3,9 +3,6 @@ import { cookies } from "../App";
 import ChannelPopUpList  from "./ChannelPopUpList";
 import setting from "../images/setting.png";
 
-import { UseChannelContext } from "../Context/ChannelContext";
-
-
 const ChannelPopUp = ({channel}) =>{
 
 	const [clientList, setClientList] =  useState([]);

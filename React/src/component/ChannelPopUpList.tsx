@@ -26,16 +26,24 @@ const ChannelPopUpList = ({client, channel}) =>{
             setCheckMute(false);
     }
 
-    const muteClick =() =>{
+    const handleClick =(e) =>{
 
             const fetchData = async () =>{
-                const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channel.Name}/mute/${client.nick}`, {
+                const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channel.Name}/${(e.target).id}/${client.nick}`, {
                     headers: { 'authorization': 'Bearer ' + cookies.get("jwt_authorization"), }
                 });
-                const mes: string = await response.text();
-                if (mes.substring(0,3) !== "Err")
+                const res = await response.json();
+                console.log(res);
+                if (!res.error)
                 {
-                    changeMute();
+                    if ((e.target).id === mute)
+                    {
+                        changeMute();
+                    }
+                }
+                else{
+                    console.log(res.error);
+                    alert(res.error);
                 }
             }
             fetchData();
@@ -47,13 +55,13 @@ const ChannelPopUpList = ({client, channel}) =>{
                     <p>{client.nick}</p>
                 </div>
                 <div className="groupOnePersonIcons">
-                    <img className="channelPopUpIcon" src={kick}/>
-                    <img className="channelPopUpIcon" src={ban}/>
-                    <img className="channelPopUpIcon" src={admin}/>
+                    <img onClick={handleClick} className="channelPopUpIcon" src={kick} id="kick" />
+                    <img onClick={handleClick} className="channelPopUpIcon" src={ban} id="ban"/>
+                    <img onClick={handleClick} className="channelPopUpIcon" src={admin} id="setAdmin"/>
                     {checkMute === true ? (
-                        <img onClick={muteClick} className="channelPopUpIcon" src={mute}/>
+                        <img onClick={handleClick} className="channelPopUpIcon" src={mute} id="mute"/>
                         ):(
-                            <img onClick={muteClick} className="channelPopUpIcon" src={unmute}/>
+                            <img onClick={handleClick} className="channelPopUpIcon" src={unmute} id="mute"/>
                     )}
                 </div>
             </div>

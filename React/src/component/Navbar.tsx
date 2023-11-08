@@ -1,17 +1,14 @@
-import React,{ Component, useState } from "react";
-import {Link, Routes, Route, Router, useNavigate} from "react-router-dom";
-import Login from "../pages/Login";
+import React from "react";
+import {Link} from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
-import Profile from "../pages/Profile";
-import LeaderBoard from "../pages/LeaderBoard";
 import { cookies } from "../App";
 
 
-const Navbar = ({user}) => {
+const Navbar = ({user, setUser}) => {
     const HandleDisconnection = () => {
-        console.log("Merva")
         cookies.remove("jwt_authorization");
         cookies.remove("TFAStatus");
+        setUser({res: "undefined"})
     }
     return (
         <div className="navbar">
