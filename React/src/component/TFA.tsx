@@ -41,7 +41,7 @@ const TFA = ({qr, setIsTFA, setIsTFAPopUp}/* {closeTFA} */) =>{
                     <img src={qr} alt="QR" />
                 </div>
                 <div >
-                    <input value={value} onChange={HandleChange} className="tfa-input" type="number"  maxLength={6}/>
+                    <input value={value} onChange={HandleChange} className="tfa-input"  inputMode="numeric"  maxLength={6}/>
                 </div>
                 <div>
                     <button onClick={click}  className="tfa-button" type="submit">Gonder</button>

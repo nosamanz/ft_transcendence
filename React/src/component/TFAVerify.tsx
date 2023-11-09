@@ -32,7 +32,7 @@ const TFAVerify = ({setIsTFAStatus, setUser}) =>{
 				<h1 className="tfa-h1"> TFA </h1>
 				<p className="tfa-p">6 haneli kodu giriniz...</p>
                 <div >
-                    <input value={value} onChange={HandleChange} className="tfa-input" type="number"  maxLength={6}/>
+                    <input value={value} onChange={HandleChange} className="tfa-input" inputMode="numeric"  maxLength={6}/>
                 </div>
                 <div>
                     <button onClick={click}  className="tfa-button" type="submit">Gonder</button>

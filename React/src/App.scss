@@ -334,6 +334,54 @@
 	justify-content: center;
 	align-items: center;
 }
+.profileBody{
+	height: calc(100vh - 60px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	.profileForm{
+		border-radius: 30px;
+		width: 30vh;
+		height: 35vh;
+		background-color: #F5EFE6;
+		color: #112D4E;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+		.formInput{
+			border: none;
+			width: 70%;
+		
+		}
+		.formImage{
+			width: 42px;
+			height: 42px;
+		}
+		.profileFormHeader{
+			flex: 1;
+			margin-top: 20px;
+		}
+		.profileFormBody{
+			flex: 2;
+		}
+		
+		.profileFormDiv{
+			height: 35px;
+			margin-bottom: 30px;
+			background-color: white;
+		}
+		
+		.profileFormH2{
+			margin-top: 5px;
+			font-weight: 800;
+		}
+	}
+}
+
+
+
 
 .profile{
 	height: calc(100vh - 56px);
@@ -389,12 +437,12 @@
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
-					.addIcon{
+					.settingIcon{
 						padding-right: 15px;
 						cursor: pointer;
-						.addPerson{
-							width: 32px;
-							height: 32px;
+						.setting{
+							width: 42px;
+							height: 42px;
 							user-select: none;
 						}
 					}
@@ -924,21 +972,48 @@
 }
 .channelSetting{
 	position:absolute;
-	display: flex;
 	top: 50%;
 	left: 42%;
 	transform: translate(-50%, -50%);
-	background-color: rgba(133, 133, 133, 0.963);
+	background-color: #6097b4b6;
 	padding: 20px;
 	box-shadow: 2px 4px 1px 1px rgba(0, 0, 0, 0.2);
-	z-index: 1000;
 	display: flex;
 	border-radius: 25px;
-	width: 400px;
-	height: 400px;
+	width: 300px;
+	height: 100%;
 	align-items: center;
 	justify-content: center;
-	z-index: 3;
+	z-index: 2;
+	.channelSettingX{
+		display: flex;
+		direction: rtl;
+		button{
+			height: 24px;
+			width: 24px;
+		}
+	}
+	.channelSettingForm{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		margin: 10px;
+		input{
+			height: 30px;
+			width: 150px;
+			margin-top: 10px;
+		}
+		label{
+			// margin-top: 10px;
+			// margin-bottom: 50px;
+			height: 50px;
+		}
+	}
+	button{
+		align-self: center;
+		height: 50px;
+		width: 100px;
+	}
 }
 .tfa_visible{
 	display: flex;
