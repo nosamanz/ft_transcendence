@@ -220,6 +220,17 @@ export class UserController {
 		if (targetUser.Friends.find((element) => element.OtherUserID === user.id))
 			return res.send({res: -3, message: "The user is already your friend!"})
 
+
+			const user2 = await this.userService.getUserByNick(user.nick, {
+				FriendRequests: true,
+				Friends: true,
+			});
+			user2.FriendRequests.forEach(element => {
+				console.log(element);
+			});
+			if (user2.FriendRequests.find(element => element.UserId === targetUser.id))
+				return res.send({res: -4, message: "The friend invitation has already been sended!"})
+
 		await this.prisma.friendRequest.create({
 			data: {
 				OtherUserID: user.id,
@@ -240,10 +251,9 @@ export class UserController {
 		const user = await this.userService.getUserByID(userID);
 		const friendrequests = await this.prisma.user.findFirst({
 			where: { id : userID },
-			select: { FriendRequests: true }
+			include: { FriendRequests: true }
 		})
-		console.log(friendrequests);
-		return res.send(friendrequests);
+		return res.send(friendrequests.FriendRequests);
 	}
 
 	@Post('form')

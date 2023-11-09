@@ -5,7 +5,7 @@ import find from "../images/find.png";
 
 const FriendsSidebar = () => {
     const [friendLists, setFriendLists] = useState([{}]);
-    const [find, setFind] = useState<string>();
+    const [finds, setFinds] = useState<string>();
 
     useEffect(() => {
         const fetchData = async () =>{
@@ -19,19 +19,31 @@ const FriendsSidebar = () => {
             fetchData();
     }, [])
     const change = (e) =>{
-        setFind(e.target.value);
+        setFinds(e.target.value);
     }
     const handleClick = () =>{
         const fetchData = async () =>{
-            const responseMessages = await fetch(`https://${process.env.REACT_APP_IP}:80/findUser/${find}`, {
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/findUser/${finds}`, {
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
-            const deneme = await responseMessages.json();
-            console.log(find, deneme);
+            const deneme = await response.json();
+            console.log(finds, deneme);
         }
+
+        // const fetchData3 = async () =>{
+        //     const response2 = await fetch(`https://${process.env.REACT_APP_IP}:80/user/acceptFriend/oozcan`, {
+        //         headers: {
+        //             'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+        //         }
+        //     })
+        //     const a = await response2.json();
+        //     console.log(finds, a);
+        // }
+
         fetchData();
+        // fetchData3();
     }
 	return(
         <div className="friendContainer">
