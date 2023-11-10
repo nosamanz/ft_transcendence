@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {socket} from "../pages/Home";
+import send from "../images/send.png"
 
 const InputBox = ( {currentChannel} ) =>{
   const dValue = document.getElementById('sendInput') as HTMLInputElement;
@@ -27,7 +28,7 @@ const InputBox = ( {currentChannel} ) =>{
         <div className="messageBoxInput">
           <input className="input" id="sendInput" type="text" onKeyDown={keyDown} onChange={change} placeholder="Type something..."/>
           <div className="send">
-            <button onClick={HandleClick} className="mBBtn">Send</button>
+            <button onClick={HandleClick} className="mBBtn"><img className="sendImage" src={send} alt="s" /></button>
           </div>
         </div>
     )

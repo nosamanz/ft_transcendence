@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { cookies } from "../App";
 import { socket } from "../pages/Home";
@@ -25,13 +25,20 @@ const Messages=({currentChannel, user}) =>{
         if(currentChannel !== ""){
             fetchData();
         }
+       
     },[currentChannel])
-
+    const bottomRef = useRef<HTMLDivElement>(null);
+    useEffect(() =>{
+        if (bottomRef.current) {
+            bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+          }
+    },[messagesReceived])
     return(
         <div className="messages">
             {messagesReceived.map((message, index) => (
                 <Message key={index} message={message} user = {user} />
             ))}
+        <div ref={bottomRef}/>
         </div>
     )
 }

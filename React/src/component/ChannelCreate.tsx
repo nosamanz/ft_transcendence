@@ -38,31 +38,34 @@ const ChannelCreate = ({setPopOpen, channelList, setChannelList}) =>{
 				<div className="channelCreateX">
 					<button onClick={handleClick}>X</button>
 				</div>
-				<div className="channelForm">
-					<div>
-						<div>
-							<label>Kanal İsmi</label>
+				<div className="channelCreateBody">
+					<div className="channelForm">
+						<div className="channelFormLeft">
+							<div className="channelFormLabel">
+								<label>Kanal İsmi</label>
+							</div>
+							<div className="channelFormLabel">
+								<label>Şifre</label>
+							</div>
+							<div className="channelFormLabel">
+								<label>invite only</label>
+							</div>
 						</div>
-						<div>
-							<label>Şifre</label>
-						</div>
-						<div>
-							<label>invite only</label>
+						<div className="channelFormRight">
+							<div>
+								<input type="text" id="channelName" onChange={changeName}/>
+							</div>
+							<div>
+								<input type="password" id="password" onChange={changePass} placeholder="No Password" />
+							</div>
+							<div>
+								<input className="formInviteCheck" id="inviteCheck" type="checkbox" id="invite" onChange={changeInvite}/>
+								<label for="inviteCheck"></label>
+							</div>
 						</div>
 					</div>
-					<div>
-						<div>
-							<input type="text" id="channelName" onChange={changeName}/>
-						</div>
-						<div>
-							<input type="password" id="password" onChange={changePass} placeholder="No Password" />
-						</div>
-						<div>
-							<input type="checkbox" id="invite" onChange={changeInvite}/>
-						</div>
-						</div>
+				<button onClick={send}>Kanalı Oluştur</button>
 				</div>
-					<button onClick={send}>Kanalı Oluştur</button>
 			</div>
 		</div>
 	)
