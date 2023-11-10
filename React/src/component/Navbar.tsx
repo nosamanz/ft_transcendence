@@ -54,21 +54,20 @@ const Navbar = ({user, setUser}) => {
         }
         fetchData();
     }
-    const rejectFriend = () => {
-        // const fetchData = async () =>{
-        //     const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/friendRequests`, {
-        //         headers: {
-        //             'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-        //         }
-        //     })
-        //     const fReq = await response.json();
-        //     console.log(fReq);
-        //     console.log(fReq[0].OtherUserNick);
+    const rejectFriend = (e) => {
+        console.log(e);
+        const fetchData = async () =>{
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/rejectFriend/${e}`, {
+                headers: {
+                    'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+            })
+            const fReq = await response.json();
+            console.log(fReq);
 
-        //     setNotification(fReq);
-        //     // console.log(isNotification.forEach(element => element.OtherUserNick));
-        // }
-        // fetchData();
+            // setNotification(fReq);
+        }
+        fetchData();
     }
 
     return (
@@ -86,7 +85,7 @@ const Navbar = ({user, setUser}) => {
                                     isNotification.map((not, index) =>(
                                         <div className="popUpListLi">
                                             <li  key={index}> {not.OtherUserNick}</li>
-                                            <div> <img src={ok} alt="a" onClick={()=>acceptFriend(not.OtherUserNick)} defaultValue = {not.OtherUserNick}/><img src={ko} alt="b"onClick={rejectFriend}/></div>
+                                            <div> <img src={ok} alt="a" onClick={()=>acceptFriend(not.OtherUserNick)} defaultValue = {not.OtherUserNick}/><img src={ko} alt="b"onClick={() =>rejectFriend(not.OtherUserNick)}/></div>
                                         </div>
 
                                     ))

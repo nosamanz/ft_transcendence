@@ -87,10 +87,18 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 			return this.joinCh(userID, chname);
 		}
 		else{
+			let UserArray = [];
 			if (passwd !== "undefined")
 			{
 				passwd = await bcrypt.hash(passwd, 10);
 			}
+			if (isDirect === true)
+			{
+				let splitted: string[] = chname.split('-');
+				UserArray = splitted.map(str => parseInt(str, 10));
+			}
+			else
+				UserArray.push(userID);
 			const channel = await this.prisma.channel.create({
 				data: {
 					Name: chname,
@@ -99,12 +107,13 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 					AdminIDs: [userID],
 					IsDirect: isDirect,
 					IsInviteOnly: isInviteOnly,
-					Users : { connect: { id : userID } }
+					// Users : { connect: { id : userID } }
+					Users : {
+						connect: UserArray.map(id => ({ id }))
+					}
 				},
 			})
-			console.log(channel.Name);
 			return channel;
-
 		}
 	}catch(error){
 		return "Error while performing channel operation"}
@@ -326,7 +335,7 @@ async channelOp(userID: number, chname: string , destUser: string, process : str
 		users = users.filter( (element) => element.id !== userID)
 		return users;
 	}
-	
+
 	async getChannel(userID: number, chname: string) : Promise<any> {
         const channel = await this.prisma.channel.findFirst({
             where: { Name : chname },

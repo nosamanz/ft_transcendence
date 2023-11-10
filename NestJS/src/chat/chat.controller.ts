@@ -87,13 +87,11 @@ export class ChatChannelController {
 
         messages = messages.filter(
             message => (
-                message.senderID !== channel.MutedIDs.find((element) => element === message.senderID) &&
-                message.senderID !== channel.BannedIDs.find((element) => element === message.senderID)
+                channel.MutedIDs.some((element) => element !== message.senderID) &&
+                channel.BannedIDs.some((element) => element !== message.senderID) &&
+                user.IgnoredUsers.some((element) => element.OtherUserID !== message.senderID)
                     )
                 )
-        const ignored = user.IgnoredUsers.find((element) => element.OtherUserID)
-        if (ignored)
-            messages = messages.filter(element => element.senderID !== ignored.OtherUserID)
         messages.forEach((message) => console.log("Mes Send: "+ message.senderID + "  " + message.message))
         return response.send(messages);
     }
@@ -175,7 +173,6 @@ export class ChatChannelController {
         // return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"));
     }
 
-    // ? invite only
     // IMPORTANT: When we request to this part of the chat fill the :isDirect and :isInviteOnly (do not make request with undefined except for passwd part)
     @Get('/create/:isDirect/:isInviteOnly/:passwd')
     @UseGuards(JwtGuard)

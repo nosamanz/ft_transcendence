@@ -95,17 +95,22 @@ export class UserController {
 		@Res() res: Response,
 		@Param('user') destuser: string)
 		{
+			console.log("IGNORE");
 			const userID: number = parseInt(req.body.toString(), 10);
-			const user = await this.userService.getUserByID(userID);
-			const destUser = await this.userService.getUserByNick(destuser, true);
-			if (user.IgnoredUsers.some((element) => element === destUser.id))
-			// return res.send("")
-			return "The User Already Ignored.";
-			user.IgnoredUsers.push(destUser.id);
-			await this.prisma.user.update({
-			where: { id: user.id },
-			data: { IgnoredUsers: user.IgnoredUsers }
-		})
+			let user = await this.userService.getUserByID(userID);
+			user = await this.userService.getUserByNick(user.nick, {IgnoredUsers: true});
+			const destUser = await this.userService.getUserByNick(destuser);
+			if (user.IgnoredUsers.some((element) => element.OtherUserID === destUser.id))
+			{
+				console.log("The User Already Ignored.");
+				return res.send("The User Already Ignored.");
+			}
+			await this.prisma.ignore.create({
+				data: {
+					OtherUserID: destUser.id,
+					UserId: user.id
+				}
+			})
 	}
 
 	@Get('channels')
@@ -162,7 +167,6 @@ export class UserController {
 		// await this.userService.updateUser({nick: friendName}, user);
 	}
 
-	// has not done
 	@Get('rejectFriend/:friendName')
 	@UseGuards(JwtGuard)
 	async RejectFriend(
@@ -171,10 +175,18 @@ export class UserController {
 		@Param('friendName') friendName: string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
-		const updatedlist = user.FriendRequests.filter((element) => element !== friendName);
-		await this.userService.updateUser({FriendRequests: updatedlist}, user);
+		let user = await this.userService.getUserByID(userID);
+		user = await this.userService.getUserByNick(user.nick, {
+			FriendRequests: true,
+			Friends: true,
+		});
+		const targetUser = await this.userService.getUserByNick(friendName);
 
+		await this.prisma.friendRequest.delete({
+			where: {
+				OtherUserID: targetUser.id
+			}
+		})
 	}
 
 	@Get('friends')
@@ -214,22 +226,18 @@ export class UserController {
 			return res.send({res: -1, message: "User couldn't be found!!"});
 
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
+		let user = await this.userService.getUserByID(userID);
 		if (targetUser.FriendRequests.find((element) => element.OtherUserID === user.id))
 			return res.send({res: -2, message: "The friend invitation has already been sended!"})
 		if (targetUser.Friends.find((element) => element.OtherUserID === user.id))
 			return res.send({res: -3, message: "The user is already your friend!"})
 
-
-			const user2 = await this.userService.getUserByNick(user.nick, {
-				FriendRequests: true,
-				Friends: true,
-			});
-			user2.FriendRequests.forEach(element => {
-				console.log(element);
-			});
-			if (user2.FriendRequests.find(element => element.UserId === targetUser.id))
-				return res.send({res: -4, message: "The friend invitation has already been sended!"})
+		user = await this.userService.getUserByNick(user.nick, {
+			FriendRequests: true,
+			Friends: true,
+		});
+		if (user.FriendRequests.find(element => element.OtherUserID === targetUser.id))
+			return res.send({res: -4, message: "This user has already sent you a friend request"})
 
 		await this.prisma.friendRequest.create({
 			data: {

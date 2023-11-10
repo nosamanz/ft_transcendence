@@ -723,7 +723,7 @@
 									border-bottom: 3px solid #112D4E;
 									font-size: medium;
 								}
-							
+
 							}
 						}
 						button{
@@ -1006,12 +1006,19 @@
 					}
 					.friendOnePerson{
 						padding: 10px;
+						padding-left: 40px;
 						height: 50px;
 						display: flex;
 						align-items: center;
 						justify-content: space-between;
+						color:#9CB4CC;
+						font-size: larger;
+						font-weight: bold;
 						.friendIcons{
 							text-align: right;
+							.friendIcon{
+								cursor: pointer;
+							}
 						}
 						img{
 							height: 32px;
@@ -1020,7 +1027,8 @@
 							padding: 2px;
 						}
 					}:hover{
-						background-color: #1a4371;
+						background-color: #9CB4CC;
+						color:#112D4E;
 					}
 			}
 			.sidebarNav{

@@ -32,18 +32,7 @@ const FriendsSidebar = () => {
             console.log(finds, deneme);
         }
 
-        // const fetchData3 = async () =>{
-        //     const response2 = await fetch(`https://${process.env.REACT_APP_IP}:80/user/acceptFriend/oozcan`, {
-        //         headers: {
-        //             'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-        //         }
-        //     })
-        //     const a = await response2.json();
-        //     console.log(finds, a);
-        // }
-
         fetchData();
-        // fetchData3();
     }
 	return(
         <div className="friendContainer">
@@ -54,8 +43,8 @@ const FriendsSidebar = () => {
                 <div className="friendSearchForm">
                      <input className="searchInput" type="text" placeholder="find a user" onChange={change}/><div onClick={handleClick} className="searchButton"><img src={find} alt="find" /></div>
                 </div>
-                {friendLists.map((user, index) => (
-                    <Friend key={index} user={user} />
+                {friendLists.map((friend, index) => (
+                    <Friend key={index} friend={friend} />
                 ))}
             </div>
         </div>
