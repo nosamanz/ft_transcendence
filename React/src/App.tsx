@@ -43,7 +43,7 @@ function App() {
       setUser({...res, res: "user"});
 		}
 		fetchData();
-	}, []);
+	}, [user]);
   return (
     <BrowserRouter>
     <div className='body'>

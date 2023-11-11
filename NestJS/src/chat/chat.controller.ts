@@ -5,7 +5,6 @@ import { UserService } from 'src/user/user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { connectedClients } from './chat.gateway';
 import { ChatChannelService } from './chat-channel.service';
-import { Ignore } from '@prisma/client';
 
 @Controller('chat/:channelName')
 export class ChatChannelController {
@@ -165,12 +164,11 @@ export class ChatChannelController {
     async InviteUserToChannel(
         @Req() req: Request,
         @Res() res: Response,
-        @Param('channelName') chname: string,
-        @Param(':user') destUser: string
+        @Param('user') destUser: string,
+        @Param('channelName') chname: string
     ){
         const userID: number = parseInt(req.body.toString(), 10);
-        console.log(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"))
-        // return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"));
+        return res.send(await this.chatChannelService.channelOp(userID, chname, destUser, "inviteCh"));
     }
 
     // IMPORTANT: When we request to this part of the chat fill the :isDirect and :isInviteOnly (do not make request with undefined except for passwd part)

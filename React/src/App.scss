@@ -471,15 +471,6 @@
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
-					.settingIcon{
-						padding-right: 15px;
-						cursor: pointer;
-						.setting{
-							width: 42px;
-							height: 42px;
-							user-select: none;
-						}
-					}
 					.toogleContainer{
 						text-align: center;
 						display: flex;
@@ -540,6 +531,7 @@
 						margin-bottom: 20px;
 						font-weight: 700;
 						width: 500px;
+
 					}
 				}
 				.rightBlock{
@@ -548,6 +540,23 @@
 					.pRowBlock{
 						margin-bottom: 20px;
 						font-weight: 500;
+						input{
+							background-color: transparent;
+							border: none;
+							border-bottom: 3px solid  #112D4E;
+							outline: none;
+							font-size: medium;
+						}
+						.settingIcon{
+							padding-right: 15px;
+							.setting{
+								width: 24px;
+								height: 24px;
+								user-select: none;
+								cursor: pointer;
+
+							}
+						}
 					}
 				}
 			}
@@ -1005,9 +1014,10 @@
 						text-align: left;
 					}
 					.friendOnePerson{
+						border-bottom: 1px solid gray;
 						padding: 10px;
 						padding-left: 40px;
-						height: 50px;
+						height: 60px;
 						display: flex;
 						align-items: center;
 						justify-content: space-between;
@@ -1026,6 +1036,59 @@
 							margin: 1px;
 							padding: 2px;
 						}
+						.messageInvite{
+							position:fixed;
+							display: flex;
+							top: 50%;
+							left: 42%;
+							transform: translate(-50%, -50%);
+							background-color: #112d4eea;
+							color: #6096B4;
+							padding: 20px;
+							box-shadow: 2px 4px 1px 1px rgba(0, 0, 0, 0.2);
+							border-radius: 25px;
+							width: 300px;
+							height: 300px;
+							align-content: space-around;
+							justify-content: center;
+							z-index: 2;
+							flex-direction: column;
+							.messageInviteX{
+								display: flex;
+								direction: rtl;
+								border-radius: 18px;
+								button{
+									height: 50px;
+									width: 50px;
+									color: #6096B4;
+									background-color: #1a4371;
+									border-radius: 10px;
+									border: 1px solid #112D4E;
+								}
+							}
+							.messageInviteBody{
+								display: flex;
+								// justify-content: center;
+								align-items: center;
+								flex-direction: column;
+								padding: 20px;
+								width: 100%;
+								height: 100%;
+								border-radius: 18px;
+								.messageInviteLabe{
+									padding: 10px;
+									width: 100%;
+									height: 100%;
+								}
+								.messageInviteInput{
+									margin-top: 15px;
+									padding: 5px;
+								}
+								.messageInviteButton{
+									margin-top: 15px;
+									padding: 5px;
+								}
+							}}
 					}:hover{
 						background-color: #9CB4CC;
 						color:#112D4E;

@@ -83,6 +83,7 @@ export class UserController {
 		@Req() req: Request,
 		@Param('nickToChange') nickToChange: string): Promise<{msg: string}>
 	{
+		// try
 		const userID = parseInt(req.body.toString(), 10)
 		return ({msg: await this.userService.changeNick(userID, nickToChange)});
 	}

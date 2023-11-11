@@ -9,6 +9,7 @@ import { cookies } from "../App";
 
 const Friend = ({friend}) =>{
     const nick = useState<string>(friend.OtherUserNick);
+    const [isPopUp, setPopUp] = useState<boolean>(false);
 	const privMsg = () =>
     {
         let myid: number;
@@ -50,9 +51,28 @@ const Friend = ({friend}) =>{
     {
 
     }
-    const msgInvite = () =>
+    const [name, setName] = useState<string>("");
+    const chName = (e) =>{
+        setName(e.target.value);
+    }
+    const popUp = () =>{
+        setPopUp(true);
+    }
+    const chInvite = () =>
     {
+        console.log(name);
+        const fetchData = async () =>{
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${name}/inviteChannel/${friend.OtherUserNick}`, {
+                headers: {
+                    'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+            })
+        }
+        fetchData()
 
+    }
+    const handleXClick = () =>{
+        setPopUp(false);
     }
     return(
             <div className="friendOnePerson">
@@ -63,8 +83,32 @@ const Friend = ({friend}) =>{
                     <img className="friendIcon"onClick={privMsg} src={messageIcon} alt="a"/>
                     <img className="friendIcon"onClick={ignorePerson} src={ignoreIcon} alt="b"/>
                     <img className="friendIcon"onClick={gInvite} src={gameInvite} alt="c"/>
-                    <img className="friendIcon"onClick={msgInvite} src={invite} alt="d"/>
+                    <img className="friendIcon"onClick={popUp} src={invite} alt="d"/>
                 </div>
+                {
+                    isPopUp === true ? (
+                        <div>
+                            <div className="messageInvite">
+                                <div className="messageInviteX">
+                                    <button onClick={handleXClick}>X</button>
+                                </div>
+                                <div className="messageInviteBody">
+                                    <div className="messageInviteLabel">
+                                        <label>Kanal İsmi</label>
+                                    </div>
+                                    <div className="messageInviteInput">
+                                        <input type="text" id="channelName" onChange={chName}></input>
+                                    </div>
+                                    <div className="messageInviteButton">
+                                        <button onClick={chInvite}>Davet Et</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ):
+                    (null)
+                }
+
             </div>
     )
 }

@@ -93,10 +93,10 @@ const Navbar = ({user, setUser}) => {
                                 </div>
                         </div>
                     ):(null)}
-                    <li className="listItem"><Link className="link" to="/profile">Profile</Link></li>
-                    <li className="listItem"><Link className="link" to="/leaderboard">LeaderBoard</Link></li>
-                    <li className="listItem"><Link className="link" to="/chat">Chat</Link></li>
-                    <li className="listItem" onClick={HandleDisconnection}><Link className="link" to="/">Logout</Link></li>
+                    <div><li className="listItem"><Link className="link" to="/profile">Profile</Link></li></div>
+                    <div><li className="listItem"><Link className="link" to="/leaderboard">LeaderBoard</Link></li></div>
+                    <div> <li className="listItem"><Link className="link" to="/chat">Chat</Link></li></div>
+                    <div> <li className="listItem" onClick={HandleDisconnection}><Link className="link" to="/">Logout</Link></li></div>
              </ul>
             ) : (null)}
 

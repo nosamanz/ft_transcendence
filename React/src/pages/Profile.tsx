@@ -1,5 +1,8 @@
 import React, {useEffect, useState} from "react";
 import setting from "../images/setting.png";
+import edit from "../images/edit.png";
+import nickOk from "../images/nickOk.png";
+import x from "../images/close.png";
 import { cookies } from "../App";
 import TFA from "../component/TFA";
 import ToggleSwitch from "../component/ToggleSwitch";
@@ -12,6 +15,7 @@ const Profile = () => {
 	const nick = searchParams.get('nick');
 	const [selectedImage, setSelectesImage] = useState("");
 	const [reader, setReader] = useState<any>();
+	const [newNick, setNewNick] = useState<string>("");
 
 
 	const [user, setUser] = useState({imgBuffer: undefined});
@@ -48,7 +52,7 @@ const Profile = () => {
 			}
 			fetchData();
 		}
-	}, [nick])
+	}, [nick,user])
 
 	const handleToggleChange = async (isChecked: boolean) => {
 		if (isChecked === true)
@@ -71,98 +75,38 @@ const Profile = () => {
 			})
 		setToggleState(isChecked);
 	};
-	const handleClick = () =>{
+
+	const changeName = (e) =>{
 		setSettingPopUp(true);
 	}
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
-		setNick(e.target.value);
-	};
-	const handleImageChange = (e) =>{
-		const selectedFile = e.target.files[0];
-		const fileReader = new FileReader();
-
-		fileReader.onload = (ea: any) => {
-			const dataURL = ea.target.result;
-
-			setSelectesImage(URL.createObjectURL(selectedFile));
-			setReader(dataURL);
-		};
-		fileReader.readAsDataURL(selectedFile);
+	const close = () =>{
+		setSettingPopUp(false);
 	}
-	const handleSubmit = async (e: React.FormEvent) =>{
-		e.preventDefault();
-
-		try {
-			const data = {};
-			data["file"] = reader;
-			data["nick"] = nick;
-			const responseImage = await fetch(`https://${process.env.REACT_APP_IP}:80/user/form`, {
-				method: 'POST',
+	const handleChange =(e:React.ChangeEvent<HTMLInputElement>)=>{
+		setNewNick(e.target.value);
+	}
+	const send = () =>{
+		const fetchData = async () =>{
+			const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/changeNick/${newNick}`, {
 				headers: {
 					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify( data ),
+				}
 			});
-			console.log("response1");
-			const responseImageGet = responseImage.json();
-			console.log("response2");
-			console.log(responseImageGet)
-			if (responseImage.ok){
-				setLoaded(true);
-				const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/sign`, {
-					headers: {
-						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-					}
-				});
-				console.log('Form submitted successfully');
-			}
-			else{
-				console.error('Form submission failed!');
-			}
+			const resUser = await response.json();
+			// if (response.ok)
+				// setUser(resUser);
 		}
-		catch(error){
-			console.error('An error occurred:', error);
-		}
+		fetchData();
+		console.log(newNick);
 		setSettingPopUp(false);
-	};
+	}
 	return(
 		<div className="Profile">
 			{
-				isTFAPopUp === true || isSettingPopUp === true ? 
+				isTFAPopUp === true  ?
 				(
-					<div>
-					{
-					isTFAPopUp === true ?(
-						<div className="tfa_visible">
-							<TFA qr={QR} setIsTFA={setToggleState} setIsTFAPopUp={setIsTFAPopUp} />
-						</div>
-					) : (
-						<div className="profileBody">
-							<div className="profileForm">
-								<div className="profileFormHeader">
-									<h2 className="profileFormH2">Nickname ve Resim Seçin</h2>
-								</div>
-								<div className="profileFormBody">
-									<form>
-										<div className="profileFormDiv">
-											<label>Nickname: </label>
-										<input type="text" name="name" placeholder={user.nick} onChange={handleChange} className="formInput"></input>
-										</div><div className="formDiv">
-											<label></label>
-										<input id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>
-										</div>
-										<div>
-										<h3>Seçilen Resim</h3>
-										<img src= {selectedImage} alt="" className="formImage"></img>
-										</div>
-										<button type="submit" onClick={handleSubmit}>Gönder</button>
-									</form>
-								</div>
-							</div>
-						</div>
-					)
-					}
+					<div className="tfa_visible">
+						<TFA qr={QR} setIsTFA={setToggleState} setIsTFAPopUp={setIsTFAPopUp} />
 					</div>
 				):(
 					<div className="profile">
@@ -171,15 +115,12 @@ const Profile = () => {
 						</div>
 						<div className="profileContainer">
 							<div className="pTopBlock">
-								<img className="pTopBlockImage" src={`data:image/png;base64,${user.imgBuffer}`} alt="pImage"/>
+								<img className="pTopBlockImage" src={`data:image/png;base64,${user.imgBuffer}`} alt="pImage"/><img className="imageSetting" src={edit}/>
 							</div>
 							<div className="pBottomBlock">
 								{nick === null ? (
 									<div className="pIconBlock">
 										<div className="pIconBlockPosition">
-											<div className="settingIcon">
-												<img className="setting" src={setting} alt="a" onClick={handleClick} />
-											</div>
 											<div className="toogleContainer">
 												<ToggleSwitch checked={toggleState} onChange={handleToggleChange} />
 											</div>
@@ -195,7 +136,15 @@ const Profile = () => {
 										<div className="pRowBlock">Lose</div>
 									</div>
 									<div className="rightBlock">
-										<div className="pRowBlock">{user.nick}</div>
+										<div className="pRowBlock" id="changeNameId">
+										{ isSettingPopUp === false?
+											(<label className="settingIcon">{user.nick}
+											{
+												nick === null?(<img onClick={changeName} className="setting" src={edit}/>):(null)
+											}</label>):
+											(<label className="settingIcon"><input type="text" name="name" onChange={handleChange}></input><img onClick={send} src={nickOk} className="setting"/><img onClick={close} src={x} className="setting"/></label>)
+										}
+										</div>
 										<div className="pRowBlock">{user.LatterLevel}</div>
 										<div className="pRowBlock">{user.WinCount}</div>
 										<div className="pRowBlock">{user.LoseCount}</div>
