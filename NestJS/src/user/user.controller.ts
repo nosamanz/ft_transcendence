@@ -160,9 +160,15 @@ export class UserController {
 				UserId: targetUser.id
 			}
 		})
+		const friendReq = await this.prisma.friendRequest.findFirst({
+			where: {
+				OtherUserID: targetUser.id,
+				UserId: userID,
+			}
+		})
 		await this.prisma.friendRequest.delete({
 			where: {
-				OtherUserID: targetUser.id
+				id: friendReq.id
 			}
 		})
 		// await this.userService.updateUser({nick: friendName}, user);
@@ -183,9 +189,15 @@ export class UserController {
 		});
 		const targetUser = await this.userService.getUserByNick(friendName);
 
+		const friendReq = await this.prisma.friendRequest.findFirst({
+			where: {
+				OtherUserID: targetUser.id,
+				UserId: userID,
+			}
+		})
 		await this.prisma.friendRequest.delete({
 			where: {
-				OtherUserID: targetUser.id
+				id: friendReq.id
 			}
 		})
 	}
