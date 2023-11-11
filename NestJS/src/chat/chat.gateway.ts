@@ -1,11 +1,7 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from 'src/user/user.service';
-import { clientInfo } from './entities/clientInfo.entity'
-import { ChatService } from './chat.service';
-
-export let connectedClients: clientInfo[] = [];
-
+import { ChatService, connectedClients } from './chat.service';
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
@@ -17,11 +13,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	) {}
 
 	handleConnection(client: Socket){
-		console.log(`Client connected: ${client.id}`);
 		connectedClients.push({client, id: 0});
 	}
 
-	handleDisconnect(client: Socket): void {
+	async handleDisconnect(client: Socket): Promise<void> {
 		console.log(`Client disconnected: ${client.id}`);
 		const departedClient = connectedClients.find((clientInfo) => clientInfo.client === client);
 		if(!departedClient)
@@ -30,7 +25,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			return;
 		}
 		console.log("The user " + departedClient.id + " has been left!")
-		connectedClients = connectedClients.filter(cli => cli.client.id !== client.id);
+		await this.userService.setUserStatus(departedClient.id, "Offline")
+		this.chatService.removeClient(client.id);
 	}
 
 	@SubscribeMessage('chat')

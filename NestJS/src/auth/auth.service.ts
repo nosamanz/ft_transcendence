@@ -9,6 +9,8 @@ export class AuthService {
 
 	async signin_intra(data: any): Promise<{token: string, result: number} | number> {
 		const UserInfo = await this.getUserFromApi(data);
+		if (UserInfo === undefined)
+			return ({token: "The user could not log in.", result: -1});
 		console.log("Welcome " + UserInfo.login);
 		let user: any;
 		try
@@ -37,6 +39,7 @@ export class AuthService {
 				id:				UserInfo.id,
 				login:			UserInfo.login,
 				nick:			UserInfo.login,
+				Status:			"Offline",
 				IsFormSigned:	false,
 				TFAuth:			false,
 				TFSecret:		"Secret",
@@ -62,7 +65,6 @@ export class AuthService {
 		// defaultuKaydet
 		console.log("Successfully Logged In and Saved in DataBase");
 		return ({token: token, result: 0});
-
 	}
 
 	async getUserFromApi(data: any): Promise<any>{

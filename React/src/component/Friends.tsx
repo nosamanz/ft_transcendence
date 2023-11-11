@@ -2,36 +2,42 @@ import React, { useEffect, useState } from "react";
 import Friend from "./Friend";
 import { cookies } from "../App";
 import find from "../images/find.png";
+import { socket } from "../pages/Home";
 
 const FriendsSidebar = () => {
     const [friendLists, setFriendLists] = useState([{}]);
     const [finds, setFinds] = useState<string>();
+    const [status, setStatus] = useState<number>(0);
 
+    socket.on("Friend Status", () => {
+        console.log("Status değişti");
+        setStatus(status + 1);
+    })
     useEffect(() => {
         const fetchData = async () =>{
-                const responseMessages = await fetch(`https://${process.env.REACT_APP_IP}:80/user/friends`, {
-                    headers: {
-                        'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-                    }
-                })
-                setFriendLists(await responseMessages.json())
-            }
-            fetchData();
-    }, [])
-    const change = (e) =>{
-        setFinds(e.target.value);
-    }
-    const handleClick = () =>{
-        const fetchData = async () =>{
-            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/findUser/${finds}`, {
+            console.log("İstek");
+            const responseMessages = await fetch(`https://${process.env.REACT_APP_IP}:80/user/friends`, {
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
-            const deneme = await response.json();
-            console.log(finds, deneme);
+            setFriendLists(await responseMessages.json())
         }
+        fetchData();
+    }, [status])
 
+    const change = (e) =>{
+        setFinds(e.target.value);
+    }
+
+    const handleClick = () =>{
+        const fetchData = async () =>{
+            await fetch(`https://${process.env.REACT_APP_IP}:80/user/findUser/${finds}`, {
+                headers: {
+                    'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+            })
+        }
         fetchData();
     }
 	return(

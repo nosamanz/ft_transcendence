@@ -1,23 +1,18 @@
 import React, {useEffect, useState} from "react";
-import setting from "../images/setting.png";
 import edit from "../images/edit.png";
 import nickOk from "../images/nickOk.png";
 import x from "../images/close.png";
 import { cookies } from "../App";
 import TFA from "../component/TFA";
 import ToggleSwitch from "../component/ToggleSwitch";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Profile = () => {
 
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const nick = searchParams.get('nick');
-	const [selectedImage, setSelectesImage] = useState("");
-	const [reader, setReader] = useState<any>();
 	const [newNick, setNewNick] = useState<string>("");
-
-
 	const [user, setUser] = useState({imgBuffer: undefined});
 	const [isTFAPopUp, setIsTFAPopUp] = useState<boolean>(false);
 	const [isSettingPopUp, setSettingPopUp] = useState<boolean>(false);
@@ -52,7 +47,7 @@ const Profile = () => {
 			}
 			fetchData();
 		}
-	}, [nick,user])
+	}, [nick])// [nick,user] was there but there is a risky movement like while(1) infinite loop
 
 	const handleToggleChange = async (isChecked: boolean) => {
 		if (isChecked === true)
@@ -66,6 +61,7 @@ const Profile = () => {
 			const imageUrl = URL.createObjectURL(qrCodeImageData);
 			setQR(imageUrl);
 			setIsTFAPopUp(true);
+			cookies.set("Xcasfhajsd","kjshdfi23qwd");
 		}
 		else
 			await fetch(`https://${process.env.REACT_APP_IP}:80/auth/tfa/disable`, {

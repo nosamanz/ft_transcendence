@@ -1,24 +1,50 @@
 import React, {useState, useEffect} from 'react';
 import './App.scss';
 import Navbar from './component/Navbar';
-import Home from './pages/Home';
+import Home, { socket } from './pages/Home';
 import Login from './pages/Login';
 import {BrowserRouter, Routes, Route, Link, Navigate} from "react-router-dom";
 import Profile from './pages/Profile';
 import LeaderBoard from './pages/LeaderBoard';
 import Chat from './pages/Chat';
 import Cookies from 'universal-cookie';
+import DeafaultPage from './pages/DeafaultPage';
 
 
 export const cookies = new Cookies();
 
 function App() {
-
 	const [currentChannel, setCurrentChannel] = useState("");
   const [user, setUser] = useState({res: "undefined"});
 	const [isTFAStatus, setIsTFAStatus] = useState(false);
+	const [maxSocket, setMaxSocket] = useState(false);
+
   useEffect(() => {
 		const fetchData = async () => {
+      socket.on("connect", async () => {
+        const token = cookies.get("jwt_authorization");
+        if (token !== undefined){
+          const responseIsConnected = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/isConnected`, {
+          headers: {
+            'authorization': 'Bearer ' + token,
+          },
+          });
+          const IsConnected = await responseIsConnected.json();
+          if (IsConnected.res === 1)
+          {
+          console.log("Home")
+          alert(IsConnected.msg);
+          setMaxSocket(true);
+          return;
+          }
+          await fetch(`https://${process.env.REACT_APP_IP}:80/chat/connect`, {
+          headers: {
+            'socket-id': socket.id,
+            'authorization': 'Bearer ' + token,
+          },
+          });
+        }
+      });
       if ( cookies.get("jwt_authorization") === "undefined")
       {
         setUser({res: "undefined"});
@@ -30,10 +56,10 @@ function App() {
         }
       });
       const res = await responseUser.json();
-      if ( cookies.get("TFAStatus") === "Passed" && res.TFAuth === false)
-        setIsTFAStatus(true);
-      if (res.TFAuth === true)
+      if ( res.TFAuth === false || (res.TFAuth === true && cookies.get("Xcasfhajsd") === "kjshdfi23qwd"))
         setIsTFAStatus(false);
+      else if (res.TFAuth === true)
+        setIsTFAStatus(true);
       if(res === false)
       {
         cookies.remove('jwt_authorization')
@@ -43,7 +69,7 @@ function App() {
       setUser({...res, res: "user"});
 		}
 		fetchData();
-	}, [user]);
+	}, []);
   return (
     <BrowserRouter>
     <div className='body'>
@@ -52,23 +78,18 @@ function App() {
           {
             user.res !== "undefined" && isTFAStatus !== true ?
             (<>
-              <Route path='/' element = {<Home user={user}/>} />
+              <Route path='/' element = {<Home user={user} setMaxSocket={setMaxSocket}/>} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/leaderboard" element={<LeaderBoard />} />
-              <Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel}currentChannel={currentChannel} />}/>
+              <Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel} currentChannel={currentChannel}/>}/>
+              <Route path='/*' element={<DeafaultPage/>}/>
             </>) : (<>
-              <Route path='/' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus}/>}/>
+              <Route path='/' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus} setMaxSocket={setMaxSocket}/>}/>
+              <Route path='/*' element={<DeafaultPage/>}/>
             </>
             )
           }
         </Routes>
-        {/* <Routes>
-        <Route path='/home' element = {<Home setUser={setUser}/>} />
-        <Route path='/login' element={<Login setUser={setUser} />}></Route>
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/leaderboard" element={<LeaderBoard />} />
-        <Route path='chat' element={<Chat/>}/>
-        </Routes> */}
     </div>
     </BrowserRouter>
   );

@@ -3,8 +3,8 @@ import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
-import { connectedClients } from './chat.gateway';
 import { ChatChannelService } from './chat-channel.service';
+import { ChatService, connectedClients } from './chat.service';
 
 @Controller('chat/:channelName')
 export class ChatChannelController {
@@ -228,9 +228,24 @@ export class ChatChannelController {
 
 @Controller('chat')
 export class ChatController {
+    constructor(
+        private chatService: ChatService,
+        private userService: UserService){}
+
+    @Get('isConnected')
+    @UseGuards(JwtGuard)
+    async isBoundSocket(@Req() req: Request, @Res() res: Response): Promise<Response>
+    {
+        const userID: number = parseInt(req.body.toString(), 10);
+        if (this.chatService.getSocketByUserID(userID) === undefined)
+            return (res.send({res: 0, msg: "There is no socket with this ID. It is available to bind!"}));
+        return (res.status(219).json({res: 1, msg: "There is a socket with this ID. It is not available to bind!"}));
+
+    }
+
     @Get('connect')
     @UseGuards(JwtGuard)
-    bindSocket(@Req() req: Request): void
+    async bindSocket(@Req() req: Request): Promise<void>
     {
         const userID: number = parseInt(req.body.toString(), 10);
         const socketID: string = req.headers['socket-id'];
@@ -247,5 +262,6 @@ export class ChatController {
         }
         console.log("UserID: " + userID +" binded with socket " + socketID);
         connectedClients[indexToUpdate].id = userID;
+        await this.userService.setUserStatus(userID, "Online");
     }
 }

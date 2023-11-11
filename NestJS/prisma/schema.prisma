@@ -18,7 +18,7 @@ model Friend {
 
 model FriendRequest {
 	id            Int   @id @default(autoincrement())
-	OtherUserID   Int   @unique
+	OtherUserID   Int
 	OtherUserNick String
 	User          User  @relation(fields: [UserId], references: [id])
 	UserId        Int
@@ -44,6 +44,7 @@ model User {
 	id              Int      @id
 	login           String   @unique
 	nick            String   @unique
+	Status			String
 	IsFormSigned	Boolean
 	TFAuth          Boolean
 	TFSecret        String
@@ -118,4 +119,3 @@ model Message {
 //     ChannelID: 2
 //   }
 // });
-

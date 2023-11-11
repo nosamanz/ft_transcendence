@@ -1,5 +1,4 @@
 import React, {useState, useEffect, Component} from "react";
-// import { cookies } from "../App";
 import io from "socket.io-client";
 import { cookies } from '../App';
 import Game from "../component/Game";
@@ -8,30 +7,16 @@ export const socket = io(`https://${process.env.REACT_APP_IP}:80`, {
 	transports: ['websocket']
 });
 
-socket.on("connect", async () => {
-	const token = cookies.get("jwt_authorization");
-	console.log(token);
-	if (token !== undefined){
-		await fetch(`https://${process.env.REACT_APP_IP}:80/chat/connect`, {
-			headers: {
-				'socket-id': socket.id,
-				'authorization': 'Bearer ' + token,
-			},
-		});
-	}
-	// socket.emit("chat", {channelName: "123", message: "Geldim"})
-	// console.log("RESPONSE-"+response.ok);
-});
-
 socket.on('connect_error', (error) =>{
 	console.log('Bağlantı hatası', error);
 });
 
-const Home = ({user}) =>{
+const Home = ({user, setMaxSocket}) =>{
 	const [loaded, setLoaded] = useState(false);
 	const [reader, setReader] = useState<any>();
 	const [selectedImage, setSelectesImage] = useState("");
 	const [nick, setNick] = useState("");
+
 	useEffect (() => {
 		const fetchData = async () =>{
 			const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/isSigned`, {

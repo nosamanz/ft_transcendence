@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { connectedClients } from './chat.gateway';
+import { clientInfo } from './entities/clientInfo.entity';
+
+export let connectedClients: clientInfo[] = [];
 
 @Injectable()
 export class ChatService {
@@ -83,5 +85,10 @@ export class ChatService {
 		if (clientInfo)
 			return (clientInfo.client);
 		return (undefined);
+	}
+
+	removeClient(clientID: string)
+	{
+		connectedClients = connectedClients.filter(cli => cli.client.id !== clientID);
 	}
 }

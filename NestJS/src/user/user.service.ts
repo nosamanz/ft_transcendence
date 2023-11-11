@@ -2,8 +2,9 @@ import { Injectable, Req } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/jwtconstants';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as fs from 'fs';
 import { AvatarService } from 'src/avatar/avatar.service';
+import { Socket } from 'socket.io';
+import { connectedClients } from 'src/chat/chat.service';
 
 @Injectable()
 export class UserService
@@ -59,6 +60,22 @@ export class UserService
             include: include
         });
         return user;
+    }
+
+    async updateUserByID(userUpdateInformation: any, userID: number): Promise<number> {
+        try
+        {
+            await this.prisma.user.update({
+                where: { id: userID },
+                data: userUpdateInformation,
+            });
+        }
+        catch(error)
+        {
+            console.log("Couldn't be updated!!(" + userUpdateInformation.nick + ")");
+            return -1;
+        }
+        return 0;
     }
 
     async updateUser(userUpdateInformation: any, user: any): Promise<number> {
@@ -139,4 +156,41 @@ export class UserService
         else
             return false;
     }
+
+    async getFriendsSockets(userID: number): Promise<Socket[]>{
+        const user = await this.prisma.user.findFirst({
+            where: {id: userID},
+            select:{ Friends: true, }
+        })
+        const friends = user.Friends;
+        let friendsSockets: Socket[] = [];
+        if ( friends !== undefined ){
+            friends.forEach((element) => {
+                const friendSocket = this.getSocketByUserID(element.OtherUserID)
+                if(friendSocket !== undefined)
+                    friendsSockets.push(friendSocket);
+            });
+        }
+        return friendsSockets;
+    }
+
+    async setUserStatus(userID: number, status: string): Promise<void> {
+        console.log("SetUserStatus: ", userID);
+        if (userID === 0)
+            return;
+        await this.updateUserByID({ Status: status }, userID);
+        const friendSockets: Socket[] = await this.getFriendsSockets(userID);
+        friendSockets.forEach((element) => {
+            console.log(element.id);
+            element.emit("Friend Status");
+        })
+    }
+
+    getSocketByUserID(userID: number): Socket | undefined
+	{
+		const clientInfo = connectedClients.find((clientInfo) => clientInfo.id === userID);
+		if (clientInfo)
+			return (clientInfo.client);
+		return (undefined);
+	}
 }
