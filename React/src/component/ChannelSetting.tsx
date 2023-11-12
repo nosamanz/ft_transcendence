@@ -1,28 +1,65 @@
 import React, { useState } from "react";
+import { useAsyncError } from "react-router-dom";
 import { cookies } from "../App";
 
 const ChannelCreate = ({setPopOpen, channelName}) =>{
 	const [inputValue, setInputValue] = useState<string>("");
 	const [pass, setPass] = useState<string>("undefined");
 	const [inv, setInv] = useState<boolean>(false);
+	const [check, setCheck] = useState<boolean>(false);
+	const [Process, setProcess] = useState<string>();
+
+	const changeCheckPass = (e) =>{
+		setCheck(true);
+		setProcess(e.target.id)
+	}
+	const changePass = (e) =>{
+		if (!e.target.value)
+			setPass("undefined");
+		else{
+			setPass(e.target.value);
+		}
+	}
 
 	const send = async () =>{
-		const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${inputValue}/create/false/${inv}/${pass}`, {
-			headers: {
-				'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-                'Content-Type': 'application/json'
+		switch (Process)
+			{
+				case "set":
+					{
+						const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channelName}/setChannelPassword/${pass}`, {
+							headers: {
+								'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+							}
+						})
+						console.log(response.ok);
+						break;
+					}
+					case "change":
+					{
+						const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channelName}/changeChannelPassword/${pass}`, {
+							headers: {
+								'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+							}
+						})
+						console.log(response.ok);
+						break;
+					}
+					case "remove":
+					{
+						const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channelName}/removeChannelPassword`, {
+							headers: {
+							'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+							}
+						})
+						console.log(response.ok);
+						break;
+					}
+				default:
+					console.log(Process);
 			}
-		})
-		const ch = await response.json();
 	}
 	const handleClick = () =>{
 		setPopOpen(false);
-	}
-	const changePass = (e) =>{
-		console.log(e.target.value);
-		setPass(e.target.value);
-		if (!e.target.value)
-			setPass("undefined");
 	}
 	return(
 		<div>
@@ -31,22 +68,33 @@ const ChannelCreate = ({setPopOpen, channelName}) =>{
 					<button onClick={handleClick}>X</button>
 				</div>
 				<div className="channelSettingForm">
-					<div>
+					<div className="settingLeft">
 						<div>
 							<label>Kanal İsmi</label>
+						</div>
+						<div>
+							<label>Select</label>
 						</div>
 						<div>
 							<label>Şifre</label>
 						</div>
 					</div>
-					<div>
+					<div className="settingRight">
 						<div>
 							<label>{channelName}</label>
 						</div>
+						<div className="ticDiv" >
+							<label className="tic" >Set Pass<input type="radio" name="radioGroup" id="set" onChange={changeCheckPass} /></label>
+							<label className="tic">Remove Pass<input type="radio" name="radioGroup" id="remove"  onChange={changeCheckPass}/></label>
+							<label className="tic">Change Pass<input type="radio" name="radioGroup" id="change"  onChange={changeCheckPass}/></label>
+						</div>
 						<div>
-							<input type="password" id="password" onChange={changePass} placeholder="No Password" />
+							{
+								Process !== "remove" ? (<input type="password" id="password" onChange={changePass} placeholder="No Password" />):(null)
+							}
+
 						</div>
-						</div>
+					</div>
 				</div>
 					<button onClick={send}>Şifre Değiştir</button>
 			</div>

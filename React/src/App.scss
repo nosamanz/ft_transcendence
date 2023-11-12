@@ -139,6 +139,7 @@
 			.popUpList{
 				display: flex;
 				width: 100%;
+				flex-direction: column;
 				.popUpListLi{
 					display: flex;
 					width: 100%;
@@ -568,6 +569,19 @@
 						}
 					}
 				}
+			}
+		}
+		.achvBlock{
+			margin-top: 50px;
+			margin-bottom: -100px;
+			img{
+				width: 100px;
+				height:100px;
+				margin: 10px;
+				overflow: hidden;;
+				background-color: #112D4E;
+				border: 10px solid #6096B4;
+				border-radius: 50%;
 			}
 		}
 	}
@@ -1033,6 +1047,26 @@
 						color:#9CB4CC;
 						font-size: larger;
 						font-weight: bold;
+						.friendLink{
+							display: flex;
+							justify-content: center;
+							align-items: center;
+						}
+						.friendStatus{
+							.off{
+								width: 12px;
+								height: 12px;
+								border-radius: 50%;
+								border: 1px solid #aaa;
+								background-color: red;
+							}
+							.on{
+								background-color: green;
+							}
+							.gameIn{
+								background-color: blue;
+							}
+						}
 						.friendIcons{
 							text-align: right;
 							.friendIcon{
@@ -1129,7 +1163,7 @@
 	box-shadow: 2px 4px 1px 1px rgba(0, 0, 0, 0.2);
 	display: flex;
 	border-radius: 25px;
-	width: 300px;
+	width: 400px;
 	height: 100%;
 	align-items: center;
 	justify-content: center;
@@ -1147,16 +1181,36 @@
 		flex-direction: row;
 		align-items: center;
 		margin: 10px;
-		input{
-			height: 30px;
-			width: 150px;
-			margin-top: 10px;
+		.settingLeft{
+			margin-left: 5px;
+			label{
+				// margin-top: 10px;
+				margin-bottom: 50px;
+				height: 50px;
+			}
 		}
-		label{
-			// margin-top: 10px;
-			// margin-bottom: 50px;
-			height: 50px;
+		.settingRight{
+			// display: flex;
+			.ticDiv{
+				display: flex;
+
+				input[type="radio"]{
+					height: 16px;
+					width: 16px;
+				}
+				.tic{
+					font-size: 12px;
+					font-weight: bold;
+				}
+			}
+			input{
+				height: 30px;
+				width: 150px;
+				margin-top: 10px;
+			}
+
 		}
+
 	}
 	button{
 		align-self: center;

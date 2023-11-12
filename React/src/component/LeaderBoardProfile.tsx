@@ -3,6 +3,7 @@ import image from "../images/free-photo1.jpeg";
 import msgImg from "../images/msg.jpg";
 import addPerson from "../images/addPerson.png";
 import msg from "../images/message.png";
+import { Link } from "react-router-dom";
 
 const LeaderBoardProfile = ({index, user}) =>{
 	return(
@@ -13,7 +14,7 @@ const LeaderBoardProfile = ({index, user}) =>{
 					<h3 className="lBH3">{index + 1} .  </h3>
 					<img className="lBImage" src={`data:image/png;base64,${user.imgBuffer}`} alt=""/>
 					<div className="info">
-						<h3 className="lBH3">{user.nick}</h3>
+						<Link className="link" to={`/profile?nick=${user.nick}`}><h3 className="lBH3">{user.nick}</h3></Link>
 						<span className="lBSpan">{user.LatterLevel}</span>
 					</div>
 				</div>

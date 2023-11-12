@@ -16,6 +16,7 @@ const ChannelCreate = ({setPopOpen, channelList, setChannelList}) =>{
 		const ch = await response.json();
 		const UpdateChannel = [...channelList, ch]
 		setChannelList(UpdateChannel);
+		setPopOpen(false);
 	}
 	const handleClick = () =>{
 		setPopOpen(false);
