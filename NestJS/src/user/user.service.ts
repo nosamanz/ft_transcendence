@@ -180,13 +180,11 @@ export class UserService
     }
 
     async setUserStatus(userID: number, status: string): Promise<void> {
-        console.log("SetUserStatus: ", userID);
         if (userID === 0)
             return;
         await this.updateUserByID({ Status: status }, userID);
         const friendSockets: Socket[] = await this.getFriendsSockets(userID);
         friendSockets.forEach((element) => {
-            console.log(element.id);
             element.emit("Friend Status");
         })
     }

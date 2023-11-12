@@ -4,14 +4,16 @@ import notification from "../images/notification.png";
 import ok from "../images/ok.png";
 import ko from "../images/close.png";
 import { cookies } from "../App";
+import { socket } from "../pages/Home";
 
 
-const Navbar = ({user, setUser}) => {
+const Navbar = ({user, setUser, maxSocket}) => {
     const [isPopOpen, setPopOpen] = useState<boolean>(false);
     const [isNotification, setNotification] = useState([]);
     const HandleDisconnection = () => {
         cookies.remove("jwt_authorization");
         cookies.remove("TFAStatus");
+        socket.disconnect();
         setUser({res: "undefined"})
     }
     const handleClick = ()=>{
@@ -73,7 +75,7 @@ const Navbar = ({user, setUser}) => {
     return (
         <div className="navbar">
             <span className="logo"><Link to="/" className="link">TRANSCENDENCE</Link></span>
-            {user.res !== "undefined" ? (
+            {user.res !== "undefined" && maxSocket !== true ? (
                 <ul className="list">
                  <p className="pItem">{user.login}</p>
                      {/* <img src="" alt="img" className="avatar"></img> */}

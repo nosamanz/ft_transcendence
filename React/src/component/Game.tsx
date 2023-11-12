@@ -3,7 +3,8 @@ import io from "socket.io-client";
 import Canvas from './Canvas';
 import L42 from '../images/42icon.png';
 
-let rivalID: string = "";
+let rivalSocketID: string = "";
+let rivalID: number;
 
 export let socketGame = io(`https://${process.env.REACT_APP_IP}:80`, {
     transports: ['websocket']
@@ -16,7 +17,8 @@ const Game = ({user}) => {
     const [roomID, roomIDSet] = useState<string>("");
 
     socketGame.on("openGame", (data) => {
-        rivalID = data.rival;
+        rivalID = data.rivalId;
+        rivalSocketID = data.rival;
         roomIDSet(data.roomID);
         rivalSocketSet(data.rival);
         locationSet(data.myLocation);
@@ -25,7 +27,7 @@ const Game = ({user}) => {
 
     const handleKeyDown = (e: any) => {
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-            socketGame.emit('movePaddle', {rivalID: rivalID, direction: e.key, location: location, roomID: roomID});
+            socketGame.emit('movePaddle', {rivalID: rivalSocketID, direction: e.key, location: location, roomID: roomID});
         }
     };
 
@@ -41,7 +43,7 @@ const Game = ({user}) => {
         socketGame = io(`https://${process.env.REACT_APP_IP}:80`, {
             transports: ['websocket']
         });
-        socketGame.emit('joinChannel');
+        socketGame.emit('joinChannel', {id: user.id});
         setState(1);
         console.log("Girdim " + socketGame.id)
     }
@@ -62,7 +64,7 @@ const Game = ({user}) => {
             :
             (
                 <div>
-                    <Canvas rivalSocket={rivalSocket} location={location} user={user}/>
+                    <Canvas rivalSocket={rivalSocket} location={location} user={user} rivalID={rivalID}/>
                 </div>
             )
         }

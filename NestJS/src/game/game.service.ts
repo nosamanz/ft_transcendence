@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { ChatService } from 'src/chat/chat.service';
+import { clientInfo } from 'src/chat/entities/clientInfo.entity';
 import { connectedGameSockets } from 'src/game/game.gateway';
 import { UserService } from 'src/user/user.service';
 
@@ -16,7 +17,7 @@ export class GameService {
 
     async leaveRoom(server: Server, client: Socket): Promise<number>
     {
-        const userID = this.chatService.getUserBySocket(client);
+        const userID = this.getUserBySocket(client);
         await this.userService.setUserStatus(userID, "Online");
         const adapter = server.of('/').adapter;
         let rooms: Map<string, string[]> = new Map()
@@ -34,7 +35,8 @@ export class GameService {
             if(value[0] === "1")
             {
                 // value[1] won game because his rival disconnected
-                let socket: Socket = connectedGameSockets.find(element => element.id === value[1]);
+                const clientInf: clientInfo = connectedGameSockets.find(element => element.client.id === value[1]);
+                const socket: Socket = clientInf.client
                 if (socket)
                 {
                     socket.emit("scoreUpdate", "rivalDisconnected");
@@ -46,15 +48,15 @@ export class GameService {
     }
 
     async createRoom(server: Server, roomId: string, socket1: Socket, socket2: Socket) {
-        const user1ID = this.chatService.getUserBySocket(socket1);
-        const user2ID = this.chatService.getUserBySocket(socket2);
+        const user1ID = this.getUserBySocket(socket1);
+        const user2ID = this.getUserBySocket(socket2);
         await this.userService.setUserStatus(user1ID, "In-Game");
         await this.userService.setUserStatus(user2ID, "In-Game");
         roomStates.set(roomId, { leftPaddleY: 245, rightPaddleY: 245, ballX: 395, ballY: 295, speedX: 5, speedY: 5 });
         socket1.join(roomId);
         socket2.join(roomId);
-        socket1.emit('openGame', {rival: socket2.id, myLocation: "left", roomID: roomId});
-        socket2.emit('openGame', {rival: socket1.id, myLocation: "right", roomID: roomId});
+        socket1.emit('openGame', {rival: socket2.id, myLocation: "left", roomID: roomId, rivalId: user2ID});
+        socket2.emit('openGame', {rival: socket1.id, myLocation: "right", roomID: roomId, rivalId: user1ID});
         this.startGameLoop(server, roomId);
     }
 
@@ -219,6 +221,14 @@ export class GameService {
 		else if(location === "right")
 			res = 1;
 		return res;
+	}
+    
+    getUserBySocket(client: Socket): number
+	{
+		const clientInfo = connectedGameSockets.find((clientInfo) => clientInfo.client === client);
+		if (clientInfo)
+			return (clientInfo.id);
+		return (undefined);
 	}
     //private speed: number = 0;
     //private acceleration: number = 0.5;

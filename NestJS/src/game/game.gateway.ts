@@ -1,9 +1,10 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { clientInfo } from 'src/chat/entities/clientInfo.entity';
 import { GameService } from 'src/game/game.service';
 
 export let queue: Socket[] = [];
-export let connectedGameSockets: Socket[] = [];
+export let connectedGameSockets: clientInfo[] = [];
 let nextRoomID: number = 1;
 
 @WebSocketGateway()
@@ -13,17 +14,16 @@ export class GameGateway {
 	server: Server;
 
 	handleDisconnect(client: Socket): void {
-		console.log("Game Disconnection(TO check if game disconnects before chat for setting Status)");
-		queue = queue.filter(cli => cli.id !== client.id);
-		connectedGameSockets = connectedGameSockets.filter(cli => cli.id !== client.id);
 		this.gameService.leaveRoom(this.server, client);
+		queue = queue.filter(cli => cli.id !== client.id);
+		connectedGameSockets = connectedGameSockets.filter(cli => cli.client.id !== client.id);
 	}
 
 	@SubscribeMessage('joinChannel')
-	handleJoinChannel(client: Socket) {
+	handleJoinChannel(client: Socket, data: {id: number}) {
 		if (!queue.includes(client)) {
 			queue.push(client);
-			connectedGameSockets.push(client);
+			connectedGameSockets.push({id: data.id, client: client});
 			console.log(`Client ${client.id} joined the queue.`);
 		}
 

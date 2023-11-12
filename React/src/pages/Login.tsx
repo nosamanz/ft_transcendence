@@ -50,6 +50,7 @@ export const Login = ({setUser, isTFAStatus, setIsTFAStatus,setMaxSocket}) => {
 					setMaxSocket(true);
 					return;
 				}
+				setMaxSocket(false);
 				await fetch(`https://${process.env.REACT_APP_IP}:80/chat/connect`, {
 					headers: {
 						'socket-id': socket.id,

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { socketGame } from './Game';
 
-const Canvas = ({ rivalSocket, location, user }: { rivalSocket: string, location: string, user: any}) => {
+const Canvas = ({ rivalSocket, location, user, rivalID }: { rivalSocket: string, location: string, user: any, rivalID: number}) => {
 	const canvasRef1 = useRef<HTMLCanvasElement | null>(null);
 	const canvasRef2 = useRef<HTMLCanvasElement | null>(null);
 	const speed = 15;
@@ -85,7 +85,7 @@ const Canvas = ({ rivalSocket, location, user }: { rivalSocket: string, location
 				if ( location === "left")
 				{
 					ctx1.fillText(user.nick, 20, 35);
-					ctx1.fillText(rivalSocket, 615, 30);
+					ctx1.fillText(rivalID, 615, 30);
 					ctx1.font = '50px cursive';
 					ctx1.fillStyle = 'white';
 					ctx1.fillText(myScore, 340, 42);
@@ -94,7 +94,7 @@ const Canvas = ({ rivalSocket, location, user }: { rivalSocket: string, location
 				else
 				{
 					ctx1.fillText(user.nick, 615, 30);
-					ctx1.fillText(rivalSocket, 10, 30);
+					ctx1.fillText(rivalID, 10, 30);
 					ctx1.font = '50px cursive';
 					ctx1.fillStyle = 'white';
 					ctx1.fillText(myScore, 420, 37);
