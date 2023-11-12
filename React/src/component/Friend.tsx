@@ -7,7 +7,7 @@ import Profile from "../pages/Profile"
 import { Link } from "react-router-dom";
 import { cookies } from "../App";
 
-const Friend = ({friend}) =>{
+const Friend = ({friend, status, setStatus}) =>{
     const [isPopUp, setPopUp] = useState<boolean>(false);
 	const privMsg = () =>
     {
@@ -35,7 +35,7 @@ const Friend = ({friend}) =>{
         }
         fetchMe();
     }
-    const ignorePerson = () =>
+    const ignorePerson = async () =>
     {
         const fetchData = async () =>{
             const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/ignoreUser/${friend.nick}`, {
@@ -43,8 +43,10 @@ const Friend = ({friend}) =>{
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
+            if(response.ok)
+                setStatus(++status);
         }
-        fetchData()
+        fetchData();
     }
     const gInvite = () =>
     {
@@ -76,7 +78,7 @@ const Friend = ({friend}) =>{
     return(
             <div className="friendOnePerson">
                 <div>
-                    <Link className="link" to={`/profile?nick=${friend.nick}`} ><span>{friend.nick}</span></Link>
+                    <Link className="link" to={`/profile?nick=${friend.nick}`} ><span>{friend.nick}{friend.Status}</span></Link>
                 </div>
                 <div className="friendIcons">
                     <img className="friendIcon"onClick={privMsg} src={messageIcon} alt="a"/>

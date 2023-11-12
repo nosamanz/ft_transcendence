@@ -124,23 +124,27 @@ export class UserController {
 		@Req() req: Request,
 		@Res() res: Response,
 		@Param('user') destuser: string)
-		{
-			console.log("IGNORE");
-			const userID: number = parseInt(req.body.toString(), 10);
-			let user = await this.userService.getUserByID(userID);
-			user = await this.userService.getUserByNick(user.nick, {IgnoredUsers: true});
-			const destUser = await this.userService.getUserByNick(destuser);
-			if (user.IgnoredUsers.some((element) => element.OtherUserID === destUser.id))
-			{
-				console.log("The User Already Ignored.");
-				return res.send("The User Already Ignored.");
+	{
+		console.log("IGNORE");
+		const userID: number = parseInt(req.body.toString(), 10);
+		let user = await this.userService.getUserByID(userID);
+		user = await this.userService.getUserByNick(user.nick, {IgnoredUsers: true});
+		const destUser = await this.userService.getUserByNick(destuser);
+		await this.prisma.ignore.create({
+			data: {
+				OtherUserID: destUser.id,
+				UserId: user.id
 			}
-			await this.prisma.ignore.create({
-				data: {
-					OtherUserID: destUser.id,
-					UserId: user.id
-				}
-			})
+		})
+		await this.prisma.friend.deleteMany({
+			where: {
+				AND: [
+					{ Users: { some: { id: userID } } },
+					{ Users: { some: { id: destUser.id } } },
+				],
+			},
+		});
+		return res.send('The user has been ignored.');
 	}
 
 	@Get('channels')
@@ -256,15 +260,19 @@ export class UserController {
 					Users: true,
 				}
 			},
-			Friends: true,
+			Friends: {
+				include: {
+					Users: true,
+				}
+			},
 		});
 		if (!targetUser)
 			return res.send({res: -1, message: "User couldn't be found!!"});
 
 		const userID: number = parseInt(req.body.toString(), 10);
-		if (targetUser.FriendRequests.some((element) => element.Users.some((e) => { e.id === userID })))
+		if (targetUser.FriendRequests !== undefined && targetUser.FriendRequests.some((element) => element.Users.some((e) => e.id === userID)))
 			return res.send({res: -2, message: "The friend invitation has already been sended!"})
-		if (targetUser.Friends.some((element) => element.Users.some((e) => { e.id === userID })))
+		if (targetUser.Friends !== undefined && targetUser.Friends.some((element) => element.Users.some((e) => e.id === userID)))
 			return res.send({res: -3, message: "The user is already your friend!"})
 		await this.prisma.friendRequest.create({
 			data: {
