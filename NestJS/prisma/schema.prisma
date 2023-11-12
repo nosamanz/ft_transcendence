@@ -10,18 +10,12 @@ datasource db {
 
 model Friend {
 	id            Int   @id @default(autoincrement())
-	OtherUserID   Int   @unique
-	OtherUserNick String
-	User          User  @relation(fields: [UserId], references: [id])
-	UserId        Int
+	Users         User[]
 }
 
 model FriendRequest {
 	id            Int   @id @default(autoincrement())
-	OtherUserID   Int
-	OtherUserNick String
-	User          User  @relation(fields: [UserId], references: [id])
-	UserId        Int
+	Users         User[]
 }
 
 model Ignore {

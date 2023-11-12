@@ -5,7 +5,7 @@ import find from "../images/find.png";
 import { socket } from "../pages/Home";
 
 const FriendsSidebar = () => {
-    const [friendLists, setFriendLists] = useState([{}]);
+    const [friendLists, setFriendLists] = useState<{}[]>([]);
     const [finds, setFinds] = useState<string>();
     const [status, setStatus] = useState<number>(0);
 
@@ -16,12 +16,12 @@ const FriendsSidebar = () => {
     useEffect(() => {
         const fetchData = async () =>{
             console.log("İstek");
-            const responseMessages = await fetch(`https://${process.env.REACT_APP_IP}:80/user/friends`, {
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/friends`, {///
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
-            setFriendLists(await responseMessages.json())
+            setFriendLists(await response.json())
         }
         fetchData();
     }, [status])
@@ -32,11 +32,13 @@ const FriendsSidebar = () => {
 
     const handleClick = () =>{
         const fetchData = async () =>{
-            await fetch(`https://${process.env.REACT_APP_IP}:80/user/findUser/${finds}`, {
+            const response: any = await fetch(`https://${process.env.REACT_APP_IP}:80/user/findUser/${finds}`, {///
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
+            const res = response.jsson();
+            alert(res.message);
         }
         fetchData();
     }

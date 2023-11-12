@@ -75,7 +75,7 @@ const Navbar = ({user, setUser}) => {
             <span className="logo"><Link to="/" className="link">TRANSCENDENCE</Link></span>
             {user.res !== "undefined" ? (
                 <ul className="list">
-                 <p className="pItem">{user.nick}</p>
+                 <p className="pItem">{user.login}</p>
                      {/* <img src="" alt="img" className="avatar"></img> */}
                     <span className="iconItem"  onClick={handleClick}  ><img className="avatar" src={notification} alt="a"/></span>
                     {isPopOpen === true ? (
@@ -84,8 +84,8 @@ const Navbar = ({user, setUser}) => {
                                 {
                                     isNotification.map((not, index) =>(
                                         <div className="popUpListLi">
-                                            <li  key={index}> {not.OtherUserNick}</li>
-                                            <div> <img src={ok} alt="a" onClick={()=>acceptFriend(not.OtherUserNick)} defaultValue = {not.OtherUserNick}/><img src={ko} alt="b"onClick={() =>rejectFriend(not.OtherUserNick)}/></div>
+                                            <li  key={index}> {not.nick}</li>
+                                            <div> <img src={ok} alt="a" onClick={()=>acceptFriend(not.nick)} defaultValue = {not.nick}/><img src={ko} alt="b"onClick={() =>rejectFriend(not.nick)}/></div>
                                         </div>
 
                                     ))

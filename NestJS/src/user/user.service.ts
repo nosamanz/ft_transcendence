@@ -159,17 +159,22 @@ export class UserService
 
     async getFriendsSockets(userID: number): Promise<Socket[]>{
         const user = await this.prisma.user.findFirst({
-            where: {id: userID},
-            select:{ Friends: true, }
+            where: { id: userID },
+            select:{ Friends: {
+                include: { Users: true }
+            }},
         })
         const friends = user.Friends;
         let friendsSockets: Socket[] = [];
         if ( friends !== undefined ){
-            friends.forEach((element) => {
-                const friendSocket = this.getSocketByUserID(element.OtherUserID)
-                if(friendSocket !== undefined)
-                    friendsSockets.push(friendSocket);
-            });
+            friends.forEach((element) => { element.Users.forEach((e) => {
+                if (e.id !== userID)
+                {
+                    const friendSocket = this.getSocketByUserID(e.id)
+                    if(friendSocket !== undefined)
+                        friendsSockets.push(friendSocket);
+                };
+            })});
         }
         return friendsSockets;
     }

@@ -15,20 +15,11 @@ export class UserController {
 		private userService: UserService,
 		private prisma: PrismaService){}
 
-	@Get('profile/:nick')
+	@Get()
 	@UseGuards(JwtGuard)
-	async getOtherProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
-		const user = await this.userService.getUserByNick(nick);
-		return response.send(user);
-	}
-
-	@Get('profile')
-	@UseGuards(JwtGuard)
-	async getUserProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
-		const userID = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
-		const retUser = { ...user, imgBuffer: this.avatarService.OpenImgFromUser(user)};
-		return response.send(retUser);
+	async GetUser(@Req() req: Request): Promise<any>{
+		const userID: number = parseInt(req.body.toString(), 10);
+		return await this.userService.getUserByID(userID);
 	}
 
 	@Get('checkJWT')
@@ -47,21 +38,20 @@ export class UserController {
 		return res.send(user);
 	}
 
-	@Get()
+	@Get('profile')
 	@UseGuards(JwtGuard)
-	async GetUser(@Req() req: Request): Promise<any>{
-		const userID: number = parseInt(req.body.toString(), 10);
-		return await this.userService.getUserByID(userID);
+	async getUserProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
+		const userID = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID);
+		const retUser = { ...user, imgBuffer: this.avatarService.OpenImgFromUser(user)};
+		return response.send(retUser);
 	}
 
-	@Get('sign')
+	@Get('profile/:nick')
 	@UseGuards(JwtGuard)
-	async SignForm(
-		@Req() req: Request,)
-	{
-		const userID = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID)
-		await this.userService.signForm(user);
+	async getOtherProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
+		const user = await this.userService.getUserByNick(nick);
+		return response.send(user);
 	}
 
 	@Get('isSigned')
@@ -76,6 +66,45 @@ export class UserController {
 			return res.send(true);
 		return res.send(false);
 	}
+
+	@Get('sign')
+	@UseGuards(JwtGuard)
+	async SignForm(
+		@Req() req: Request,)
+	{
+		const userID = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID)
+		await this.userService.signForm(user);
+	}
+
+	@Post('form')
+    async uploadAvatar(
+        @Res() res: any,
+        @Body() body: any,
+        @Headers('authorization') JWT: string,
+    ) {
+        //JWT CONTROL
+		let userID: number;
+        try{
+            const token = JWT.replace('Bearer ', '');
+            const decode = this.jwtService.verify(token, jwtConstants);
+            userID = parseInt(decode.sub, 10);
+        }
+        catch(error)
+        {
+			console.log("Incorrect token!!");
+		    return ;
+        }
+		try
+		{
+			const file = body.file;
+			const ret: { nick: string, image: string } = { nick: "", image: "" };
+			ret.nick = await this.userService.changeNick(userID, body.nick);
+			ret.image = await this.avatarService.changeAvatar(file, userID);
+			return res.send(ret);
+		}
+		catch(error){ console.log("Posting form error!") }
+    }
 
 	@Get('changeNick/:nickToChange')
 	@UseGuards(JwtGuard)
@@ -137,44 +166,63 @@ export class UserController {
 		return res.send(channels);
 	}
 
-	@Get('acceptFriend/:friendName')
+	@Get('friends')///
+	@UseGuards(JwtGuard)
+	async GetFriends(
+		@Req() req: Request,
+		@Res() res: Response)
+	{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const user = await this.prisma.user.findFirst({
+			where: { id : userID},
+			select : {
+				id: true,
+				Friends: {
+					include: {
+						Users: true
+					}
+				}
+			}
+		})
+		let friendList: any[] = [];
+		if(user.Friends !== undefined)
+		{
+			user.Friends.forEach((element) => {
+				element.Users.forEach((e) => {
+					if (e.id !== user.id)
+						friendList.push(e);
+				})
+			})
+		}
+		return res.send(friendList);
+	}
+
+	@Get('acceptFriend/:friendName')///
 	@UseGuards(JwtGuard)
 	async AddFriend(
 		@Req() req: Request,
 		@Param('friendName') friendName: string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
 		const targetUser = await this.userService.getUserByNick(friendName);
 		await this.prisma.friend.create({
 			data: {
-				OtherUserID: targetUser.id,
-				OtherUserNick: targetUser.nick,
-				UserId: user.id
+				Users: {
+					connect: [{ id: userID, },{  id: targetUser.id}],
+				}
 			}
 		})
-		await this.prisma.friend.create({
-			data: {
-				OtherUserID: user.id,
-				OtherUserNick: user.nick,
-				UserId: targetUser.id
-			}
-		})
-		const friendReq = await this.prisma.friendRequest.findFirst({
+		await this.prisma.friendRequest.deleteMany({
 			where: {
-				OtherUserID: targetUser.id,
-				UserId: userID,
-			}
-		})
-		await this.prisma.friendRequest.delete({
-			where: {
-				id: friendReq.id
-			}
-		})
-		// await this.userService.updateUser({nick: friendName}, user);
+				AND: [
+					{ Users: { some: { id: userID } } },
+					{ Users: { some: { id: targetUser.id } } },
+				],
+			},
+		});
 	}
 
-	@Get('rejectFriend/:friendName')
+	@Get('rejectFriend/:friendName')///
 	@UseGuards(JwtGuard)
 	async RejectFriend(
 		@Req() req: Request,
@@ -182,48 +230,19 @@ export class UserController {
 		@Param('friendName') friendName: string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		let user = await this.userService.getUserByID(userID);
-		user = await this.userService.getUserByNick(user.nick, {
-			FriendRequests: true,
-			Friends: true,
-		});
 		const targetUser = await this.userService.getUserByNick(friendName);
 
-		const friendReq = await this.prisma.friendRequest.findFirst({
+		await this.prisma.friendRequest.deleteMany({
 			where: {
-				OtherUserID: targetUser.id,
-				UserId: userID,
-			}
-		})
-		await this.prisma.friendRequest.delete({
-			where: {
-				id: friendReq.id
-			}
-		})
+				AND: [
+					{ Users: { some: { id: userID } } },
+					{ Users: { some: { id: targetUser.id } } },
+				],
+			},
+		});
 	}
 
-	@Get('friends')
-	@UseGuards(JwtGuard)
-	async GetFriends(
-		@Req() req: Request,
-		@Res() res: Response)
-	{
-		const userID: number = parseInt(req.body.toString(), 10);
-		const friends = await this.prisma.user.findFirst({
-			where: { id : userID},
-			select : {
-				Friends: {
-					select: {
-						OtherUserID: true,
-						OtherUserNick: true,
-					}
-				},
-			}
-		})
-		return res.send(friends.Friends);
-	}
-
-	@Get('findUser/:user')
+	@Get('findUser/:user')///
 	@UseGuards(JwtGuard)
 	async FindUser(
 		@Req() req: Request,
@@ -232,31 +251,26 @@ export class UserController {
 	{
 		console.log(finduser + " searching...");
 		const targetUser = await this.userService.getUserByNick(finduser, {
-			FriendRequests: true,
+			FriendRequests: {
+				include: {
+					Users: true,
+				}
+			},
 			Friends: true,
 		});
 		if (!targetUser)
 			return res.send({res: -1, message: "User couldn't be found!!"});
 
 		const userID: number = parseInt(req.body.toString(), 10);
-		let user = await this.userService.getUserByID(userID);
-		if (targetUser.FriendRequests.find((element) => element.OtherUserID === user.id))
+		if (targetUser.FriendRequests.some((element) => element.Users.some((e) => { e.id === userID })))
 			return res.send({res: -2, message: "The friend invitation has already been sended!"})
-		if (targetUser.Friends.find((element) => element.OtherUserID === user.id))
+		if (targetUser.Friends.some((element) => element.Users.some((e) => { e.id === userID })))
 			return res.send({res: -3, message: "The user is already your friend!"})
-
-		user = await this.userService.getUserByNick(user.nick, {
-			FriendRequests: true,
-			Friends: true,
-		});
-		if (user.FriendRequests.find(element => element.OtherUserID === targetUser.id))
-			return res.send({res: -4, message: "This user has already sent you a friend request"})
-
 		await this.prisma.friendRequest.create({
 			data: {
-				OtherUserID: user.id,
-				OtherUserNick: user.nick,
-				UserId: targetUser.id,
+				Users: {
+					connect: [{ id: userID, },{  id: targetUser.id}],
+				}
 			}
 		})
 		return res.send({res: 0, message: "The user has been invited as a friend."})
@@ -269,42 +283,27 @@ export class UserController {
 		@Req() req: Request)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
-		const friendrequests = await this.prisma.user.findFirst({
-			where: { id : userID },
-			include: { FriendRequests: true }
+		const user = await this.prisma.user.findFirst({
+			where: { id : userID},
+			select : {
+				id: true,
+				FriendRequests: {
+					include: {
+						Users: true
+					}
+				}
+			}
 		})
-		return res.send(friendrequests.FriendRequests);
-	}
-
-	@Post('form')
-    async uploadAvatar(
-        @Res() res: any,
-        @Body() body: any,
-        @Headers('authorization') JWT: string,
-    ) {
-        //JWT CONTROL
-		let userID: number;
-        try{
-            const token = JWT.replace('Bearer ', '');
-            const decode = this.jwtService.verify(token, jwtConstants);
-            userID = parseInt(decode.sub, 10);
-        }
-        catch(error)
-        {
-			console.log("Incorrect token!!");
-		    return ;
-        }
-		try
+		let friendRequestList: any[] = [];
+		if(user.FriendRequests !== undefined)
 		{
-			const file = body.file;
-			const ret: { nick: string, image: string } = { nick: "", image: "" };
-			ret.nick = await this.userService.changeNick(userID, body.nick);
-			ret.image = await this.avatarService.changeAvatar(file, userID);
-			return res.send(ret);
+			user.FriendRequests.forEach((element) => {
+				element.Users.forEach((e) => {
+					if (e.id !== user.id)
+						friendRequestList.push(e);
+				})
+			})
 		}
-		catch(error){ console.log("Posting form error!") }
-    }
-
-
+		return res.send(friendRequestList);
+	}
 }

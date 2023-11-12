@@ -12,13 +12,8 @@ export class GameGateway {
 	@WebSocketServer()
 	server: Server;
 
-
-	handleConnection(client: Socket){
-	console.log(`Client connected: ${client.id}`);
-	}
-
 	handleDisconnect(client: Socket): void {
-		console.log(`Client disconnected: ${client.id}`);
+		console.log("Game Disconnection(TO check if game disconnects before chat for setting Status)");
 		queue = queue.filter(cli => cli.id !== client.id);
 		connectedGameSockets = connectedGameSockets.filter(cli => cli.id !== client.id);
 		this.gameService.leaveRoom(this.server, client);

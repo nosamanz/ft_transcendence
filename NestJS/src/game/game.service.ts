@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
+import { ChatService } from 'src/chat/chat.service';
 import { connectedGameSockets } from 'src/game/game.gateway';
+import { UserService } from 'src/user/user.service';
 
 let roomStates: Map<string, { leftPaddleY: number, rightPaddleY: number, ballX: number, ballY: number, speedX: number, speedY: number, }> = new Map();
 let speed: number = 10;
@@ -8,8 +10,14 @@ let speed: number = 10;
 
 @Injectable()
 export class GameService {
-    leaveRoom(server: Server, client: Socket): number
+    constructor(
+        private userService: UserService,
+        private chatService: ChatService ){}
+
+    async leaveRoom(server: Server, client: Socket): Promise<number>
     {
+        const userID = this.chatService.getUserBySocket(client);
+        await this.userService.setUserStatus(userID, "Online");
         const adapter = server.of('/').adapter;
         let rooms: Map<string, string[]> = new Map()
 		adapter.sids.forEach((value, key) => {
@@ -37,7 +45,11 @@ export class GameService {
         return;
     }
 
-    createRoom(server: Server, roomId: string, socket1: Socket, socket2: Socket) {
+    async createRoom(server: Server, roomId: string, socket1: Socket, socket2: Socket) {
+        const user1ID = this.chatService.getUserBySocket(socket1);
+        const user2ID = this.chatService.getUserBySocket(socket2);
+        await this.userService.setUserStatus(user1ID, "In-Game");
+        await this.userService.setUserStatus(user2ID, "In-Game");
         roomStates.set(roomId, { leftPaddleY: 245, rightPaddleY: 245, ballX: 395, ballY: 295, speedX: 5, speedY: 5 });
         socket1.join(roomId);
         socket2.join(roomId);

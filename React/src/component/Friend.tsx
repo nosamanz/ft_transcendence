@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { cookies } from "../App";
 
 const Friend = ({friend}) =>{
-    const nick = useState<string>(friend.OtherUserNick);
     const [isPopUp, setPopUp] = useState<boolean>(false);
 	const privMsg = () =>
     {
@@ -22,10 +21,10 @@ const Friend = ({friend}) =>{
             })
             const res = await response.json();
             myid = res.id;
-            if (myid > friend.OtherUserID)
-                chName = friend.OtherUserID + "-" + myid;
+            if (myid > friend.id)
+                chName = friend.id + "-" + myid;
             else
-                chName = myid + "-" + friend.OtherUserID;
+                chName = myid + "-" + friend.id;
 
             const chcreateRes = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${chName}/create/true/false/undefined`, {
                 headers: {
@@ -39,7 +38,7 @@ const Friend = ({friend}) =>{
     const ignorePerson = () =>
     {
         const fetchData = async () =>{
-            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/ignoreUser/${friend.OtherUserNick}`, {
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/ignoreUser/${friend.nick}`, {
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
@@ -62,7 +61,7 @@ const Friend = ({friend}) =>{
     {
         console.log(name);
         const fetchData = async () =>{
-            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${name}/inviteChannel/${friend.OtherUserNick}`, {
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${name}/inviteChannel/${friend.nick}`, {
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
@@ -77,7 +76,7 @@ const Friend = ({friend}) =>{
     return(
             <div className="friendOnePerson">
                 <div>
-                    <Link className="link" to={`/profile?nick=${friend.OtherUserNick}`} ><span>{friend.OtherUserNick}</span></Link>
+                    <Link className="link" to={`/profile?nick=${friend.nick}`} ><span>{friend.nick}</span></Link>
                 </div>
                 <div className="friendIcons">
                     <img className="friendIcon"onClick={privMsg} src={messageIcon} alt="a"/>

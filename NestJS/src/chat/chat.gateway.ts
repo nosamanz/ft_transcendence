@@ -17,7 +17,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	async handleDisconnect(client: Socket): Promise<void> {
-		console.log(`Client disconnected: ${client.id}`);
+		console.log("Chat Disconnection(TO check if game disconnects before chat for setting Status)");
 		const departedClient = connectedClients.find((clientInfo) => clientInfo.client === client);
 		if(!departedClient)
 		{
