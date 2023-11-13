@@ -1,4 +1,4 @@
-import { Controller, Get, Post , Body, Res, UseGuards, Req, Param, Headers} from '@nestjs/common';
+import { Controller, Get, Post , Body, Res, UseGuards, Req, Param, Headers, ParseIntPipe} from '@nestjs/common';
 import { UserService } from './user.service';
 import { Response } from 'express';
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
@@ -52,6 +52,18 @@ export class UserController {
 	async getOtherProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
 		const user = await this.userService.getUserByNick(nick);
 		return response.send(user);
+	}
+
+	@Get('nick/:id')
+	@UseGuards(JwtGuard)
+	async GetUserNick(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('id', new ParseIntPipe()) id: number): Promise<any>{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const me = await this.userService.getUserByID(userID)
+		const rival = await this.userService.getUserByID(id);
+		return res.send({myNick: me.nick, nick: rival.nick});
 	}
 
 	@Get('isSigned')

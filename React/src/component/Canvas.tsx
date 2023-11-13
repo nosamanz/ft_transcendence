@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { socketGame } from './Game';
+import { cookies } from '../App';
 
-const Canvas = ({ rivalSocket, location, user, rivalID }: { rivalSocket: string, location: string, user: any, rivalID: number}) => {
+const Canvas = ({ location, myNick, rival}: { location: string, myNick: string, rival: {nick: string, id: number}}) => {
 	const canvasRef1 = useRef<HTMLCanvasElement | null>(null);
 	const canvasRef2 = useRef<HTMLCanvasElement | null>(null);
 	const speed = 15;
@@ -36,27 +37,39 @@ const Canvas = ({ rivalSocket, location, user, rivalID }: { rivalSocket: string,
 	socketGame.on("scoreUpdate", async (pos) => {
 		if (pos === "rivalDisconnected")
 		{
-			console.log("rival disconnect")
-			disconnectionSet(true)
-			//fetch result 1 - 0
+			await fetch(`https://${process.env.REACT_APP_IP}:80/game/result/${rival.id}/3/0`, {
+				headers: {
+					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+				}
+			})
+			myScoreSet(3);
+			rivalScoreSet(0);
+			disconnectionSet(true);
+			socketGame.disconnect();
 		}
 		else if (location === pos){
 			myScoreSet(myScore + 1)
 			if(myScore + 1 == 10)
 			{
-				//fetch result myScore - rivalScore
+				await fetch(`https://${process.env.REACT_APP_IP}:80/game/result/${rival.id}/${myScore}/${rivalScore}`, {
+					headers: {
+						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+					}
+				})
 				socketGame.disconnect();
 			}
 		}
 		else{
 			rivalScoreSet(rivalScore + 1)
 			if(rivalScore + 1 == 10)
-			{
-				//fetch result myScore - rivalScore
 				socketGame.disconnect();
-			}
 		}
 	});
+
+	const printNick = (ctx: any, nick: string, x: number, y: number): void => {
+		if (nick !== undefined)
+			ctx.fillText(nick.length > 10 ? nick.substring(0, 9) + "." : nick, x, y);
+	}
 
 	useEffect(() => {
 		const canvas1 = canvasRef1.current;
@@ -69,11 +82,11 @@ const Canvas = ({ rivalSocket, location, user, rivalID }: { rivalSocket: string,
 			if(ctx1)
 			{
 				ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
-				ctx1.fillStyle = '#2E1A47';
+				ctx1.fillStyle = 'black';
 				ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
 				ctx1.fillStyle = 'white';
 				ctx1.fillRect(5, 5, canvas1.width- 10, canvas1.height -10);
-				ctx1.fillStyle = '#2E1A47';
+				ctx1.fillStyle = 'black';
 				ctx1.fillRect(10, 10, canvas1.width- 20, canvas1.height -20);
 				ctx1.fillStyle = 'white';
 				ctx1.fillRect(393, 27, 15, 5);
@@ -82,23 +95,20 @@ const Canvas = ({ rivalSocket, location, user, rivalID }: { rivalSocket: string,
 				ctx1.fillStyle = 'white';
 
 
-				if ( location === "left")
-				{
-					ctx1.fillText(user.nick, 20, 35);
-					ctx1.fillText(rivalID, 615, 30);
+				if ( location === "left") {
+					printNick(ctx1, myNick, 20, 35);
+					printNick(ctx1, rival.nick, 675, 30);
 					ctx1.font = '50px cursive';
 					ctx1.fillStyle = 'white';
 					ctx1.fillText(myScore, 340, 42);
 					ctx1.fillText(rivalScore, 420, 42);
-				}
-				else
-				{
-					ctx1.fillText(user.nick, 615, 30);
-					ctx1.fillText(rivalID, 10, 30);
+				} else {
+					printNick(ctx1, myNick, 675, 30);
+					printNick(ctx1, rival.nick, 20, 35);
 					ctx1.font = '50px cursive';
 					ctx1.fillStyle = 'white';
-					ctx1.fillText(myScore, 420, 37);
-					ctx1.fillText(rivalScore, 340, 37);
+					ctx1.fillText(myScore, 420, 42);
+					ctx1.fillText(rivalScore, 340, 42);
 				}
 			}
 			if(ctx2)
@@ -106,13 +116,13 @@ const Canvas = ({ rivalSocket, location, user, rivalID }: { rivalSocket: string,
 				ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
 
 				// back
-				ctx2.fillStyle = '#2E1A47';
+				ctx2.fillStyle = 'black';
 				ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
 
 				ctx2.fillStyle = 'white';
 				ctx2.fillRect(5, 5, canvas2.width - 10, canvas2.height - 10);
 
-				ctx2.fillStyle = '#2E1A47';
+				ctx2.fillStyle = 'black';
                 ctx2.fillRect(10, 10, canvas2.width - 20, canvas2.height - 20);
 
 				ctx2.fillStyle = 'white';
@@ -134,7 +144,7 @@ const Canvas = ({ rivalSocket, location, user, rivalID }: { rivalSocket: string,
 				ctx2.fillRect(gameState.ballX + 1, gameState.ballY + 1, 18, 18);
 		}
 
-	}, [/*rivalSocket, */gameState, myScore, rivalScore, disconnection]);
+	}, [gameState, myScore, rivalScore, disconnection]);
 
 	return (<>
 		<canvas

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import io from "socket.io-client";
 import Canvas from './Canvas';
 import L42 from '../images/42icon.png';
+import { cookies } from "../App";
 
 let rivalSocketID: string = "";
 let rivalID: number;
@@ -12,17 +13,27 @@ export let socketGame = io(`https://${process.env.REACT_APP_IP}:80`, {
 
 const Game = ({user}) => {
     const [state, setState] = useState(0);
-    const [rivalSocket, rivalSocketSet] = useState<string>("");
-    const [location, locationSet] = useState<string>("");
-    const [roomID, roomIDSet] = useState<string>("");
+    const [rivalSocket, setRivalSocket] = useState<string>("");
+    const [rivalNick, setRivalNick] = useState<string>("Başlangic");
+    const [myNick, setMyNick] = useState<string>("Başlangic");
+    const [location, setLocation] = useState<string>("");
+    const [roomID, setRoomID] = useState<string>("");
 
-    socketGame.on("openGame", (data) => {
+    socketGame.on("openGame", async (data) => {
         rivalID = data.rivalId;
         rivalSocketID = data.rival;
-        roomIDSet(data.roomID);
-        rivalSocketSet(data.rival);
-        locationSet(data.myLocation);
+        setRoomID(data.roomID);
+        setRivalSocket(data.rival);
+        setLocation(data.myLocation);
         setState(2);
+        const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/nick/${rivalID}`, {
+            headers: {
+                'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+            }
+        })
+        const res = await response.json();
+        setRivalNick(res.nick);
+        setMyNick(res.myNick);
     });
 
     const handleKeyDown = (e: any) => {
@@ -64,7 +75,7 @@ const Game = ({user}) => {
             :
             (
                 <div>
-                    <Canvas rivalSocket={rivalSocket} location={location} user={user} rivalID={rivalID}/>
+                    <Canvas location={location} myNick={myNick} rival={{nick: rivalNick, id: rivalID}}/>
                 </div>
             )
         }
