@@ -164,17 +164,21 @@ export class UserService
                 include: { Users: true }
             }},
         })
-        const friends = user.Friends;
         let friendsSockets: Socket[] = [];
-        if ( friends !== undefined ){
-            friends.forEach((element) => { element.Users.forEach((e) => {
-                if (e.id !== userID)
-                {
-                    const friendSocket = this.getSocketByUserID(e.id)
-                    if(friendSocket !== undefined)
-                        friendsSockets.push(friendSocket);
-                };
-            })});
+        if (user && user.Friends !== null)
+        {
+            let friends = user.Friends;
+            if (friends !== undefined ){
+                friends.forEach((element) => { element.Users.forEach((e) => {
+                    if (e.id !== userID)
+                    {
+                        const friendSocket = this.getSocketByUserID(e.id)
+                        if(friendSocket !== undefined)
+                            friendsSockets.push(friendSocket);
+                    };
+                })});
+            }
+
         }
         return friendsSockets;
     }
@@ -184,9 +188,12 @@ export class UserService
             return;
         await this.updateUserByID({ Status: status }, userID);
         const friendSockets: Socket[] = await this.getFriendsSockets(userID);
-        friendSockets.forEach((element) => {
-            element.emit("Friend Status");
-        })
+        if (friendSockets)
+        {
+            friendSockets.forEach((element) => {
+                element.emit("Friend Status");
+            })
+        }
     }
 
     getSocketByUserID(userID: number): Socket | undefined
