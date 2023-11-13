@@ -21,7 +21,7 @@ const FriendsSidebar = () => {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
-            setFriendLists(await response.json())
+            setFriendLists(await response.json());
         }
         fetchData();
     }, [status])
@@ -52,7 +52,7 @@ const FriendsSidebar = () => {
                      <input className="searchInput" type="text" placeholder="find a user" onChange={change}/><div onClick={handleClick} className="searchButton"><img src={find} alt="find" /></div>
                 </div>
                 {friendLists.map((friend, index) => (
-                    <Friend key={index} friend={friend} status={status} setStatus={setStatus}/>
+                    <Friend key={index} friend={friend} status setStatus={setStatus}/>
                 ))}
             </div>
         </div>

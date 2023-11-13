@@ -75,17 +75,16 @@ const Friend = ({friend, status, setStatus}) =>{
     const handleXClick = () =>{
         setPopUp(false);
     }
-    console.log("status",friend.status);
+    console.log("status",friend.Status);
     return(
             <div className="friendOnePerson">
                 <div className="friendLink">
                     <Link className="link" to={`/profile?nick=${friend.nick}`} ><span>{friend.nick}</span></Link>
                 </div>
                 <div className="friendStatus">
-                <div className="off" />
-                    {friend.status === "Online" ? (<div className="off" />):(null)}
-                    {friend.status === "Offline" ? (<div className="on" />):(null)}
-                    {friend.status === "In-Game" ? (<div className="gameIn" />):(null)}
+                    {friend.Status === "Online" ? (<div className="on" />):(null)}
+                    {friend.Status === "Offline" ? (<div className="off" />):(null)}
+                    {friend.Status === "In-Game" ? (<div className="gameIn" />):(null)}
                 </div>
                 <div className="friendIcons">
                     <img className="friendIcon"onClick={privMsg} src={messageIcon} alt="a"/>

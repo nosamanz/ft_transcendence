@@ -42,7 +42,6 @@ return(
 				{popChannel.Users.map((client, index) => (
 					<ChannelPopUpList key={index} client={client} channel={popChannel} checkMute={checkMute} setCheckMute={setCheckMute}/>
 				))}
-
 			</div>
 
         </div>

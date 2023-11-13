@@ -27,11 +27,7 @@ const Navbar = ({user, setUser, maxSocket}) => {
                     }
                 })
                 const fReq = await response.json();
-                // console.log(fReq);
-                // console.log(fReq[0].OtherUserNick);
-
                 setNotification(fReq);
-                // console.log(isNotification.forEach(element => element.OtherUserNick));
             }
             fetchData();
         }
@@ -47,12 +43,11 @@ const Navbar = ({user, setUser, maxSocket}) => {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
-            // const fReq = await response.json();
-            // console.log(fReq);
-            // console.log(fReq[0].OtherUserNick);
-
-            // setNotification(fReq);
-            // console.log(isNotification.forEach(element => element.OtherUserNick));
+            if (response.ok) {
+                setNotification(prevNotifications => prevNotifications.filter(not => not.nick !== e));
+            } else {
+                console.error('Failed to accept friend request');
+            }
         }
         fetchData();
     }
@@ -64,10 +59,15 @@ const Navbar = ({user, setUser, maxSocket}) => {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
-            const fReq = await response.json();
-            console.log(fReq);
-
-            // setNotification(fReq);
+            console.log(response.ok);
+            if (response.ok) {
+                // Update local state to remove the rejected friend request
+                console.log("REJECT");
+                setNotification(prevNotifications => prevNotifications.filter(not => not.nick !== e));
+            } else {
+                // Handle error case if needed
+                console.error('Failed to reject friend request');
+            }
         }
         fetchData();
     }
@@ -89,7 +89,6 @@ const Navbar = ({user, setUser, maxSocket}) => {
                                             <li  key={index}> {not.nick}</li>
                                             <div> <img src={ok} alt="a" onClick={()=>acceptFriend(not.nick)} defaultValue = {not.nick}/><img src={ko} alt="b"onClick={() =>rejectFriend(not.nick)}/></div>
                                         </div>
-
                                     ))
                                 }
                                 </div>

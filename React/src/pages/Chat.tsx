@@ -19,7 +19,7 @@ const Chat = ({setCurrentChannel, currentChannel}) =>{
             setUser({...res, res:"user"});
         }
         fetchData();
-    },[]);
+    },[setCurrentChannel]);
     return(
         <div className="chat">
             <div className="chatContainer">

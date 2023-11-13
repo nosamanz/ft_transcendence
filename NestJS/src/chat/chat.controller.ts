@@ -54,6 +54,7 @@ export class ChatChannelController {
         @Req() req: Request,
         @Param('channelName') chname: string)
     {
+        console.log("chname:", chname);
         const userID: number = parseInt(req.body.toString(), 10);
         const include = { IgnoredUsers: true};
         const user = await this.userService.getUserByID(userID, include);
@@ -87,8 +88,8 @@ export class ChatChannelController {
         messages = messages.filter(
             message => (
                 channel.MutedIDs.some((element) => element !== message.senderID) &&
-                channel.BannedIDs.some((element) => element !== message.senderID) &&
-                user.IgnoredUsers.some((element) => element.OtherUserID !== message.senderID)
+                channel.BannedIDs.some((element) => element !== message.senderID)
+                //&& user.IgnoredUsers.find((element) => element.OtherUserID !== message.senderID)
                     )
                 )
         messages.forEach((message) => console.log("Mes Send: "+ message.senderID + "  " + message.message))
@@ -182,6 +183,7 @@ export class ChatChannelController {
         @Param('isInviteOnly', new ParseBoolPipe()) isInviteOnly : boolean,
         @Param('passwd') passwd: string
     ){
+        // if (chname.is)
         const userID: number = parseInt(req.body.toString(), 10);
         const ch =  await this.chatChannelService.createCh(userID, chname, passwd, isDirect, isInviteOnly);
         return res.send(ch);

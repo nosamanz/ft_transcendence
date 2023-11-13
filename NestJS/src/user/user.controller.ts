@@ -230,7 +230,6 @@ export class UserController {
 	@UseGuards(JwtGuard)
 	async RejectFriend(
 		@Req() req: Request,
-		@Res() res: Response,
 		@Param('friendName') friendName: string)
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
@@ -292,7 +291,7 @@ export class UserController {
 	{
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.prisma.user.findFirst({
-			where: { id : userID},
+			where: { id : userID },
 			select : {
 				id: true,
 				FriendRequests: {

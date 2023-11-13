@@ -20,12 +20,13 @@ const Messages=({currentChannel, user}) =>{
                 }
             });
             const Mess:  {message: string, channelName: string, senderNick: string}[] =await responseMessages.json()
+            console.log(Mess);
             setMessagesReceived(Mess);
         }
         if(currentChannel !== ""){
             fetchData();
         }
-       
+
     },[currentChannel])
     const bottomRef = useRef<HTMLDivElement>(null);
     useEffect(() =>{
