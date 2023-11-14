@@ -48,6 +48,10 @@ services:
     volumes:
       - ./ssl:/etc/ssl_volume
       - ./React:/root/React
+    environment:
+      - HTTPS=true
+      - SSL_CRT_FILE=/etc/ssl_volume/domain_crt.pem
+      - SSL_KEY_FILE=/etc/ssl_volume/domain_key.pem
 
 networks:
   network:

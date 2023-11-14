@@ -82,7 +82,7 @@ function App() {
 				(<>
 					<Route path='/*' element = {<Home user={user} setMaxSocket={setMaxSocket}/>} />
 					<Route path="/profile" element={<Profile />} />
-					<Route path="/leaderboard" element={<LeaderBoard />} />
+					<Route path="/leaderboard" element={<LeaderBoard user={user} />} />
 					<Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel} currentChannel={currentChannel}/>}/>
 				</>) : (<>
 					<Route path='/*' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus} setMaxSocket={setMaxSocket}/>}/>

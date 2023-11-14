@@ -32,8 +32,13 @@ export class ChatChannelController {
         @Param('channelName') chname: string
     )
     {
-        const userID: number = parseInt(req.body.toString(), 10);
-        return res.send(await this.chatChannelService.leaveChannel(chname, userID));
+        try{
+            const userID: number = parseInt(req.body.toString(), 10);
+            return res.send(await this.chatChannelService.leaveChannel(chname, userID));
+        }
+        catch(error){
+            return res.status(580).json({error: error});
+        }
     }
 
     @Get('/users')
@@ -54,7 +59,6 @@ export class ChatChannelController {
         @Req() req: Request,
         @Param('channelName') chname: string)
     {
-        console.log("chname:", chname);
         const userID: number = parseInt(req.body.toString(), 10);
         const include = { IgnoredUsers: true};
         const user = await this.userService.getUserByID(userID, include);

@@ -190,7 +190,6 @@ export class UserService
         const friendSockets: Socket[] = await this.getFriendsSockets(userID);
         if (friendSockets)
         {
-            console.log("Friend Status");
             friendSockets.forEach((element) => {
                 element.emit("Friend Status");
             })

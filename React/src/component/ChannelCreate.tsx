@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { cookies } from "../App";
 
-
-
 const ChannelCreate = ({setPopOpen, channelList, setChannelList}) =>{
 	const [inputValue, setInputValue] = useState<string>("");
 	const [pass, setPass] = useState<string>("undefined");
@@ -63,10 +61,10 @@ const ChannelCreate = ({setPopOpen, channelList, setChannelList}) =>{
 					<div className="channelForm">
 						<div className="channelFormLeft">
 							<div className="channelFormLabel">
-								<label>Kanal İsmi</label>
+								<label>Channel Name</label>
 							</div>
 							<div className="channelFormLabel">
-								<label>Şifre</label>
+								<label>Password</label>
 							</div>
 							<div className="channelFormLabel">
 								<label>invite only</label>
@@ -87,7 +85,7 @@ const ChannelCreate = ({setPopOpen, channelList, setChannelList}) =>{
 							</div>
 						</div>
 					</div>
-				<button onClick={send}>Kanalı Oluştur</button>
+				<button onClick={send}>Create/Join Channel</button>
 				</div>
 			</div>
 		</div>

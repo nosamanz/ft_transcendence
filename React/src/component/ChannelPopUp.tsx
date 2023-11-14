@@ -13,7 +13,6 @@ const ChannelPopUp = ({channel}) =>{
 	const channelName = channel.Name;
 
 	useEffect ( () => {
-		console.log("Geldi");
 		const fetchData = async () =>{
 			const responseClients =await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channel.Name}`, {
 				headers: {

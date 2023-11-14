@@ -15,7 +15,6 @@ const FriendsSidebar = () => {
     })
     useEffect(() => {
         const fetchData = async () =>{
-            console.log("İstek");
             const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/friends`, {///
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),

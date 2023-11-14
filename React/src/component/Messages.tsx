@@ -19,12 +19,15 @@ const Messages=({currentChannel, user}) =>{
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             });
-            const Mess:  {message: string, channelName: string, senderNick: string}[] =await responseMessages.json()
-            console.log(Mess);
+            const Mess:  {message: string, channelName: string, senderNick: string}[] = await responseMessages.json()
             setMessagesReceived(Mess);
         }
         if(currentChannel !== ""){
             fetchData();
+        }
+        else{
+            const Mess:  {message: string, channelName: string, senderNick: string}[] = [];
+            setMessagesReceived(Mess);
         }
 
     },[currentChannel])
@@ -35,12 +38,14 @@ const Messages=({currentChannel, user}) =>{
           }
     },[messagesReceived])
     return(
-        <div className="messages">
-            {messagesReceived.map((message, index) => (
-                <Message key={index} message={message} user = {user} />
-            ))}
-        <div ref={bottomRef}/>
-        </div>
+        // messagesReceived.length > 0 ?
+            <div className="messages">
+                {messagesReceived.map((message, index) => (
+                    <Message key={index} message={message} user = {user} />
+                ))}
+            <div ref={bottomRef}/>
+            </div>
+        // : (null)
     )
 }
 // never shall we die

@@ -24,7 +24,7 @@ const GroupChatSearch = ({ channelList, setChannelList, setCurrentChannel }) => 
         <input className="searchInput" type="text" placeholder="find a user" />
       </div> */}
       {channelList.map((channel, index) => (
-        <Channel key={index} channel={channel} setCurrentChannel={setCurrentChannel}/>
+        <Channel key={index} channel={channel} channelList={channelList} setCurrentChannel={setCurrentChannel} setChannelList={setChannelList}/>
       ))}
     </div>
   );

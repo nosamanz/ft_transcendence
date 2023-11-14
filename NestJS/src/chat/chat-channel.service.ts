@@ -60,18 +60,17 @@ async leaveChannel(chname: string, userID: number)
 			data = { AdminIDs: [channel.Users[0].id] , ChannelOwnerID: channel.Users[0].id };
 		else
 		data = { AdminIDs: [channel.Users[0].id] };
-}
-await this.prisma.channel.update({
-	where: { Name: chname },
-	data: data
-})
-}
-}
-catch (error){
-	console.log(error);
-	return "Error while leaving channel";
-}
-
+	}
+	await this.prisma.channel.update({
+		where: { Name: chname },
+		data: data
+		})}
+	}
+	catch (error){
+		console.log(error);
+		return "Error while leaving channel";
+	}
+	return "Successfully leaves";
 }
 
 async createCh(userID, chname, passwd, isDirect, isInviteOnly)
