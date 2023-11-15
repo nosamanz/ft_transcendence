@@ -8,7 +8,6 @@ import Profile from './pages/Profile';
 import LeaderBoard from './pages/LeaderBoard';
 import Chat from './pages/Chat';
 import Cookies from 'universal-cookie';
-import DeafaultPage from './pages/DeafaultPage';
 
 
 export const cookies = new Cookies();
@@ -18,6 +17,7 @@ function App() {
 	const [user, setUser] = useState({res: "undefined"});
 	const [isTFAStatus, setIsTFAStatus] = useState(false);
 	const [maxSocket, setMaxSocket] = useState(true);
+	const [isFormSigned, setIsFormSigned] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -69,23 +69,31 @@ function App() {
 				return;
 			}
 			setUser({...res, res: "user"});
+			const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/isSigned`, {
+				headers: {
+					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+            });
+            const IsSigned = await response.json();
+			if (IsSigned === true)
+				setIsFormSigned(true);
 		}
 		fetchData();
 	}, []);
 	return (
 		<BrowserRouter>
 		<div className='body'>
-			<Navbar user={user} setUser={setUser} maxSocket={maxSocket}/>
+			<Navbar user={user} setUser={setUser} maxSocket={maxSocket} isFormSigned={isFormSigned}/>
 			<Routes>
 			{
-				user.res !== "undefined" && isTFAStatus !== true && maxSocket !== true ?
+				user.res !== "undefined" && maxSocket !== true && isTFAStatus !== true ?
 				(<>
-					<Route path='/*' element = {<Home user={user} setMaxSocket={setMaxSocket}/>} />
+					<Route path='/*' element = {<Home user={user} isFormSigned={isFormSigned} setIsFormSigned={setIsFormSigned}/>} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/leaderboard" element={<LeaderBoard user={user} />} />
 					<Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel} currentChannel={currentChannel}/>}/>
 				</>) : (<>
-					<Route path='/*' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus} setMaxSocket={setMaxSocket}/>}/>
+					<Route path='/*' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus} setMaxSocket={setMaxSocket} setIsFormSigned={setIsFormSigned}/>}/>
 				</>
 				)
 			}

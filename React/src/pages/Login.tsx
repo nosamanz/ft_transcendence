@@ -4,7 +4,7 @@ import { cookies } from '../App';
 import TFAVerify from '../component/TFAVerify';
 import { socket } from './Home';
 
-export const Login = ({setUser, isTFAStatus, setIsTFAStatus,setMaxSocket}) => {
+export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIsFormSigned}) => {
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -71,6 +71,14 @@ export const Login = ({setUser, isTFAStatus, setIsTFAStatus,setMaxSocket}) => {
 				const UserData = await responseUser.json();
 				setUser(UserData);
 			}
+			const resIsSigned = await fetch(`https://${process.env.REACT_APP_IP}:80/user/isSigned`, {
+				headers: {
+					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+			});
+			const IsSigned = await resIsSigned.json();
+			if (IsSigned === true)
+				setIsFormSigned(true);
 		}
 		fetchData();
 	}, []);

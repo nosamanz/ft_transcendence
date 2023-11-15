@@ -6,7 +6,7 @@ import PopUp from "./ChannelPopUp"
 import { cookies } from "../App";
 
 
-const Channel = ({channel, channelList, setCurrentChannel, setChannelList}) =>{
+const Channel = ({channel, channelList, setCurrentChannel, currentChannel, setChannelList}) =>{
 	const HandleClick = async () => {
         setCurrentChannel(channel.Name);
     }
@@ -27,15 +27,16 @@ const Channel = ({channel, channelList, setCurrentChannel, setChannelList}) =>{
     };
     const channelLeave = async () =>{
         const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channel.Name}/leave`, {
-			headers: {
-				'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+            headers: {
+                'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 			}
 		})
         if (response.ok)
         {
-            setCurrentChannel("");
+            if (currentChannel === channel.Name)
+                setCurrentChannel("");
             setChannelList(channelList.filter(element => element.Name !== channel.Name))
-        }else{
+        } else {
             const res = await response.json();
             alert(res.error);
         }

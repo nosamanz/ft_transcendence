@@ -90,7 +90,17 @@ const LeaderBoardProfile = ({index, user, myid}) =>{
 						<Link className="link" to={`/chat`}><img onClick={handleClick} src={msg} alt="" /></Link>
 					</div>
 					</>
-				) : (null)}
+				) : (<>
+					<div className="itemIcon">
+						<span />
+					</div>
+					<div className="itemIcon">
+						<span />
+					</div>
+					<div className="itemIcon">
+						<span />
+					</div>
+					</>)}
 				<div className="item2">
 					<div>
 						<span className="itemSpan">Win</span>

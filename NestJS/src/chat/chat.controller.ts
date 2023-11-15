@@ -63,6 +63,8 @@ export class ChatChannelController {
         const include = { IgnoredUsers: true};
         const user = await this.userService.getUserByID(userID, include);
         //Lets find Channel
+        console.log("Channel: ");
+        console.log(chname);
         const channel = await this.prisma.channel.findFirst({
             where: {
                 Name: chname,
@@ -82,18 +84,16 @@ export class ChatChannelController {
                 MutedIDs: true,
             }
         });
+        console.log("channel: ", !channel);
+        if (channel === null)
+            return response.send({msg: "The channel to see messages is not be founded!"});
         let messages = channel.messages;
 
-        channel.messages.forEach((message) => console.log("Mes: "+ message.senderID + "  " + message.message))
-        channel.BannedIDs.forEach((id) => console.log("Banned: "+ id))
-        channel.MutedIDs.forEach((id) => console.log("Muted: "+ id))
-        user.IgnoredUsers.forEach((element) => console.log("ignored: "+ element.OtherUserID))
-
         messages = messages.filter(
-            message => (
-                channel.MutedIDs.some((element) => element !== message.senderID) &&
-                channel.BannedIDs.some((element) => element !== message.senderID)
-                //&& user.IgnoredUsers.find((element) => element.OtherUserID !== message.senderID)
+            message => !(
+                channel.MutedIDs.some((element) => element === message.senderID) ||
+                channel.BannedIDs.some((element) => element === message.senderID) ||
+                user.IgnoredUsers.some((element) => element.OtherUserID === message.senderID)
                     )
                 )
         messages.forEach((message) => console.log("Mes Send: "+ message.senderID + "  " + message.message))

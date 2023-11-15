@@ -25,7 +25,7 @@ const Chat = ({setCurrentChannel, currentChannel}) =>{
             <div className="chatContainer">
                     <Sidebar setCurrentChannel={setCurrentChannel} />
                     <MainBox currentChannel={currentChannel}  user={user}/>
-                    <GroupSidebar  setCurrentChannel={setCurrentChannel}  />
+                    <GroupSidebar  setCurrentChannel={setCurrentChannel} currentChannel={currentChannel} />
             </div>
             <div className="friends">
                 <Friends />

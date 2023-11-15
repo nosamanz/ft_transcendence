@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { socketGame } from './Game';
 import { cookies } from '../App';
 
-const Canvas = ({ location, myNick, rival}: { location: string, myNick: string, rival: {nick: string, id: number}}) => {
+const Canvas = ({ location, myNick, rival, roomID, setState}: { location: string, myNick: string, rival: {nick: string, id: number}, roomID: string, setState: any}) => {
 	const canvasRef1 = useRef<HTMLCanvasElement | null>(null);
 	const canvasRef2 = useRef<HTMLCanvasElement | null>(null);
 	const speed = 15;
@@ -10,13 +10,12 @@ const Canvas = ({ location, myNick, rival}: { location: string, myNick: string, 
 	const paddleHeight = 80;
 	const leftPaddleX = 30;
 	const rightPaddleX = 800 - 15 - 30;
-	const [disconnection, disconnectionSet] = useState(false);
-	const [myScore, myScoreSet] = useState(0);
-	const [rivalScore, rivalScoreSet] = useState(0);
-	let mySocket: string = socketGame.id;
 	let ctx1: any;
 	let ctx2: any;
-	const [gameState, gameStateSet] = useState<{
+	const [disconnection, setDisconnection] = useState(false);
+	const [myScore, setMyScore] = useState(0);
+	const [rivalScore, setRivalScore] = useState(0);
+	const [gameState, setGameState] = useState<{
 		leftPaddleY: number,
 		rightPaddleY: number,
 		speedX: number,
@@ -31,8 +30,8 @@ const Canvas = ({ location, myNick, rival}: { location: string, myNick: string, 
 			ballY: 295
 		});
 
-	socketGame.on("updateGameState", async (data) => {
-		gameStateSet(data);
+	socketGame.on("updateGameState", (data) => {
+		setGameState(data);
 	});
 	socketGame.on("scoreUpdate", async (pos) => {
 		if (pos === "rivalDisconnected")
@@ -42,13 +41,14 @@ const Canvas = ({ location, myNick, rival}: { location: string, myNick: string, 
 					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 				}
 			})
-			myScoreSet(3);
-			rivalScoreSet(0);
-			disconnectionSet(true);
+			setMyScore(3);
+			setRivalScore(0);
+			setDisconnection(true);
+			socketGame.emit("stopInterval", roomID);
 			socketGame.disconnect();
 		}
 		else if (location === pos){
-			myScoreSet(myScore + 1)
+			setMyScore(myScore + 1)
 			if(myScore + 1 == 10)
 			{
 				await fetch(`https://${process.env.REACT_APP_IP}:80/game/result/${rival.id}/${myScore}/${rivalScore}`, {
@@ -56,11 +56,12 @@ const Canvas = ({ location, myNick, rival}: { location: string, myNick: string, 
 						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 					}
 				})
+				socketGame.emit("stopInterval", roomID);
 				socketGame.disconnect();
 			}
 		}
-		else{
-			rivalScoreSet(rivalScore + 1)
+		else {
+			setRivalScore(rivalScore + 1)
 			if(rivalScore + 1 == 10)
 				socketGame.disconnect();
 		}
@@ -144,7 +145,11 @@ const Canvas = ({ location, myNick, rival}: { location: string, myNick: string, 
 				ctx2.fillRect(gameState.ballX + 1, gameState.ballY + 1, 18, 18);
 		}
 
-	}, [gameState, myScore, rivalScore, disconnection]);
+	}, [gameState, myScore, rivalScore, disconnection, roomID]);
+
+	const handleClick = () =>{
+		setState(0);
+	}
 
 	return (<>
 		<canvas
@@ -170,6 +175,7 @@ const Canvas = ({ location, myNick, rival}: { location: string, myNick: string, 
 			height={600}// Canvas Height
 			style={{ border: '1px solid black' }}
 		></canvas>
+	    <button onClick={handleClick}>X</button>
 	</>);
 
 };

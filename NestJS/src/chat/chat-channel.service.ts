@@ -120,7 +120,7 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 
 	private async setAdmin(channel, targetUser) : Promise<string> {
 		if ((channel.AdminIDs.some((element) => element === targetUser.id)))
-			throw "Dest User is Already Admin!";
+			throw "Target User is Already Admin!";
 		channel.AdminIDs.push(targetUser.id);
 		await this.prisma.channel.update({
 			where: { Name: channel.Name },
@@ -132,7 +132,7 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 	private async ban(channel, targetUser)
 	{
 		if ((channel.BannedIDs.some((element) => element === targetUser.id)))
-			throw "Dest User is Already Banned !";
+			throw "Target User is Already Banned !";
 		channel.BannedIDs.push(targetUser.id);
 		console.log(channel.BannedIDs);
 		await this.prisma.channel.update({
@@ -226,7 +226,7 @@ async channelOp(userID: number, chname: string , destUser: string, process : str
 		//If i am not channel owner i cant ban this user because he is admin or channelowner but if i am channel owner i can ban.
 		if (((channel.AdminIDs.some((element) => element === targetUser.id)) || (channel.ChannelOwnerID === targetUser.id))
 			&& !(channel.ChannelOwnerID === userID))
-			throw "Dest User is Admin or Channel Owner !";
+			throw "Target User is Admin or Channel Owner !";
 		else if (process === "ban")
 		{
 			return (await this.ban(channel, targetUser));

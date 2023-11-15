@@ -22,6 +22,18 @@ export class UserController {
 		return await this.userService.getUserByID(userID);
 	}
 
+	@Get('nick/:id')
+	@UseGuards(JwtGuard)
+	async GetUserNick(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('id', new ParseIntPipe()) id: number): Promise<any>{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const me = await this.userService.getUserByID(userID)
+		const rival = await this.userService.getUserByID(id);
+		return res.send({myNick: me.nick, nick: rival.nick});
+	}
+
 	@Get('checkJWT')
 	async CheckJWT(@Res() res: any, @Headers("authorization") jwt: string): Promise<any>{
 		const token = jwt.replace('Bearer ', '');
@@ -40,7 +52,7 @@ export class UserController {
 
 	@Get('profile')
 	@UseGuards(JwtGuard)
-	async getUserProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
+	async getUserProfile(@Res() response : Response, @Req() req : Request){
 		const userID = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
 		const retUser = { ...user, imgBuffer: this.avatarService.OpenImgFromUser(user)};
@@ -50,20 +62,11 @@ export class UserController {
 	@Get('profile/:nick')
 	@UseGuards(JwtGuard)
 	async getOtherProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
-		const user = await this.userService.getUserByNick(nick);
-		return response.send(user);
-	}
-
-	@Get('nick/:id')
-	@UseGuards(JwtGuard)
-	async GetUserNick(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('id', new ParseIntPipe()) id: number): Promise<any>{
-		const userID: number = parseInt(req.body.toString(), 10);
-		const me = await this.userService.getUserByID(userID)
-		const rival = await this.userService.getUserByID(id);
-		return res.send({myNick: me.nick, nick: rival.nick});
+		let user:any;
+		try { user = await this.userService.getUserByNick(nick); }
+		catch(error) { return response.status(580).json({msg: "The user couldn't be found!"})}
+		const retUser = { ...user, imgBuffer: this.avatarService.OpenImgFromUser(user)};
+		return response.send(retUser);
 	}
 
 	@Get('isSigned')
@@ -90,13 +93,13 @@ export class UserController {
 	}
 
 	@Post('form')
-    async uploadAvatar(
+    async postForm(
         @Res() res: any,
         @Body() body: any,
         @Headers('authorization') JWT: string,
     ) {
         //JWT CONTROL
-		let userID: number;
+        let userID: number;
         try{
             const token = JWT.replace('Bearer ', '');
             const decode = this.jwtService.verify(token, jwtConstants);
@@ -104,35 +107,64 @@ export class UserController {
         }
         catch(error)
         {
-			console.log("Incorrect token!!");
-		    return ;
+            console.log("Incorrect token!!");
+            return ;
         }
-		try
-		{
-			const file = body.file;
-			const ret: { nick: string, image: string } = { nick: "", image: "" };
-			ret.nick = await this.userService.changeNick(userID, body.nick);
-			ret.image = await this.avatarService.changeAvatar(file, userID);
-			return res.send(ret);
-		}
-		catch(error){ console.log("Posting form error!") }
+        try
+        {
+            const file = body.file;
+            const ret: { nick: string, image: string } = { nick: "", image: "" };
+            ret.nick = await this.userService.changeNick(userID, body.nick);
+            ret.image = await this.avatarService.changeAvatar(file, userID);
+            return res.send(ret);
+        }
+        catch(error){
+            return res.status(580).json({error: error});
+        }
+    }
+	
+	@Post('changeAvatar')
+    async changeAvatar(
+        @Res() res: any,
+        @Body() body: any,
+        @Headers('authorization') JWT: string,
+    ) {
+        //JWT CONTROL
+        let userID: number;
+        try{
+            const token = JWT.replace('Bearer ', '');
+            const decode = this.jwtService.verify(token, jwtConstants);
+            userID = parseInt(decode.sub, 10);
+        }
+        catch(error)
+        {
+            console.log("Incorrect token!!");
+            return ;
+        }
+        try
+        {
+            const file = body.file;
+            return res.send({msg: await this.avatarService.changeAvatar(file, userID)});
+        }
+        catch(error){
+            return res.status(580).json({error: error});
+        }
     }
 
-	@Get('changeNick/:nickToChange')
-	@UseGuards(JwtGuard)
-	async ChangeNick(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Param('nickToChange') nickToChange: string): Promise<object>
-	{
-		try{
-			const userID = parseInt(req.body.toString(), 10)
-			return res.send(await this.userService.changeNick(userID, nickToChange));
-		}catch(error) {
-			return res.status(580).json({error: error});
-		}
-	}
-
+    @Get('changeNick/:nickToChange')
+    @UseGuards(JwtGuard)
+    async ChangeNick(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Param('nickToChange') nickToChange: string): Promise<object>
+    {
+        try{
+            const userID = parseInt(req.body.toString(), 10)
+            return res.send({msg: await this.userService.changeNick(userID, nickToChange)});
+        }catch(error) {
+            return res.status(580).json({msg: "Database Error"});
+        }
+    }
 
 	@Get('ignoreUser/:user')
 	@UseGuards(JwtGuard)

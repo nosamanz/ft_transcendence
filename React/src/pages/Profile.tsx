@@ -16,14 +16,16 @@ import ach2 from "../images/ach2.png"
 
 
 ;
+import Form from "../component/Form";
 
 const Profile = () => {
 
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const nick = searchParams.get('nick');
+	const [chgAvatar, setChgAvatar] = useState<boolean>(false);
 	const [newNick, setNewNick] = useState<string>("");
-	const [user, setUser] = useState({imgBuffer: undefined});
+	const [user, setUser] = useState<any>({imgBuffer: undefined});
 	const [isTFAPopUp, setIsTFAPopUp] = useState<boolean>(false);
 	const [isSettingPopUp, setSettingPopUp] = useState<boolean>(false);
 	const [toggleState, setToggleState] = useState<boolean>(false);
@@ -34,14 +36,17 @@ const Profile = () => {
 	useEffect (() =>{
 		if (nick !== null)
 		{
-			const fetchData = async () =>{
+			const fetchData = async () => {
 				const responseUser = await fetch(`https://${process.env.REACT_APP_IP}:80/user/profile/${nick}`, {
 					headers: {
 						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 					}
 				});
 				const resUser = await responseUser.json();
-				setUser(resUser);
+				if (responseUser.ok)
+					setUser(resUser);
+				else
+					alert("The user could not be found!");
 			}
 			fetchData();
 		}
@@ -58,7 +63,7 @@ const Profile = () => {
 			}
 			fetchData();
 		}
-	}, [nick])// [nick,user] was there but there is a risky movement like while(1) infinite loop
+	}, [nick, chgAvatar])// [nick,user] was there but there is a risky movement like while(1) infinite loop
 
 	const handleToggleChange = async (isChecked: boolean) => {
 		if (isChecked === true)
@@ -115,6 +120,11 @@ const Profile = () => {
 		console.log(newNick);
 		setSettingPopUp(false);
 	}
+	
+	const changeAvatar = () => {
+		setChgAvatar(true);
+	}
+
 	return(
 		<div className="Profile">
 			{
@@ -128,10 +138,13 @@ const Profile = () => {
 						<div className="profileH1">
 							<h1>Profile</h1>
 						</div>
+						{chgAvatar === true ? (<>
+							<Form user={user} setUser={setUser} setIsFormSigned={undefined} formType={"ChangeAvatar"} setChgAvatar={setChgAvatar}/>
+						</>) : null }
 						<div className="profileContainer">
 							<div className="pTopBlock">
-								<img className="pTopBlockImage" src={`data:image/png;base64,${user.imgBuffer}`} alt="pImage"/>
-								{nick === null ? (<img className="imageSetting" src={edit}/>):(null)}
+								{user.imgBuffer !== undefined ? (<img className="pTopBlockImage" src={`data:image/png;base64,${user.imgBuffer}`} alt="pImage"/>): null}	
+								{nick === null ? (<img onClick={changeAvatar} className="imageSetting" src={edit}/>):(null)}
 							</div>
 							<div className="pBottomBlock">
 								{nick === null ? (

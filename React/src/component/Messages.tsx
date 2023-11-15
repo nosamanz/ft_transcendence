@@ -4,7 +4,6 @@ import { cookies } from "../App";
 import { socket } from "../pages/Home";
 
 // const messes = [{message: "asdsadsad",senderNick: "ssss"},{message: "asdasd",senderNick: "sss"}]
-let oldCurrentChannel = "";
 const Messages=({currentChannel, user}) =>{
     const [messagesReceived, setMessagesReceived] = useState<{message: string, channelName: string, senderNick: string}[]>([]);
     // data = {message: string, channelName: string, senderNick: string}
@@ -19,13 +18,18 @@ const Messages=({currentChannel, user}) =>{
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             });
-            const Mess:  {message: string, channelName: string, senderNick: string}[] = await responseMessages.json()
+            const res = await responseMessages.json();
+            let Mess: {message: string, channelName: string, senderNick: string}[];
+            if (res.msg === "The channel to see messages is not be founded!")
+                Mess = [];
+            else
+                Mess = res;
             setMessagesReceived(Mess);
         }
-        if(currentChannel !== ""){
+        if (currentChannel !== ""){
             fetchData();
         }
-        else{
+        else {
             const Mess:  {message: string, channelName: string, senderNick: string}[] = [];
             setMessagesReceived(Mess);
         }

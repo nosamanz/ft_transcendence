@@ -340,37 +340,58 @@
 	justify-content: center;
 	flex-direction: column;
 	box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+	.formHeader{
+		flex: .5;
+		margin-top: 20px;
+		.homeForm{
+			margin-top: 5px;
+			font-weight: 800;
+		}
+	}
+	.formBody{
+		flex: 2;
+		padding: 20px;
+		display: flex;
+		justify-content: center;
+		margin-left: 50px;
+		.formDiv{
+			height: 35px;
+			margin-bottom: 30px;
+			justify-content: center;
+
+				input{
+					border: none;
+					width: 60%;
+					height: 35px;
+					display: flex;
+					align-items: center;
+					background-color: transparent;
+					border: none;
+					outline: none;
+					border-bottom: 3px solid #112D4E;
+					font-size: medium;
+				}
+			.formImage{
+				width: 42px;
+				height: 42px;
+			}
+		}
+		button{
+			height: 35px;
+			width: 100px;
+			margin-left: 60px;
+			margin-top: 30px;
+			border: none;
+			background-color: #112D4E;
+			border-radius: 15px;
+			color:#93BFCF;
+			font-weight: bolder;
+			font-size: medium;
+			box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.3);
+		}
+	}
 }
 
-.formInput{
-	border: none;
-	width: 70%;
-
-}
-
-.formImage{
-	width: 42px;
-	height: 42px;
-}
-
-.formHeader{
-	flex: 1;
-	margin-top: 20px;
-}
-.formBody{
-	flex: 2;
-}
-
-.formDiv{
-	height: 35px;
-	margin-bottom: 30px;
-	background-color: white;
-}
-
-.homeForm{
-	margin-top: 5px;
-	font-weight: 800;
-}
 
 .containerHome{
 	height: 80vh;
@@ -465,6 +486,7 @@
 				z-index: 2;
 				margin-top: 35%;
 				margin-left: -5%;
+				cursor: pointer;
 				// transform: scaleX(-1);
 			}
 		}
@@ -595,6 +617,123 @@
 			}
 		}
 	}
+	@media (max-width: 768px) {
+		.profileContainer {
+		  .pTopBlock {
+			.pTopBlockImage {
+			  width: 150px;
+			  height: 150px;
+			}
+		  }
+		  .pBottomBlock {
+			width: 100%;
+			.pValueBlock{
+				display: flex;
+				.leftBlock{
+					width: 30%;
+					padding-left: 10%;
+					padding-right: 10px;
+					.pRowBlock{
+						margin-bottom: 10px;
+						font-weight: 500;
+						width: 300px;
+
+					}
+				}
+				.rightBlock{
+					padding-left: 10%;
+					// width: 30%;
+				}
+				// width: 40%;
+			}
+		}
+		  .achvBlock {
+			margin-bottom: -50px;
+			img{
+				width: 60px;
+				height:60px;
+				margin: 10px;
+			}
+		  }
+		}
+	  }
+	  .changeAvatar{
+		z-index: 3;
+		border-radius: 50%;
+		width: 300px;
+		height: 300px;
+		background-color: #F5EFE6;
+		color: #112D4E;
+		display: flex;
+		position:fixed;
+		display: flex;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+		.changeAvatarX{
+			margin-top: 20px;
+			width: 32px;
+			height: 32px;
+			background-color: #112D4E;
+			color: #93BFCF;
+			border-radius: 50%;
+			font-size: large;
+			font-weight: bolder;
+			box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.3);
+			border:none;
+
+		}
+		.formHeader{
+			flex: .5;
+			margin-top: 20px;
+			.homeForm{
+				margin-top: 5px;
+				font-weight: 800;
+			}
+		}
+		.formBody{
+			flex: 2;
+			padding: 20px;
+			display: flex;
+			justify-content: center;
+			margin-left: 50px;
+			.formDiv{
+				height: 35px;
+				margin-bottom: 20px;
+				justify-content: center;
+				input{
+					border: none;
+					width: 60%;
+					height: 35px;
+					display: flex;
+					align-items: center;
+					background-color: transparent;
+					border: none;
+					outline: none;
+					border-bottom: 3px solid #112D4E;
+					font-size: medium;
+					margin-top: 15px;
+				}
+			}
+			button{
+				height: 35px;
+				width: 100px;
+				margin-left: 30px;
+				margin-top: 30px;
+				border: none;
+				background-color: #112D4E;
+				border-radius: 15px;
+				color:#93BFCF;
+				font-weight: bolder;
+				font-size: medium;
+				box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.3);
+			}
+		}
+	}
 }
 
 
@@ -618,6 +757,10 @@
 			align-items: center;
 			display: flex;
 			img{
+				width: 52px;
+				height: 52px;
+			}
+			span{
 				width: 52px;
 				height: 52px;
 			}
@@ -1049,6 +1192,22 @@
 						}
 					}
 				}
+				@media (max-width: 1400px) {
+							.friendSearchForm{
+								margin-left: 5px;
+								display: flex;
+								justify-content: center;
+								.searchInput{
+									font-size: small;
+								}
+								.searchButton{
+									img{
+										width: 24px;
+										height: 24px;
+									}
+								}
+							}
+					}
 					.friendOnePerson > div:first-child{
 						text-align: left;
 					}
@@ -1135,7 +1294,6 @@
 							}
 							.messageInviteBody{
 								display: flex;
-								// justify-content: center;
 								align-items: center;
 								flex-direction: column;
 								padding: 20px;
@@ -1148,34 +1306,55 @@
 									height: 100%;
 								}
 								.messageInviteInput{
-									margin-top: 15px;
-									padding: 5px;
+									margin-top: 30px;
+									margin-right: 50px;
+									height: 30px;
+									width: 130px;
+									input{
+										background-color: transparent;
+										margin: 10px;
+										color: #6096B4;
+										outline: none;
+										border: none;
+										border-bottom: 3px solid #112D4E;
+										font-size: medium;
+									}
 								}
 								.messageInviteButton{
 									margin-top: 15px;
 									padding: 5px;
+									button{
+										align-self: center;
+										height: 40px;
+										width: 150px;
+										color: #6096B4;
+										background-color: #1a4371;
+										border-radius: 10px;
+										border: 1px solid #112D4E;
+									}
 								}
-							}}
+							}
+						}
 					}:hover{
 						background-color: #9CB4CC;
 						color:#112D4E;
 					}
-			}
-			.sidebarNav{
-				display: flex;
-				align-items: center;
-				background-color: #112D4E;
-				height: 50px;
-				padding: 10px;
-				justify-content: space-between;
-				color:#93BFCF;
-				.sidebarLogo{
-					font-weight: bolder;
+				}
+
+				.sidebarNav{
+					display: flex;
+					align-items: center;
+					background-color: #112D4E;
+					height: 50px;
+					padding: 10px;
+					justify-content: space-between;
+					color:#93BFCF;
+					.sidebarLogo{
+						font-weight: bolder;
+					}
 				}
 			}
 		}
-
-	}
 }
 .channelSetting{
 	position:absolute;
@@ -1415,4 +1594,8 @@
 	align-items: center;
 	display: flex;
 	cursor: pointer;
+}
+
+.ImageError{
+	color: red;
 }

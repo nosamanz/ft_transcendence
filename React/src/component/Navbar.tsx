@@ -7,7 +7,7 @@ import { cookies } from "../App";
 import { socket } from "../pages/Home";
 
 
-const Navbar = ({user, setUser, maxSocket}) => {
+const Navbar = ({user, setUser, maxSocket, isFormSigned}) => {
     const [isPopOpen, setPopOpen] = useState<boolean>(false);
     const [isNotification, setNotification] = useState([]);
     const HandleDisconnection = () => {
@@ -62,7 +62,6 @@ const Navbar = ({user, setUser, maxSocket}) => {
             console.log(response.ok);
             if (response.ok) {
                 // Update local state to remove the rejected friend request
-                console.log("REJECT");
                 setNotification(prevNotifications => prevNotifications.filter(not => not.nick !== e));
             } else {
                 // Handle error case if needed
@@ -75,7 +74,7 @@ const Navbar = ({user, setUser, maxSocket}) => {
     return (
         <div className="navbar">
             <span className="logo"><Link to="/" className="link">TRANSCENDENCE</Link></span>
-            {user.res !== "undefined" && maxSocket !== true ? (
+            {user.res !== "undefined" && maxSocket !== true && isFormSigned !== false ? (
                 <ul className="list">
                  <p className="pItem">{user.login}</p>
                      {/* <img src="" alt="img" className="avatar"></img> */}

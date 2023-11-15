@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Channel from "./Channel";
 import { cookies } from "../App";
 
-const GroupChatSearch = ({ channelList, setChannelList, setCurrentChannel }) => {
+const GroupChatSearch = ({ channelList, setChannelList, setCurrentChannel, currentChannel}) => {
   useEffect (() => {
       const fetchData = async () =>{
           const responseChannels = await fetch(`https://${process.env.REACT_APP_IP}:80/user/channels`, {
@@ -24,7 +24,7 @@ const GroupChatSearch = ({ channelList, setChannelList, setCurrentChannel }) => 
         <input className="searchInput" type="text" placeholder="find a user" />
       </div> */}
       {channelList.map((channel, index) => (
-        <Channel key={index} channel={channel} channelList={channelList} setCurrentChannel={setCurrentChannel} setChannelList={setChannelList}/>
+        <Channel key={index} channel={channel} channelList={channelList} setCurrentChannel={setCurrentChannel} currentChannel={currentChannel} setChannelList={setChannelList}/>
       ))}
     </div>
   );

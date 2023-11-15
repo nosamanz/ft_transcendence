@@ -59,6 +59,8 @@ export class UserService
             },
             include: include
         });
+        if (!user)
+            throw ("Error");
         return user;
     }
 
@@ -137,9 +139,9 @@ export class UserService
     {
 		const user = await this.getUserByID(userId);
         if (nickToChange === "" || nickToChange === user.nick)
-            throw "Nick could not be changed!";
+            return "Nick could not be changed!";
         if (await this.updateUser({nick: nickToChange}, user) === -1)
-            throw "Nick in use!!";
+            return "Nick in use!!";
         return "Nick is changed successfully.";
     }
 
@@ -165,20 +167,15 @@ export class UserService
             }},
         })
         let friendsSockets: Socket[] = [];
-        if (user && user.Friends !== null)
-        {
-            let friends = user.Friends;
-            if (friends !== undefined ){
-                friends.forEach((element) => { element.Users.forEach((e) => {
-                    if (e.id !== userID)
-                    {
-                        const friendSocket = this.getSocketByUserID(e.id)
-                        if(friendSocket !== undefined)
-                            friendsSockets.push(friendSocket);
-                    };
-                })});
-            }
-
+        if ( user !== null && user.Friends !== null ){
+            user.Friends.forEach((element) => { element.Users.forEach((e) => {
+                if (e.id !== userID)
+                {
+                    const friendSocket = this.getSocketByUserID(e.id)
+                    if(friendSocket !== undefined)
+                        friendsSockets.push(friendSocket);
+                };
+            })});
         }
         return friendsSockets;
     }
@@ -188,8 +185,7 @@ export class UserService
             return;
         await this.updateUserByID({ Status: status }, userID);
         const friendSockets: Socket[] = await this.getFriendsSockets(userID);
-        if (friendSockets)
-        {
+        if (friendSockets){
             friendSockets.forEach((element) => {
                 element.emit("Friend Status");
             })
