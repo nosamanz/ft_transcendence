@@ -16,6 +16,7 @@ model Friend {
 model FriendRequest {
 	id            Int   @id @default(autoincrement())
 	Users         User[]
+	SenderID	  Int
 }
 
 model Ignore {

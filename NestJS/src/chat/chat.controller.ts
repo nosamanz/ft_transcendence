@@ -21,7 +21,7 @@ export class ChatChannelController {
         @Req() req: Request,
         @Param('channelName') chname: string){
         const userID: number = parseInt(req.body.toString(), 10);
-        return res.send(await this.chatChannelService.getChannel(userID, chname));
+        return res.send({myid: userID, channel: await this.chatChannelService.getChannel(userID, chname)});
     }
 
     @Get('/leave')

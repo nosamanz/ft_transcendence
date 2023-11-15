@@ -137,9 +137,9 @@ export class UserService
     {
 		const user = await this.getUserByID(userId);
         if (nickToChange === "" || nickToChange === user.nick)
-            return "Nick could not be changed!";
+            throw "Nick could not be changed!";
         if (await this.updateUser({nick: nickToChange}, user) === -1)
-            return "Nick in use!!";
+            throw "Nick in use!!";
         return "Nick is changed successfully.";
     }
 

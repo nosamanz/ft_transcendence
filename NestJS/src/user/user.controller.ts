@@ -122,11 +122,15 @@ export class UserController {
 	@UseGuards(JwtGuard)
 	async ChangeNick(
 		@Req() req: Request,
-		@Param('nickToChange') nickToChange: string): Promise<{msg: string}>
+		@Res() res: Response,
+		@Param('nickToChange') nickToChange: string): Promise<object>
 	{
-		// try
-		const userID = parseInt(req.body.toString(), 10)
-		return ({msg: await this.userService.changeNick(userID, nickToChange)});
+		try{
+			const userID = parseInt(req.body.toString(), 10)
+			return res.send(await this.userService.changeNick(userID, nickToChange));
+		}catch(error) {
+			return res.status(580).json({error: error});
+		}
 	}
 
 
@@ -289,7 +293,8 @@ export class UserController {
 			data: {
 				Users: {
 					connect: [{ id: userID, },{  id: targetUser.id}],
-				}
+				},
+				SenderID: userID,
 			}
 		})
 		return res.send({res: 0, message: "The user has been invited as a friend."})
@@ -316,6 +321,7 @@ export class UserController {
 		let friendRequestList: any[] = [];
 		if(user.FriendRequests !== undefined)
 		{
+			user.FriendRequests = user.FriendRequests.filter(element => element.SenderID !== userID);
 			user.FriendRequests.forEach((element) => {
 				element.Users.forEach((e) => {
 					if (e.id !== user.id)

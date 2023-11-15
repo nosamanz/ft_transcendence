@@ -8,7 +8,7 @@ import ban from "../images/ban.png"
 import kick from "../images/kick.png"
 import { cookies } from "../App";
 
-const ChannelPopUpList = ({client, channel, checkMute, setCheckMute}) =>{
+const ChannelPopUpList = ({client, channel, checkMute, setCheckMute, IsAdmin}) =>{
 
     useEffect(() => {
         if (channel.MutedIDs.some(element => element === client.id))
@@ -52,16 +52,19 @@ const ChannelPopUpList = ({client, channel, checkMute, setCheckMute}) =>{
                 <div>
                     <p>{client.nick}</p>
                 </div>
-                <div className="groupOnePersonIcons">
-                    <img onClick={handleClick} className="channelPopUpIcon" src={kick} id="kick" />
-                    <img onClick={handleClick} className="channelPopUpIcon" src={ban} id="ban"/>
-                    <img onClick={handleClick} className="channelPopUpIcon" src={admin} id="setAdmin"/>
-                    {checkMute === true ? (
-                        <img onClick={handleClick} className="channelPopUpIcon" src={mute} id="mute"/>
-                        ):(
-                            <img onClick={handleClick} className="channelPopUpIcon" src={unmute} id="mute"/>
-                    )}
-                </div>
+                { IsAdmin  ? (
+                    <div className="groupOnePersonIcons">
+                        <img onClick={handleClick} className="channelPopUpIcon" src={kick} id="kick" />
+                        <img onClick={handleClick} className="channelPopUpIcon" src={ban} id="ban"/>
+                        <img onClick={handleClick} className="channelPopUpIcon" src={admin} id="setAdmin"/>
+                        {checkMute === true ? (
+                            <img onClick={handleClick} className="channelPopUpIcon" src={mute} id="mute"/>
+                            ):(
+                                <img onClick={handleClick} className="channelPopUpIcon" src={unmute} id="mute"/>
+                        )}
+                    </div>
+                ): (null)
+                }
             </div>
 		</div>
 	)

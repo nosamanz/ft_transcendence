@@ -10,6 +10,8 @@ const ChannelPopUp = ({channel}) =>{
 	const [popChannel, setPopChannel] =  useState({Users: []});
     const [checkMute, setCheckMute] = useState<boolean>();
 	const [isPopOpen, setPopOpen] = useState<boolean>(false);
+    const [IsOwner, setIsOwner] = useState<boolean>();
+    const [IsAdmin, setIsAdmin] = useState<boolean>();
 	const channelName = channel.Name;
 
 	useEffect ( () => {
@@ -17,11 +19,15 @@ const ChannelPopUp = ({channel}) =>{
 			const responseClients =await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${channel.Name}`, {
 				headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-                    'Content-Type': 'application/json'
                 }
 			});
 			const resPopChannel = await responseClients.json();
-			setPopChannel(resPopChannel);
+			setPopChannel(resPopChannel.channel);
+			const myid:number = resPopChannel.myid;
+			setIsOwner(resPopChannel.channel.ChannelOwnerID === myid ? true : false);
+			console.log(IsOwner);
+			setIsAdmin(resPopChannel.channel.AdminIDs.some(element => element === myid));
+			console.log(resPopChannel.channel.AdminIDs.some(element => element === myid));
 		}
 		fetchData();
 	}, [checkMute])
@@ -35,17 +41,19 @@ return(
         <div className="channelPopUpPage">
 			<div className="channelPageUp">
             	<span className="groupName">{channel.Name}</span>
-				<img onClick={clickSetting} className="settingGroup" src={setting} alt=""/>
+				{ IsOwner ?
+					( <img onClick={clickSetting} className="settingGroup" src={setting} alt=""/> )
+					: (null)
+				}
 			</div>
 			<div>
 				{popChannel.Users.map((client, index) => (
-					<ChannelPopUpList key={index} client={client} channel={popChannel} checkMute={checkMute} setCheckMute={setCheckMute}/>
+					<ChannelPopUpList key={index} client={client} channel={popChannel} checkMute={checkMute} setCheckMute={setCheckMute} IsAdmin={IsAdmin}/>
 				))}
 			</div>
-
-        </div>
-		{isPopOpen && <ChannelSetting setPopOpen={setPopOpen} channelName={channelName}></ChannelSetting>}
-    </div>
+		</div>
+			{isPopOpen && <ChannelSetting setPopOpen={setPopOpen} channelName={channelName}></ChannelSetting>}
+		</div>
 )
 }
 

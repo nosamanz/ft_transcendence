@@ -99,9 +99,17 @@ const Profile = () => {
 					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 				}
 			});
-			const resUser = await response.json();
-			// if (response.ok)
-				// setUser(resUser);
+			if (response.ok)
+			{
+				console.log("response ok");
+				setNewNick(newNick);
+				setUser(prevUser => ({ ...prevUser, nick: newNick }));
+				console.log(user.nick);
+			}
+			else{
+				const res = await response.json();
+				alert(res.error)
+			}
 		}
 		fetchData();
 		console.log(newNick);
