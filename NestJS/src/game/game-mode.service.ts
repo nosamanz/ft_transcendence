@@ -67,7 +67,7 @@ export class GameModeService {
         let randY: number = Math.round(Math.random() * 10) - 5;
         let randX = Math.round(Math.random() * 12) - 6;
         randX = randX <= 4 && randX >= 0 ? 5 : randX < 0 && randX >= -4 ? -5 : randX;
-        roomStatesM.set(roomId, { 
+        roomStatesM.set(roomId, {
             leftPaddleY: 225,
             rightPaddleY: 225,
             leftPaddleHeight: 120,
@@ -214,13 +214,13 @@ export class GameModeService {
         return gameState;
     }
 
-    changePaddleSpeedM(server: Server, clientID: string, obj: {rivalID: string, direction: string, location: string, roomID: string}): void {
+    changePaddleSpeed(server: Server, clientID: string, obj: {rivalID: string, direction: string, location: string, roomID: string}): void {
         let gameStates: any = roomStatesM.get(obj.roomID);
         const stick: number = this.findStick(clientID, obj.rivalID, obj.location);
         gameStates = this.changeSpeed(obj.direction, stick, gameStates, paddleSpeedM)
         roomStatesM.set(obj.roomID, gameStates);
     }
-    
+
     stopPaddle(server: Server, clientID: string, obj: {rivalID: string, direction: string, location: string, roomID: string}): void {
         let gameStates: any = roomStatesM.get(obj.roomID);
         const stick: number = this.findStick(clientID, obj.rivalID, obj.location);
@@ -259,7 +259,7 @@ export class GameModeService {
 			res = 1;
 		return res;
 	}
-    
+
     getUserBySocket(client: Socket): number
 	{
 		const clientInfo = connectedGameSockets.find((clientInfo) => clientInfo.client === client);

@@ -58,6 +58,8 @@ CREATE TABLE "Achievements" (
     "Ac2" BOOLEAN NOT NULL,
     "Ac3" BOOLEAN NOT NULL,
     "Ac4" BOOLEAN NOT NULL,
+    "Ac5" BOOLEAN NOT NULL,
+    "Ac6" BOOLEAN NOT NULL,
     "UserID" INTEGER NOT NULL,
 
     CONSTRAINT "Achievements_pkey" PRIMARY KEY ("id")

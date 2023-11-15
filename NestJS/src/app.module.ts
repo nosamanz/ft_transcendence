@@ -17,7 +17,8 @@ import { AvatarService } from './avatar/avatar.service';
 import { AvatarModule } from './avatar/avatar.module';
 import { GameGateway } from './game/game.gateway';
 import { GameService } from './game/game.service';
-import { GameModeService } from './game/game.service';
+import { GameModeService } from './game/game-mode.service';
+import { GameController } from './game/game.controller';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { GameModeService } from './game/game.service';
   TFAModule,
   JwtModule,
   AvatarModule],
-  controllers: [AppController, AvatarController],
+  controllers: [AppController, AvatarController, GameController],
   providers: [UserService, ChatGateway, ChatService, GameGateway, GameService, GameModeService, AuthService, PrismaService, TFAService, JwtService, AvatarService],
 })
 export class AppModule {}

@@ -2,7 +2,7 @@ import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/web
 import { Socket, Server } from 'socket.io';
 import { clientInfo } from 'src/chat/entities/clientInfo.entity';
 import { GameService } from 'src/game/game.service';
-import { GameModeService } from 'src/game/game.service';
+import { GameModeService } from 'src/game/game-mode.service';
 
 export let connectedGameSockets: clientInfo[] = [];
 let queue: Socket[] = [];
@@ -11,11 +11,11 @@ let nextRoomID: number = 1;
 
 @WebSocketGateway()
 export class GameGateway {
-	constructor( 
+	constructor(
 		private gameService: GameService,
 		private gameModeService: GameModeService
 		){}
-	
+
 	@WebSocketServer()
 	server: Server;
 
@@ -52,7 +52,7 @@ export class GameGateway {
 	handleStopInterval(client: Socket, roomID: string) {
 		this.gameService.stopGame(roomID);
 	}
-	
+
 	@SubscribeMessage('joinModeChannel')
 	handleJoinModeChannel(client: Socket, data: {id: number}) {
 		if (!modeQueue.includes(client)) {
@@ -83,17 +83,17 @@ export class GameGateway {
 	handleMovePaddle(client: Socket, obj: {rivalID: string, direction: string, location: string, roomID: string}) {
 		this.gameService.changePaddleSpeed(this.server, client.id, obj)
 	}
-	
+
 	@SubscribeMessage('stopPaddle')
 	handleStopPaddle(client: Socket, obj: {rivalID: string, direction: string, location: string, roomID: string}) {
 		this.gameService.stopPaddle(this.server, client.id, obj)
 	}
-	
+
 	@SubscribeMessage('moveModePaddle')
 	handleMoveModePaddle(client: Socket, obj: {rivalID: string, direction: string, location: string, roomID: string}) {
 		this.gameModeService.changePaddleSpeed(this.server, client.id, obj)
 	}
-	
+
 	@SubscribeMessage('stopModePaddle')
 	handleStopModePaddle(client: Socket, obj: {rivalID: string, direction: string, location: string, roomID: string}) {
 		this.gameModeService.stopPaddle(this.server, client.id, obj)

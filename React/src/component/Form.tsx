@@ -6,8 +6,8 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
 	const [selectedImage, setSelectesImage] = useState("");
 	const [reader, setReader] = useState<any>();
 	const [nick, setNick] = useState("");
-    const [error, setError] = useState<string>(""
-    )
+    const [error, setError] = useState<string>("");
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
 		setNick(e.target.value);
 	};
@@ -15,13 +15,13 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
 		const selectedFile = e.target.files[0];
         const fileSizeInKB = selectedFile.size / 1024; // Convert bytes to KB
 		const fileReader = new FileReader();
-        
+
         if (fileSizeInKB < 72)
         {
             setError("");
             fileReader.onload = (ea: any) => {
                 const dataURL = ea.target.result;
-    
+
                 setSelectesImage(URL.createObjectURL(selectedFile));
                 setReader(dataURL);
             };
@@ -36,7 +36,7 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
         const data = {};
         data["file"] = reader;
         const sendForm = async () => {
-            if (error !== "")
+            if (error === "")
             {
                 try {
                     data["nick"] = nick;
@@ -117,9 +117,9 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
                         <p className="ImageError">{error}</p>
                         <button type="submit" onClick={handleSubmit}>Gönder</button>
                     </form>
-                </div> 
+                </div>
             </div>
-            ):( 
+            ):(
             <div className="form">
                 <div className="formHeader">
                     <h2 className="homeForm">Nickname ve Resim Seçin</h2>
@@ -133,7 +133,7 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
                             <label></label>
                         <input id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>
                         </div>
-                        { 
+                        {
                             selectedImage !== "" ? (
                             <div>
                                 <h3>Seçilen Resim</h3>

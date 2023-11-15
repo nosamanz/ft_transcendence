@@ -54,7 +54,7 @@ export class UserController {
 	@UseGuards(JwtGuard)
 	async getUserProfile(@Res() response : Response, @Req() req : Request){
 		const userID = parseInt(req.body.toString(), 10);
-		const user = await this.userService.getUserByID(userID);
+		const user = await this.userService.getUserByID(userID, { Achievements: true });
 		const retUser = { ...user, imgBuffer: this.avatarService.OpenImgFromUser(user)};
 		return response.send(retUser);
 	}
@@ -63,7 +63,7 @@ export class UserController {
 	@UseGuards(JwtGuard)
 	async getOtherProfile(@Res() response : Response, @Req() req : Request, @Param('nick') nick: string){
 		let user:any;
-		try { user = await this.userService.getUserByNick(nick); }
+		try { user = await this.userService.getUserByNick(nick, { Achievements: true }) }
 		catch(error) { return response.status(580).json({msg: "The user couldn't be found!"})}
 		const retUser = { ...user, imgBuffer: this.avatarService.OpenImgFromUser(user)};
 		return response.send(retUser);
@@ -122,7 +122,7 @@ export class UserController {
             return res.status(580).json({error: error});
         }
     }
-	
+
 	@Post('changeAvatar')
     async changeAvatar(
         @Res() res: any,

@@ -54,6 +54,8 @@ export class AuthService {
 						Ac2:	false,
 						Ac3:	false,
 						Ac4:	false,
+						Ac5:	false,
+						Ac6:	false,
 					}
 				},
 				Friends:     	{},

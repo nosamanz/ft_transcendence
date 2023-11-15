@@ -7,15 +7,11 @@ import TFA from "../component/TFA";
 import ToggleSwitch from "../component/ToggleSwitch";
 import { useLocation } from "react-router-dom";
 import achievement from "../images/achievement.png";
-import firstWin from "../images/firstWin.png"
-import w5wL from "../images/w5wL.png"
-import w10wL from "../images/w10wL.png"
-import ach1 from "../images/ach1.png"
-import ach2 from "../images/ach2.png"
-
-
-
-;
+import firstWin from "../images/firstWin.png";
+import w5wL from "../images/w5wL.png";
+import w10wL from "../images/w10wL.png";
+import ach1 from "../images/ach1.png";
+import ach2 from "../images/ach2.png";
 import Form from "../component/Form";
 
 const Profile = () => {
@@ -30,7 +26,6 @@ const Profile = () => {
 	const [isSettingPopUp, setSettingPopUp] = useState<boolean>(false);
 	const [toggleState, setToggleState] = useState<boolean>(false);
     const [QR, setQR] = useState("");
-	let  ac = {a:true, b:false, c:true,d:false, e:false, f:true};
 	let tfa: boolean = false;
 
 	useEffect (() =>{
@@ -120,7 +115,7 @@ const Profile = () => {
 		console.log(newNick);
 		setSettingPopUp(false);
 	}
-	
+
 	const changeAvatar = () => {
 		setChgAvatar(true);
 	}
@@ -143,7 +138,7 @@ const Profile = () => {
 						</>) : null }
 						<div className="profileContainer">
 							<div className="pTopBlock">
-								{user.imgBuffer !== undefined ? (<img className="pTopBlockImage" src={`data:image/png;base64,${user.imgBuffer}`} alt="pImage"/>): null}	
+								{user.imgBuffer !== undefined ? (<img className="pTopBlockImage" src={`data:image/png;base64,${user.imgBuffer}`} alt="pImage"/>): null}
 								{nick === null ? (<img onClick={changeAvatar} className="imageSetting" src={edit}/>):(null)}
 							</div>
 							<div className="pBottomBlock">
@@ -179,20 +174,18 @@ const Profile = () => {
 										<div className="pRowBlock">{user.LoseCount}</div>
 									</div>
 								</div>
-								<div className="achvBlock">
-									{ ac.a ===  true ? (<img src={achievement} alt="a" />):(null) }
-									{ ac.b ===  true ? (<img src={firstWin} alt="a" />):(null) }
-									{ ac.c ===  true ? (<img src={w5wL} alt="a" />):(null) }
-									{ ac.d ===  true ? (<img src={w10wL} alt="a" />):(null) }
-									{ ac.e ===  true ? (<img src={ach1} alt="a" />):(null) }
-									{ ac.f ===  true ? (<img src={ach2} alt="a" />):(null) }
-
-
-
-
-
-
-								</div>
+								{
+									user.imgBuffer ? (
+										<div className="achvBlock">
+											{ user.Achievements.Ac1 ===  true ? (<img src={achievement} alt="a" />):(null) }
+											{ user.Achievements.Ac2 ===  true ? (<img src={firstWin} alt="a" />):(null) }
+											{ user.Achievements.Ac3 ===  true ? (<img src={w5wL} alt="a" />):(null) }
+											{ user.Achievements.Ac4 ===  true ? (<img src={w10wL} alt="a" />):(null) }
+											{ user.Achievements.Ac5 ===  true ? (<img src={ach1} alt="a" />):(null) }
+											{ user.Achievements.Ac6 ===  true ? (<img src={ach2} alt="a" />):(null) }
+										</div>
+									): (null)
+								}
 							</div>
 						</div>
 					</div>

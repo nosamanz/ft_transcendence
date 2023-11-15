@@ -36,7 +36,6 @@ const Navbar = ({user, setUser, maxSocket, isFormSigned}) => {
         }
     }
     const acceptFriend = (e) =>{
-        console.log(e);
         const fetchData = async () =>{
             const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/acceptFriend/${e}`, {
                 headers: {

@@ -62,6 +62,8 @@ model Achievements{
 	Ac2     Boolean
 	Ac3     Boolean
 	Ac4     Boolean
+	Ac5     Boolean
+	Ac6     Boolean
 	User    User    @relation(fields: [UserID], references: [id])
 	UserID  Int     @unique
 }
