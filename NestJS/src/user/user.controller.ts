@@ -301,7 +301,8 @@ export class UserController {
 		@Param('user') finduser: string)
 	{
 		console.log(finduser + " searching...");
-		const targetUser = await this.userService.getUserByNick(finduser, {
+		try{
+			const targetUser = await this.userService.getUserByNick(finduser, {
 			FriendRequests: {
 				include: {
 					Users: true,
@@ -313,8 +314,9 @@ export class UserController {
 				}
 			},
 		});
-		if (!targetUser)
-			return res.send({res: -1, message: "User couldn't be found!!"});
+
+		// if (!targetUser)
+		// 	return res.send({res: -1, message: "User couldn't be found!!"});
 
 		const userID: number = parseInt(req.body.toString(), 10);
 		if (targetUser.FriendRequests !== undefined && targetUser.FriendRequests.some((element) => element.Users.some((e) => e.id === userID)))
@@ -328,7 +330,9 @@ export class UserController {
 				},
 				SenderID: userID,
 			}
-		})
+		})}catch (error) {
+			return res.send({res: -1, message: "User couldn't be found!!"});
+		}
 		return res.send({res: 0, message: "The user has been invited as a friend."})
 	}
 
@@ -363,4 +367,27 @@ export class UserController {
 		}
 		return res.send(friendRequestList);
 	}
+
+	@Get('/matchHistory')
+	@UseGuards(JwtGuard)
+	async GetHistory(
+		@Req() req: Request,
+		@Res() res: Response)
+	{
+		const userID: number = parseInt(req.body.toString(), 10);
+		const user = await this.prisma.user.findFirst({
+			where: { id : userID },
+			select : {
+				nick: true,
+				LatterLevel: true,
+				MatchHistory: {
+					include: {
+						User: true
+					}
+				}
+			}
+		})
+		return res.send(user);
+	}
+
 }

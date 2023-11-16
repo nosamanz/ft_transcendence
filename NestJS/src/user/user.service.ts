@@ -74,7 +74,7 @@ export class UserService
         }
         catch(error)
         {
-            console.log("Couldn't be updated!!(" + userUpdateInformation.nick + ")");
+            console.log("Couldn't be updated!!(" + userUpdateInformation + ")");
             return -1;
         }
         return 0;

@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import LeaderBoard from './pages/LeaderBoard';
 import Chat from './pages/Chat';
 import Cookies from 'universal-cookie';
+import MatchHistory from './component/MatchHistory';
 
 
 export const cookies = new Cookies();
@@ -92,6 +93,7 @@ function App() {
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/leaderboard" element={<LeaderBoard user={user} />} />
 					<Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel} currentChannel={currentChannel}/>}/>
+					<Route path='/profile/matchHistory' element={<MatchHistory />} />
 				</>) : (<>
 					<Route path='/*' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus} setMaxSocket={setMaxSocket} setIsFormSigned={setIsFormSigned}/>}/>
 				</>

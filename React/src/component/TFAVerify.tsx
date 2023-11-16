@@ -35,7 +35,7 @@ const TFAVerify = ({setIsTFAStatus, setUser}) =>{
                     <input value={value} onChange={HandleChange} className="tfa-input" inputMode="numeric"  maxLength={6}/>
                 </div>
                 <div>
-                    <button onClick={click}  className="tfa-button" type="submit">Gonder</button>
+                    <button onClick={click}  className="tfa-button" type="submit">Send</button>
             </div>
         </div>
     )

@@ -8,6 +8,7 @@ const FriendsSidebar = () => {
     const [friendLists, setFriendLists] = useState<{}[]>([]);
     const [finds, setFinds] = useState<string>();
     const [status, setStatus] = useState<number>(0);
+    const dValue = document.getElementById('search') as HTMLInputElement;
 
     socket.on("Friend Status", () => {
         console.log("Status değişti");
@@ -28,18 +29,29 @@ const FriendsSidebar = () => {
     const change = (e) =>{
         setFinds(e.target.value);
     }
+    const keyDown = (e) =>{
+        if(e.key === 'Enter'){
+            handleClick ();
+            dValue.value = '';
+            setFinds('');
+        }
+    }
 
     const handleClick = () =>{
-        const fetchData = async () =>{
-            const response: any = await fetch(`https://${process.env.REACT_APP_IP}:80/user/findUser/${finds}`, {///
-                headers: {
-                    'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-                }
-            })
-            const res = await response.json();
-            alert(res.message);
+        if (finds){
+            const fetchData = async () =>{
+                const response: any = await fetch(`https://${process.env.REACT_APP_IP}:80/user/findUser/${finds}`, {///
+                    headers: {
+                        'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                    }
+                })
+                const res = await response.json();
+                alert(res.message);
+            }
+            fetchData();
         }
-        fetchData();
+        setFinds('');
+        dValue.value = '';
     }
 	return(
         <div className="friendContainer">
@@ -48,7 +60,7 @@ const FriendsSidebar = () => {
             </div>
             <div className="friendsMain">
                 <div className="friendSearchForm">
-                     <input className="searchInput" type="text" placeholder="find a user" onChange={change}/><div onClick={handleClick} className="searchButton"><img src={find} alt="find" /></div>
+                     <input id="search" className="searchInput" type="text" placeholder="find a user" onKeyDown={keyDown} onChange={change}/><div onClick={handleClick} className="searchButton"><img src={find} alt="find" /></div>
                 </div>
                 {friendLists.map((friend, index) => (
                     <Friend key={index} friend={friend} status setStatus={setStatus}/>

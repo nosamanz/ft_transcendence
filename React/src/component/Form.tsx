@@ -106,7 +106,7 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
             <div className="changeAvatar">
                 <button className="changeAvatarX" onClick={changeAvatarClose}>X</button>
                 <div className="formHeader">
-                    <h2 className="homeForm">Resim Seçin</h2>
+                    <h2 className="homeForm">Select Avatar</h2>
                 </div>
                 <div className="formBody">
                     <form>
@@ -115,34 +115,32 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
                         <input id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>
                         </div>
                         <p className="ImageError">{error}</p>
-                        <button type="submit" onClick={handleSubmit}>Gönder</button>
+                        <button type="submit" onClick={handleSubmit}>Send</button>
                     </form>
                 </div>
             </div>
             ):(
             <div className="form">
                 <div className="formHeader">
-                    <h2 className="homeForm">Nickname ve Resim Seçin</h2>
+                    <h2 className="homeForm">Select NickName and Avatar</h2>
                 </div>
                 <div className="formBody">
                     <form>
                         <div className="formDiv">
                             <label>Nickname: </label>
                         <input type="text" name="name" placeholder={user.nick} onChange={handleChange} className="formInput"></input>
-                        </div><div className="formDiv">
-                            <label></label>
                         <input id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>
                         </div>
                         {
                             selectedImage !== "" ? (
                             <div>
-                                <h3>Seçilen Resim</h3>
+                                <h3>Select Avatar</h3>
                                 <img src={selectedImage} alt="" className="formImage"></img>
                             </div>
                             ): null
                         }
                         <p className="ImageError">{error}</p>
-                        <button type="submit" onClick={handleSubmit}>Gönder</button>
+                        <button type="submit" onClick={handleSubmit}>Send</button>
                     </form>
                 </div>
             </div>

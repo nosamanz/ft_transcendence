@@ -5,7 +5,7 @@ import x from "../images/close.png";
 import { cookies } from "../App";
 import TFA from "../component/TFA";
 import ToggleSwitch from "../component/ToggleSwitch";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import achievement from "../images/achievement.png";
 import firstWin from "../images/firstWin.png";
 import w5wL from "../images/w5wL.png";
@@ -13,6 +13,7 @@ import w10wL from "../images/w10wL.png";
 import ach1 from "../images/ach1.png";
 import ach2 from "../images/ach2.png";
 import Form from "../component/Form";
+import MatchHistory from "../component/MatchHistory";
 
 const Profile = () => {
 
@@ -25,6 +26,7 @@ const Profile = () => {
 	const [isTFAPopUp, setIsTFAPopUp] = useState<boolean>(false);
 	const [isSettingPopUp, setSettingPopUp] = useState<boolean>(false);
 	const [toggleState, setToggleState] = useState<boolean>(false);
+	const [mtchOpen, setmtchOpen] = useState<boolean>(false);
     const [QR, setQR] = useState("");
 	let tfa: boolean = false;
 
@@ -119,6 +121,10 @@ const Profile = () => {
 	const changeAvatar = () => {
 		setChgAvatar(true);
 	}
+	const matchOpen = () =>{
+		console.log("matchHistory");
+		setmtchOpen(true);
+	}
 
 	return(
 		<div className="Profile">
@@ -145,6 +151,9 @@ const Profile = () => {
 								{nick === null ? (
 									<div className="pIconBlock">
 										<div className="pIconBlockPosition">
+											<div>
+												<label>TFA</label>
+											</div>
 											<div className="toogleContainer">
 												<ToggleSwitch checked={toggleState} onChange={handleToggleChange} />
 											</div>
@@ -173,6 +182,13 @@ const Profile = () => {
 										<div className="pRowBlock">{user.WinCount}</div>
 										<div className="pRowBlock">{user.LoseCount}</div>
 									</div>
+								</div>
+								<div className="match">
+									{/* <label onClick={matchOpen}>Match History</label>
+									{
+										mtchOpen === true ?(<MatchHistory />):(null)
+									} */}
+									<Link to="/profile/matchHistory" className="link" ><label>Match History</label></Link>
 								</div>
 								{
 									user.imgBuffer ? (

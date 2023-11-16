@@ -70,13 +70,13 @@ const ChannelCreate = ({setPopOpen, channelName}) =>{
 				<div className="channelSettingForm">
 					<div className="settingLeft">
 						<div>
-							<label>Kanal İsmi</label>
+							<label>ChannelName</label>
 						</div>
 						<div>
 							<label>Select</label>
 						</div>
 						<div>
-							<label>Şifre</label>
+							<label>Password</label>
 						</div>
 					</div>
 					<div className="settingRight">
@@ -96,7 +96,7 @@ const ChannelCreate = ({setPopOpen, channelName}) =>{
 						</div>
 					</div>
 				</div>
-					<button onClick={send}>Şifre Değiştir</button>
+					<button onClick={send}>Change Pass</button>
 			</div>
 		</div>
 	)
