@@ -368,15 +368,22 @@ export class UserController {
 		return res.send(friendRequestList);
 	}
 
-	@Get('/matchHistory')
+	@Get('/matchHistory/:nick')
 	@UseGuards(JwtGuard)
 	async GetHistory(
 		@Req() req: Request,
-		@Res() res: Response)
+		@Res() res: Response,
+		@Param('nick') nick: string)
 	{
-		const userID: number = parseInt(req.body.toString(), 10);
+		console.log("NICK IN GET: ", nick);
+		if (nick === "null")
+		{
+			const userID: number = parseInt(req.body.toString(), 10);
+			const me = await this.userService.getUserByID(userID);
+			nick = me.nick;
+		}
 		const user = await this.prisma.user.findFirst({
-			where: { id : userID },
+			where: { nick : nick },
 			select : {
 				nick: true,
 				LatterLevel: true,

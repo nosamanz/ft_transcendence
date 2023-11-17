@@ -11,7 +11,7 @@ const Home = ({user, isFormSigned, setIsFormSigned}) =>{
 	return(
 		<div className="home">
 		{
-			isFormSigned ?
+			isFormSigned ? 
 				<Game user={user}/>
 			:
 				<Form user={user} setUser={undefined} setIsFormSigned={setIsFormSigned} formType={"SendForm"}/>

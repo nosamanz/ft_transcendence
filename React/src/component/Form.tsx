@@ -12,6 +12,7 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
 		setNick(e.target.value);
 	};
     const handleImageChange = (e) =>{
+        console.log("deneme");
 		const selectedFile = e.target.files[0];
         const fileSizeInKB = selectedFile.size / 1024; // Convert bytes to KB
 		const fileReader = new FileReader();
@@ -111,7 +112,6 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
                 <div className="formBody">
                     <form>
                         <div className="formDiv">
-                            <label></label>
                         <input id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>
                         </div>
                         <p className="ImageError">{error}</p>
@@ -128,8 +128,8 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
                     <form>
                         <div className="formDiv">
                             <label>Nickname: </label>
-                        <input type="text" name="name" placeholder={user.nick} onChange={handleChange} className="formInput"></input>
-                        <input id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>
+                        <input type="text" name="name" placeholder={user.nick} onChange={handleChange}></input>
+                        <input  id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>
                         </div>
                         {
                             selectedImage !== "" ? (

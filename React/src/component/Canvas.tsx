@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { socketGame } from './Game';
 import { cookies } from '../App';
+import Confetti from './Confetti';
 
 const Canvas = ({ location, myNick, rival, roomID, setState}: { location: string, myNick: string, rival: {nick: string, id: number}, roomID: string, setState: any}) => {
 	const canvasRef1 = useRef<HTMLCanvasElement | null>(null);
@@ -151,7 +152,7 @@ const Canvas = ({ location, myNick, rival, roomID, setState}: { location: string
 	const handleClick = () =>{
 		setState(0);
 	}
-
+	
 	return (<>
 		<canvas
 			ref={canvasRef1}
@@ -159,15 +160,21 @@ const Canvas = ({ location, myNick, rival, roomID, setState}: { location: string
 			height={60}// Canvas Height
 			style={{ border: '1px solid black' }}
 		></canvas>
-			<div className='Win State'>
+			<div className='WinState'>
 			{
 				myScore === 10 ? (
-					<p>You Win</p>
+					<div>
+						<p className='confetti'>You Win</p>
+						<Confetti /> 
+					</div>
 				) : rivalScore === 10 ? (
-					<p>You Lose</p>
+					<p className='confetti'>You Lose</p>
 				) : disconnection === true ? (
-					<p>You Win (Your rival disconnected!)</p>
-				) :( null )
+					<div>
+						<p className='confetti'>You Win (Your rival disconnected!)</p>
+						<Confetti />
+					</div>
+				 ) :( null )
 			}
 			</div>
 		<canvas
@@ -176,7 +183,7 @@ const Canvas = ({ location, myNick, rival, roomID, setState}: { location: string
 			height={600}// Canvas Height
 			style={{ border: '1px solid black' }}
 		></canvas>
-	    <button onClick={handleClick}>X</button>
+	    <button className="canvasX" onClick={handleClick}>X</button>
 	</>);
 
 };

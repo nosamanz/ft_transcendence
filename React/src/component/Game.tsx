@@ -3,6 +3,7 @@ import io from "socket.io-client";
 import Canvas from './Canvas';
 import { cookies } from "../App";
 import CanvasMode from './CanvasMode';
+import GameRequest from './GameRequest';
 
 let rivalSocketID: string = "";
 let rivalID: number;
@@ -98,14 +99,19 @@ const Game = ({user}) => {
     return(
         <div className='oyun'>
         {
-            state === 0 ? (<>
-                <div className="PlayButton" onClick={handleClick}>
-                    PLAY
+            state === 0 ? (<div className='game'>
+                <div className="gameLeft">
+                    <div className="PlayButton" onClick={handleClick}>
+                        PLAY
+                    </div>
+                    <div className="PlayModeButton" onClick={handleModeClick}>
+                        PLAY MODE
+                    </div>
                 </div>
-                <div className="PlayModeButton" onClick={handleModeClick}>
-                    PLAY MODE
+                <div className="gameRight">
+                    <GameRequest />
                 </div>
-            </>
+            </div>
             )
             : state === 1 ? (
                 <div>

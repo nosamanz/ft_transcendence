@@ -87,14 +87,14 @@ function App() {
 			<Navbar user={user} setUser={setUser} maxSocket={maxSocket} isFormSigned={isFormSigned}/>
 			<Routes>
 			{
-				user.res !== "undefined" && maxSocket !== true && isTFAStatus !== true ?
-				(<>
-					<Route path='/*' element = {<Home user={user} isFormSigned={isFormSigned} setIsFormSigned={setIsFormSigned}/>} />
-					<Route path="/profile" element={<Profile />} />
-					<Route path="/leaderboard" element={<LeaderBoard user={user} />} />
-					<Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel} currentChannel={currentChannel}/>}/>
-					<Route path='/profile/matchHistory' element={<MatchHistory />} />
-				</>) : (<>
+				 user.res !== "undefined" && maxSocket !== true && isTFAStatus !== true ?
+				 (<>
+				 	<Route path='/*' element = {<Home user={user} isFormSigned={isFormSigned} setIsFormSigned={setIsFormSigned}/>} />
+				 	<Route path="/profile" element={<Profile />} />
+				 	<Route path="/leaderboard" element={<LeaderBoard user={user} />} />
+				 	<Route path='/chat' element={<Chat setCurrentChannel={setCurrentChannel} currentChannel={currentChannel}/>}/>
+				 	<Route path='/profile/matchHistory' element={<MatchHistory />} />
+				 </>) : (<>
 					<Route path='/*' element={<Login setUser = {setUser} isTFAStatus={isTFAStatus} setIsTFAStatus={setIsTFAStatus} setMaxSocket={setMaxSocket} setIsFormSigned={setIsFormSigned}/>}/>
 				</>
 				)

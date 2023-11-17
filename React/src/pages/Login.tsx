@@ -4,6 +4,8 @@ import { cookies } from '../App';
 import TFAVerify from '../component/TFAVerify';
 import { socket } from './Home';
 
+
+
 export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIsFormSigned}) => {
 
 	useEffect(() => {
@@ -87,17 +89,28 @@ export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIs
 	const handleFTLogin = () => {
 		window.location.href=(process.env.REACT_APP_API);
 	};
+	const calculateTransform = (index) => {
+		const degree = 7.2 * index;
+		return `rotate(${degree}deg) translate(300px) rotate(${0}deg)`;
+	  };
+	const spanCount = 50;
 
+  	const spans = Array.from({ length: spanCount }, (_, index) => (
+   	 <span key={index} style={{ '--i': index, transform: calculateTransform(index)}} className="blinking-span"></span>
+ 	 ));
 	return (
 		<div className='login'>
 		{
 			isTFAStatus === true ?
 			(<TFAVerify setIsTFAStatus={setIsTFAStatus} setUser={setUser}/>):
 			(<div className="wrapper">
-				<div className="loginButton" onClick={handleFTLogin}>
-				<img src={L42} alt="" className="icon" />
-				Login
+				<div className='login-box'>
+					<div className="loginButton" onClick={handleFTLogin}>
+						<img src={L42} alt="" className="icon" />
+						Login
+					</div>
 				</div>
+				{spans}
 			</div>
 			)
 		}

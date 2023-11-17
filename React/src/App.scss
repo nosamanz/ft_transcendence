@@ -277,15 +277,64 @@
 }
 
 .wrapper{
-	width: 260px;
-	height: 180px;
-	border-radius: 10px;
+	position: relative;
+	width: 500px;
+	height: 500px;
+	border-radius: 50%;
 	box-shadow: rgba(7, 7, 14, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.514) 0px 18px 36px -18px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	color: #112D4E;
-	background-color: #9CB4CC;
+	// background-color: #9CB4CC;
+	background-color: #6096B4;
+	.login-box{
+		position: absolute;
+		.loginButton{
+			height: 50px;
+			width: 200px;
+			padding: 15px 25px;
+			border-radius: 5px;
+			border: 5px;
+			color: black;
+			background-color: white;
+			border: 2px solid #1a4371;
+			box-shadow: rgba(0, 0, 0, 0.2);
+			font-weight: bold;
+			align-items: center;
+			display: flex;
+			cursor: pointer;
+		}
+		.icon{
+			width: 40px;
+			height: 40px;
+		}
+	}
+		.blinking-span{
+			position: absolute;
+			left: 25%;
+			width: 64px;
+			height: 6px;
+			background: #2c4766;
+			border-radius: 8px;
+			transform-origin: 128px;
+			animation: animateBlink 3s linear infinite;
+			animation-delay: calc(var(--i) * (3s /50));
+	}
+	@keyframes animateBlink{
+		0%{
+			background: purple ;
+		}
+		25%{
+			background: #6096B4;
+		}
+		50%{
+			background: #EEE9DA;
+		}
+		100%{
+			background: purple ;
+		}
+	}
 }
 .loginH1{
 	position: absolute;
@@ -296,23 +345,7 @@
 	z-index: 1;
 }
 
-.loginButton{
-	height: 40px;;
-	padding: 15px 25px;
-	border-radius: 5px;
-	border: 5px;
-	color: black;
-	background-color: white;
-	font-weight: bold;
-	align-items: center;
-	display: flex;
-	cursor: pointer;
-}
 
-.icon{
-	width: 40px;
-	height: 40px;
-}
 
 .home{
 	width: 100%;
@@ -320,13 +353,6 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-
-.game-container{
-	height: 80px;
-	width: 500px;
-	background-color:aqua;
-
 }
 
 .form{
@@ -361,7 +387,7 @@
 			label{
 				margin-bottom: 20px;
 			}
-			input{
+			input[type = "text"]{
 				border: none;
 				width: 60%;
 				height: 35px;
@@ -516,6 +542,12 @@
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
+					.pIconLabel{
+						margin: 20px;
+						color: #112D4E;
+						font-size: large;
+						font-weight: 700;
+					}
 					.toogleContainer{
 						text-align: center;
 						display: flex;
@@ -604,6 +636,21 @@
 						}
 					}
 				}
+			}
+		}
+		.match{
+			width: 55%;
+			display: flex;
+			justify-content: flex-end;
+			label{
+				cursor: pointer;
+				color: #112D4E;
+				font-weight: 700;
+				font-size: large;
+				border: 2px solid #112D4E;
+				border-radius: 8px;
+				padding: 8px;
+				box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.3);
 			}
 		}
 		.achvBlock{
@@ -773,7 +820,6 @@
 		.item1{
 			display: flex;
 			align-items: center;
-			margin-left: 5%;
 			.lBH3{
 				margin: 3px;
 				display: -webkit-inline-box;
@@ -788,6 +834,7 @@
 			.info{
 				padding: .2em;
 				margin-bottom: 1.4em;
+				width: 7em;
 				.lBH3{
 					margin: 3px;
 					display: -webkit-inline-box;
@@ -1609,37 +1656,12 @@
   input:checked + .slider + .on-label + .off-label {
 	display: none;
   }
-.PlayButton{
-	height: 50px;;
-	padding: 15px 30px;
-	border-radius: 5px;
-	border: 5px;
-	color: white;
-	background-color: rgb(30, 149, 61);
-	font-weight: bold;
-	font-family:monospace;
-	font-size:xx-large;
-	align-items: center;
-	display: flex;
-	cursor: pointer;
-}
 
 .ImageError{
 	color: red;
 }
 
-.match{
-    width: 55%;
-    display: flex;
-    justify-content: flex-end;
-    label{
-        cursor: pointer;
-        background-color: #112D4E;
-        color: #6096B4;
-        font-weight: 600;
-        font-size: medium;
-    }
-}
+
 
 .matchHistory{
     background-color: #6097b4f6;
@@ -1743,3 +1765,135 @@
 
         }
     }
+
+.game{
+	display: flex;
+	flex-direction: row;
+	width: 100vh;
+	justify-content: center;
+	.gameLeft{
+		flex: 3;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		border-radius: 15px;
+		background-color: #112d4e8f;
+		height: 50vh;
+		margin: 50px;
+		padding: 15px;
+		.PlayButton{
+			height: 70px;
+			width: 270px;
+			padding: 15px 30px;
+			border-radius: 5px;
+			border: 5px;
+			color: white;
+			background-color: rgb(30, 149, 61);
+			border: 2px solid #1a4371;
+			font-weight: bold;
+			font-family:monospace;
+			font-size:xx-large;
+			align-items: center;
+			justify-content: center;
+			display: flex;
+			cursor: pointer;
+			margin: 10px;
+			box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.3);
+		}
+		.PlayModeButton{
+			height: 70px;
+			width: 270px;
+			padding: 15px 30px;
+			border-radius: 5px;
+			border: 5px;
+			color: white;
+			background-color: rgb(193, 207, 34);
+			border: 2px solid #1a4371;
+			font-weight: bold;
+			font-family:monospace;
+			font-size:xx-large;
+			align-items: center;
+			justify-content: center;
+			display: flex;
+			cursor: pointer;
+			margin: 10px;
+			box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.3);
+		}
+		
+	}
+	.gameRight{
+		background-color: #1a4371be;
+		flex: 3;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		border-radius: 15px;
+		height: 50vh;
+		margin: 50px;
+		padding: 15px;
+		.gameRequest{
+			align-items: center;
+			.gameRequestH{
+				margin-top: 50px;
+				font-weight: 600;
+				font-size: x-large;
+			}
+			.gameRequestList{
+				display: flex;
+				width: 100%;
+				flex-direction: column;
+				overflow-x: hidden;
+				padding: 5px;
+				.gameRequestLi{
+					display: flex;
+					width: 100%;
+					justify-content:space-between;
+					margin: 5px;
+					li{
+				
+					}
+					img{
+						width: 24px;
+						height: 24px;
+						margin-left: 20px;
+						cursor: pointer;
+					}
+				}
+			}
+		}
+	}
+	.gameRight::-webkit-scrollbar{
+		width: 4px;
+	}
+}
+
+
+.canvasX{
+	width: 32px;
+	height: 32px;
+	background-color: #1a4371;
+	color: #6096B4;
+	font-weight: 700;
+	border-radius: 8px;
+	border:2px solid #112D4E;
+	box-shadow: 1px 2px 3px 1px rgba(0,0,0,0.3); 
+	margin-left: 20px;
+	position: fixed;
+	cursor: pointer;
+}
+
+.WinState{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 30px;
+	.confetti{
+		display: flex;
+		z-index: 2;
+		color: white;
+		font-weight: 900;
+		font-size: xx-large;
+	}
+}

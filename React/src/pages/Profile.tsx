@@ -92,7 +92,12 @@ const Profile = () => {
 		setSettingPopUp(false);
 	}
 	const handleChange =(e:React.ChangeEvent<HTMLInputElement>)=>{
-		setNewNick(e.target.value);
+		if((e.target.value).length < 11)
+		{
+			setNewNick(e.target.value);
+		}
+		else
+			alert("new nick");
 	}
 	const send = () =>{
 		const fetchData = async () =>{
@@ -152,7 +157,7 @@ const Profile = () => {
 									<div className="pIconBlock">
 										<div className="pIconBlockPosition">
 											<div>
-												<label>TFA</label>
+												<label className="pIconLabel">TFA</label>
 											</div>
 											<div className="toogleContainer">
 												<ToggleSwitch checked={toggleState} onChange={handleToggleChange} />
@@ -188,7 +193,7 @@ const Profile = () => {
 									{
 										mtchOpen === true ?(<MatchHistory />):(null)
 									} */}
-									<Link to="/profile/matchHistory" className="link" ><label>Match History</label></Link>
+									<Link to={`/profile/matchHistory?nick=${nick}`} className="link" ><label>Match History</label></Link>
 								</div>
 								{
 									user.imgBuffer ? (
