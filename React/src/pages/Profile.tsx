@@ -12,6 +12,9 @@ import w5wL from "../images/w5wL.png";
 import w10wL from "../images/w10wL.png";
 import ach1 from "../images/ach1.png";
 import ach2 from "../images/ach2.png";
+import ach3 from "../images/ach2.png";
+import ach5 from "../images/ach5.png";
+
 import Form from "../component/Form";
 import MatchHistory from "../component/MatchHistory";
 
@@ -199,12 +202,12 @@ const Profile = () => {
 								{
 									user.imgBuffer ? (
 										<div className="achvBlock">
-											{ user.Achievements.Ac1 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={achievement} alt="a" />{isHovered && <p>First Win</p>}</div>):(null) }
-											{ user.Achievements.Ac2 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={firstWin} alt="a" />{isHovered && <p>First Lose</p>}</div>):(null) }
-											{ user.Achievements.Ac3 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={w5wL} alt="a" />{isHovered && <p>Win 10 times</p>}</div>):(null) }
-											{ user.Achievements.Ac4 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={w10wL} alt="a" />{isHovered && <p>Win 5 games without Losing</p>}</div>):(null) }
-											{ user.Achievements.Ac5 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={ach1} alt="a" />{isHovered && <p>Win 10 games without Losing</p>}</div>):(null) }
-											{ user.Achievements.Ac6 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={ach2} alt="a" />{isHovered && <p>Win without conceding any goals</p>}</div>):(null) }
+											{ user.Achievements.Ac1 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={firstWin} alt="a" />{isHovered && <p>First Win</p>}</div>):(null) }
+											{ user.Achievements.Ac2 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={ach5} alt="a" />{isHovered && <p>First Lose</p>}</div>):(null) }
+											{ user.Achievements.Ac3 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={achievement} alt="a" />{isHovered && <p>Win 10 times</p>}</div>):(null) }
+											{ user.Achievements.Ac4 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={w5wL} alt="a" />{isHovered && <p>Win 5 games without Losing</p>}</div>):(null) }
+											{ user.Achievements.Ac5 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={w10wL} alt="a" />{isHovered && <p>Win 10 games without Losing</p>}</div>):(null) }
+											{ user.Achievements.Ac6 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={ach3} alt="a" />{isHovered && <p>Win without conceding any goals</p>}</div>):(null) }
 										</div>
 									): (null)
 								}
