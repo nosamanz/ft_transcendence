@@ -3,18 +3,31 @@ import L42 from '../images/42icon.png';
 import { cookies } from '../App';
 import TFAVerify from '../component/TFAVerify';
 import { socket } from './Home';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 
 export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIsFormSigned}) => {
+	const location = useLocation();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const params = new URLSearchParams(window.location.search);
-			const code = params.get('code');
+			const searchParams = new URLSearchParams(location.search);
+			const code = searchParams.get('code');
+
+			const handleRemoveQueryParam = () => {
+				const searchParams = new URLSearchParams(location.search);
+				searchParams.delete('code');
+				const newSearchString = searchParams.toString();
+				navigate({
+					search: newSearchString,
+				});
+			};
 
 			if(code)
 			{
+				handleRemoveQueryParam();
 				const data = {}
 				data['grant_type']= 'authorization_code';
 				data['client_id']= process.env.REACT_APP_UID;

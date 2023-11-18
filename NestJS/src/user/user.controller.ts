@@ -77,7 +77,7 @@ export class UserController {
 	{
 		const userID = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID)
-		if (user.IsFormSigned === true)
+		if (user && user.IsFormSigned === true)
 			return res.send(true);
 		return res.send(false);
 	}

@@ -30,6 +30,7 @@ model History {
 	id            Int     @id @default(autoincrement())
 	RivalNick     String
 	Score         Int
+	Latter		  Int
 	RivalScore    Int
 	RivalLatter   Int
 	User          User    @relation(fields: [UserId], references: [id])
@@ -54,6 +55,7 @@ model User {
 	Friends         Friend[]
 	IgnoredUsers    Ignore[]
 	MatchHistory    History[]
+	GameInvitations	GameInvitation[]
 	Channels        Channel[]
 }
 
@@ -94,6 +96,15 @@ model Message {
 	channelName	String
 
 	CreatedAt DateTime  @default(now())
+}
+
+model GameInvitation {
+	id        	Int       @id @default(autoincrement())
+	inviterID  	Int
+	inviterNick	String
+
+	User    User    @relation(fields: [UserID], references: [id])
+	UserID  Int
 }
 
 // @Get()//Ana Sayfa

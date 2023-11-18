@@ -22,43 +22,6 @@ let paddleSpeedM: number = 10;
 export class GameModeService {
     constructor( private userService: UserService ){}
 
-    async leaveRoom(server: Server, client: Socket): Promise<number>
-    {
-        const userID = this.getUserBySocket(client);
-        if (userID === undefined)
-        {
-            console.log("This is not a regular game a could not leave regular room.")
-            return;
-        }
-        await this.userService.setUserStatus(userID, "Online");
-        const adapter = server.of('/').adapter;
-        let rooms: Map<string, string[]> = new Map()
-		adapter.sids.forEach((value, key) => {
-            const arr: any[] = Array.from(value)
-            if(arr.length === 2)
-            {
-                if (rooms.has(arr[1]) === false)
-                    rooms.set(arr[1], ["1", arr[0]]);
-                else
-                    rooms.set(arr[1], ["2", arr[0]]);
-        }
-        });
-        rooms.forEach((value, key) => {
-            if(value[0] === "1")
-            {
-                // value[1] won game because his rival disconnected
-                const clientInf: clientInfo = connectedGameSockets.find(element => element.client.id === value[1]);
-                const socket: Socket = clientInf.client
-                if (socket)
-                {
-                    socket.emit("scoreUpdate", "rivalDisconnected");
-                    socket.disconnect();
-                }
-            }
-        })
-        return;
-    }
-
     async createRoom(server: Server, roomId: string, socket1: Socket, socket2: Socket) {
         const user1ID = this.getUserBySocket(socket1);
         const user2ID = this.getUserBySocket(socket2);

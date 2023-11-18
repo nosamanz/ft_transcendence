@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { clientInfo } from 'src/chat/entities/clientInfo.entity';
 import { connectedGameSockets } from 'src/game/game.gateway';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 
 let gameIntervals: Map<string, NodeJS.Timeout> = new Map<string, NodeJS.Timeout>();
@@ -11,16 +12,13 @@ let paddleHeight: number = 80;
 
 @Injectable()
 export class GameService {
-    constructor( private userService: UserService ){}
+    constructor( private userService: UserService, private prisma: PrismaService){}
 
     async leaveRoom(server: Server, client: Socket): Promise<number>
     {
         const userID = this.getUserBySocket(client);
         if (userID === undefined)
-        {
-            console.log("This is not a regular game a could not leave regular room.")
             return;
-        }
         await this.userService.setUserStatus(userID, "Online");
         const adapter = server.of('/').adapter;
         let rooms: Map<string, string[]> = new Map()
@@ -249,6 +247,18 @@ export class GameService {
 		if (clientInfo)
 			return (clientInfo.id);
 		return (undefined);
-	}
+    }
+
+    async deleteInvitation(userID: number, inviterID: number){
+        console.log(`userID: ${userID}, inviterID: ${inviterID}`);
+        console.log (await this.prisma.gameInvitation.deleteMany({
+			where: {
+				AND: [
+					{ UserID:  userID },
+					{ inviterID: inviterID },
+				],
+			},
+		}));
+    }
 }
 

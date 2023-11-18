@@ -2,6 +2,9 @@ import { Controller, Get, Param, ParseIntPipe, Req, Res, UseGuards } from '@nest
 import { JwtGuard } from 'src/auth/strategies/jwt/jwt.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
+import { Response } from 'express';
+import { connectedClients } from 'src/chat/chat.service';
+import { clientInfo } from 'src/chat/entities/clientInfo.entity';
 
 @Controller('game')
 export class GameController {
@@ -9,11 +12,57 @@ export class GameController {
 		private userService: UserService,
 		private prisma: PrismaService)
 		{}
-   	@Get('/res')
-	async abc()
-	{
-		console.log("GET GAME");
+	
+	@Get('/gameInvitations')
+	@UseGuards(JwtGuard)
+	async getGameInvitation(
+		@Req() req: Request,
+		@Res() res: Response): Promise<any> {
+		const userID: number = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID, {GameInvitations: true});
+		return res.send(user.GameInvitations);
 	}
+
+	@Get('/invite/:id')
+	@UseGuards(JwtGuard)
+	async invite(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('id', new ParseIntPipe()) rivalID: number,): Promise<any> {
+		const userID: number = parseInt(req.body.toString(), 10);
+		const user = await this.userService.getUserByID(userID);
+		const invitation: any = await this.prisma.gameInvitation.findFirst({
+			where: {
+				inviterID: userID,
+				UserID: rivalID,
+			}
+		})
+		if (invitation)
+			return res.send({msg: "The user has been already invited!!"});
+		await this.prisma.gameInvitation.create({
+			data: {
+				inviterID: userID,
+				inviterNick: user.nick,
+				User: {
+					connect: { id: rivalID },
+		}}});
+		return res.send({msg: "The user is invited to the game."});
+	}
+	
+	@Get('/deleteInvitaton/:id')
+	@UseGuards(JwtGuard)
+	async rejectGameInvitation(
+		@Req() req: Request,
+		@Res() res: Response,
+		@Param('id', new ParseIntPipe()) invitationID: number,): Promise<any> {
+		const userID: number = parseInt(req.body.toString(), 10);
+		await this.prisma.gameInvitation.delete({where: {id: invitationID}})
+		const cli: clientInfo = connectedClients.find(e => (e.id === userID));
+		if (cli)
+			cli.client.emit("GameInvitation");
+		return res.send({msg: "The game invitation is deleted."});
+	}
+
 	@Get('/result/:id/:myScore/:rivalScore')
 	@UseGuards(JwtGuard)
 	async GetSaveResult(
@@ -35,6 +84,7 @@ export class GameController {
 					RivalNick: rival.nick,
 					Score: myScore,
 					RivalLatter: rival.LatterLevel,
+					Latter: user.LatterLevel,
 					RivalScore: rivalScore,
 					User: {
 						connect: { id: userID },
@@ -45,6 +95,7 @@ export class GameController {
 					RivalLatter: user.LatterLevel,
 					Score: rivalScore,
 					RivalScore: myScore,
+					Latter: rival.LatterLevel,
 					User: {
 						connect: { id: rivalID },
 		}}})}
@@ -54,49 +105,30 @@ export class GameController {
 
 		const newUserWin:number = user.WinCount + 1;
 
-		//Change User and Rival win lose count
-		// let achievements:any = { Ac1:false, Ac2:false, Ac3:false, Ac4:false, Ac5:false, Ac6:false }
-		// let achievements = user.Achievements;
 		if (newUserWin === 1)
 		{
-			// "First Win"
-			// console.log(user.Achievements.)
 			user.Achievements.Ac1 = true;
 		}
-		else if (newUserWin === 10)
+		if (newUserWin === 10)
 		{
-			// Win 10 Times
 			user.Achievements.Ac3 = true;
 		}
-		else if (newUserWin === 5 && user.LoseCount === 0)
+		if (newUserWin === 5 && user.LoseCount === 0)
 		{
-			// Win 5 games without losing
 			user.Achievements.Ac4 = true;
 		}
-		else if (newUserWin === 10 && user.LoseCount === 0)
+		if (newUserWin === 10 && user.LoseCount === 0)
 		{
-			// Win 10 games without losing
 			user.Achievements.Ac5 = true;
 		}
 		if (rivalScore === 0)
 		{
-			// Win without conceding any goals
 			user.Achievements.Ac6 = true;
 		}
 		if (rival.LoseCount + 1 === 1)
 		{
-			// "First Lose"
 			rival.Achievements.Ac2 = true;
 		}
-
-
-		// let userUpdateInformation:any;
-
-		// userUpdateInformation = {
-		// 	WinCount: newUserWin,
-		// 	LatterLevel: user.LatterLevel + 100,
-		// 	Achievements: user.Achievements
-		// }
 
 		await this.userService.updateUserByID({
 			WinCount: newUserWin,
@@ -113,12 +145,6 @@ export class GameController {
 			}
 		}, userID);
 
-		// userUpdateInformation = {
-		// 	LoseCount: rival.LoseCount,
-		// 	LatterLevel: rival.LatterLevel - 50,
-		// 	Achievements: rival.Achievements
-		// }
-
 		await this.userService.updateUserByID({
 			LoseCount: rival.LoseCount + 1,
 			LatterLevel: rival.LatterLevel - 50,
@@ -133,10 +159,6 @@ export class GameController {
 				}
 			}
 		}, rivalID);
-		// userID: my id
-		// rivalID: rivals id
-		// myScore: my score. I am always the winner. Sadece yenen kişiden istek gelcek
-		// rivalScore: rivals score
 		return;
 	}
 }

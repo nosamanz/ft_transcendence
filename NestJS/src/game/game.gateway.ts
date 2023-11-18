@@ -3,10 +3,12 @@ import { Socket, Server } from 'socket.io';
 import { clientInfo } from 'src/chat/entities/clientInfo.entity';
 import { GameService } from 'src/game/game.service';
 import { GameModeService } from 'src/game/game-mode.service';
+import { connectedClients } from 'src/chat/chat.service';
 
 export let connectedGameSockets: clientInfo[] = [];
 let queue: Socket[] = [];
 let modeQueue: Socket[] = [];
+let privGameQueue: {ids: number[], socket: Socket}[] = [];
 let nextRoomID: number = 1;
 
 @WebSocketGateway()
@@ -21,14 +23,34 @@ export class GameGateway {
 
 	handleDisconnect(client: Socket): void {
 		this.gameService.leaveRoom(this.server, client);
-		this.gameModeService.leaveRoom(this.server, client);
 		queue = queue.filter(cli => cli.id !== client.id);
 		modeQueue = modeQueue.filter(cli => cli.id !== client.id);
+		const theCli = connectedGameSockets.find(cli => cli.client.id === client.id);
+		if ( theCli )
+		{
+			privGameQueue.forEach(e => {
+				if ( e.socket.id === client.id)
+				{
+					//If the user leaving has some game invitations the user invited is need to be informed
+					e.ids.forEach(async (idElem) => {
+						if (idElem !== theCli.id)
+						{
+							await this.gameService.deleteInvitation(idElem, theCli.id);
+							const theUser: clientInfo = connectedClients.find(cli => cli.id === idElem);
+							if( theUser )
+								theUser.client.emit("GameInvitation");
+						}
+					})
+					privGameQueue = privGameQueue
+				}
+			})
+		}
+		privGameQueue = privGameQueue.filter(e => e.socket.id !== client.id);
 		connectedGameSockets = connectedGameSockets.filter(cli => cli.client.id !== client.id);
 	}
 
-	@SubscribeMessage('joinChannel')
-	handleJoinChannel(client: Socket, data: {id: number}) {
+	@SubscribeMessage('joinGame')
+	handleJoinGame(client: Socket, data: {id: number}) {
 		if (!queue.includes(client)) {
 			queue.push(client);
 			connectedGameSockets.push({id: data.id, client: client});
@@ -53,8 +75,8 @@ export class GameGateway {
 		this.gameService.stopGame(roomID);
 	}
 
-	@SubscribeMessage('joinModeChannel')
-	handleJoinModeChannel(client: Socket, data: {id: number}) {
+	@SubscribeMessage('joinModeGame')
+	handleJoinModeGame(client: Socket, data: {id: number}) {
 		if (!modeQueue.includes(client)) {
 			modeQueue.push(client);
 			connectedGameSockets.push({id: data.id, client: client});
@@ -79,6 +101,47 @@ export class GameGateway {
 		this.gameService.stopGame(roomID);
 	}
 
+	@SubscribeMessage('joinPrivGame')
+	handleJoinPrivGame(client: Socket, data: {myId: number, rivalID: number}) {
+		connectedGameSockets.push({id: data.myId, client: client});
+		const queueElement: {ids: number[], socket: Socket} = privGameQueue.find(element => ((element.ids.some(id => (id === data.myId)) && element.socket.id !== client.id)))
+		if ( queueElement )
+		{
+			this.gameService.createRoom(this.server, nextRoomID.toString(), client, queueElement.socket);
+			nextRoomID++;
+			privGameQueue = privGameQueue.filter(element => element !== queueElement);
+		}
+		else {
+			if (!privGameQueue.includes({ids: [data.myId, data.rivalID], socket: client}))
+				privGameQueue.push({ids: [data.myId, data.rivalID], socket: client})
+			console.log("User Id: ", data.myId, ` is waiting for his friend ${data.rivalID} to join.`);
+		}
+	}
+	
+	@SubscribeMessage('rejectPrivGame')
+	handleRejectPrivGame(client: Socket, data: {myId: number, rivalID: number}) {
+		const queueElement: {ids: number[], socket: Socket} = privGameQueue.find(element => ((element.ids.some(id => (id === data.myId)) && element.socket.id !== client.id)))
+		if ( queueElement )
+		{
+			console.log("QElement")
+			queueElement.socket.emit("InvitationRejected");
+			privGameQueue = privGameQueue.filter(element => element !== queueElement);
+		}
+	}
+
+	@SubscribeMessage('invite')
+	handleInvite(client: Socket, data: {myId: number, rivalID: number}) {
+		const rival: clientInfo = connectedClients.find(e => e.id === data.rivalID);
+		if (rival) {
+			rival.client.emit("GameInvitation");
+		}
+	}
+
+	@SubscribeMessage('stopPrivInterval')
+	handleStopPrivInterval(client: Socket, roomID: string) {
+		this.gameService.stopGame(roomID);
+	}
+	
 	@SubscribeMessage('movePaddle')
 	handleMovePaddle(client: Socket, obj: {rivalID: string, direction: string, location: string, roomID: string}) {
 		this.gameService.changePaddleSpeed(this.server, client.id, obj)

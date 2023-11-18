@@ -30,7 +30,7 @@ const MatchHistoryList = ({history, user}) =>{
 						<div className="nick">
 							{user.nick}
 							<div className="matchLetter">
-								{user.LatterLevel}
+								{history.Latter}
 							</div>
 							<div className="mtchScore">
 								{history.Score}

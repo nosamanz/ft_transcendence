@@ -130,10 +130,9 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
                             <label>Nickname: </label>
                         <input type="text" name="name" placeholder={user.nick} onChange={handleChange}></input>
                         <input  id = "fileInput" type="file" name="image" accept="images/*" onChange={handleImageChange}/>
-                        </div>
                         {
                             selectedImage !== "" ? (
-                            <div>
+                                <div>
                                 <h3>Select Avatar</h3>
                                 <img src={selectedImage} alt="" className="formImage"></img>
                             </div>
@@ -141,6 +140,7 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
                         }
                         <p className="ImageError">{error}</p>
                         <button type="submit" onClick={handleSubmit}>Send</button>
+                        </div>
                     </form>
                 </div>
             </div>

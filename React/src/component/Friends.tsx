@@ -11,7 +11,6 @@ const FriendsSidebar = () => {
     const dValue = document.getElementById('search') as HTMLInputElement;
 
     socket.on("Friend Status", () => {
-        console.log("Status değişti");
         setStatus(status + 1);
     })
     useEffect(() => {

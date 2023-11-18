@@ -3,7 +3,7 @@ import { socketGame } from './Game';
 import { cookies } from '../App';
 import Confetti from './Confetti';
 
-const Canvas = ({ location, myNick, rival, roomID, setState}: { location: string, myNick: string, rival: {nick: string, id: number}, roomID: string, setState: any}) => {
+const Canvas = ({ location, myNick, rival, roomID, setState, setPrivGame}: { location: string, myNick: string, rival: {nick: string, id: number}, roomID: string, setState: any, setPrivGame: any}) => {
 	const canvasRef1 = useRef<HTMLCanvasElement | null>(null);
 	const canvasRef2 = useRef<HTMLCanvasElement | null>(null);
 	const speed = 15;
@@ -150,7 +150,9 @@ const Canvas = ({ location, myNick, rival, roomID, setState}: { location: string
 	}, [gameState, myScore, rivalScore, disconnection, roomID]);
 
 	const handleClick = () =>{
+		socketGame.disconnect();
 		setState(0);
+		setPrivGame(0);
 	}
 	
 	return (<>

@@ -27,6 +27,7 @@ CREATE TABLE "History" (
     "id" SERIAL NOT NULL,
     "RivalNick" TEXT NOT NULL,
     "Score" INTEGER NOT NULL,
+    "Latter" INTEGER NOT NULL,
     "RivalScore" INTEGER NOT NULL,
     "RivalLatter" INTEGER NOT NULL,
     "UserId" INTEGER NOT NULL,
@@ -95,6 +96,16 @@ CREATE TABLE "Message" (
 );
 
 -- CreateTable
+CREATE TABLE "GameInvitation" (
+    "id" SERIAL NOT NULL,
+    "inviterID" INTEGER NOT NULL,
+    "inviterNick" TEXT NOT NULL,
+    "UserID" INTEGER NOT NULL,
+
+    CONSTRAINT "GameInvitation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_FriendToUser" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -153,6 +164,9 @@ ALTER TABLE "Achievements" ADD CONSTRAINT "Achievements_UserID_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "Message" ADD CONSTRAINT "Message_channelName_fkey" FOREIGN KEY ("channelName") REFERENCES "Channel"("Name") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GameInvitation" ADD CONSTRAINT "GameInvitation_UserID_fkey" FOREIGN KEY ("UserID") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_FriendToUser" ADD CONSTRAINT "_FriendToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Friend"("id") ON DELETE CASCADE ON UPDATE CASCADE;

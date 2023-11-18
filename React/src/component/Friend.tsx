@@ -48,10 +48,6 @@ const Friend = ({friend, status, setStatus}) =>{
         }
         fetchData();
     }
-    const gInvite = () =>
-    {
-
-    }
     const [name, setName] = useState<string>("");
     const chName = (e) =>{
         setName(e.target.value);
@@ -89,7 +85,7 @@ const Friend = ({friend, status, setStatus}) =>{
                 <div className="friendIcons">
                     <img className="friendIcon"onClick={privMsg} src={messageIcon} alt="a"/>
                     <img className="friendIcon"onClick={ignorePerson} src={ignoreIcon} alt="b"/>
-                    <img className="friendIcon"onClick={gInvite} src={gameInvite} alt="c"/>
+                    <Link className="link" to={`/?id=${friend.id}`} ><img className="friendIcon"src={gameInvite} alt="c"/></Link>
                     <img className="friendIcon"onClick={popUp} src={invite} alt="d"/>
                 </div>
                 {

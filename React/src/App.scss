@@ -656,6 +656,7 @@
 		.achvBlock{
 			margin-top: 50px;
 			margin-bottom: -100px;
+			display: flex;
 			img{
 				width: 100px;
 				height:100px;
@@ -664,6 +665,9 @@
 				background-color: #112D4E;
 				border: 10px solid #6096B4;
 				border-radius: 50%;
+			}
+			p{
+				position: absolute;
 			}
 		}
 	}
@@ -1661,8 +1665,6 @@
 	color: red;
 }
 
-
-
 .matchHistory{
     background-color: #6097b4f6;
     padding: 20px;
@@ -1835,6 +1837,11 @@
 		padding: 15px;
 		.gameRequest{
 			align-items: center;
+			display: flex;
+			flex-direction: column;
+			overflow-y: scroll;
+			height: 100%;
+			width: 100%;
 			.gameRequestH{
 				margin-top: 50px;
 				font-weight: 600;
@@ -1852,7 +1859,7 @@
 					justify-content:space-between;
 					margin: 5px;
 					li{
-				
+						color: white;
 					}
 					img{
 						width: 24px;
@@ -1863,9 +1870,10 @@
 				}
 			}
 		}
-	}
-	.gameRight::-webkit-scrollbar{
-		width: 4px;
+		.gameRequest::-webkit-scrollbar{
+			width: 5px;
+			background: transparent;
+		}
 	}
 }
 

@@ -28,6 +28,7 @@ const Profile = () => {
 	const [toggleState, setToggleState] = useState<boolean>(false);
 	const [mtchOpen, setmtchOpen] = useState<boolean>(false);
     const [QR, setQR] = useState("");
+	const [isHovered, setHovered] = useState<boolean>(false);
 	let tfa: boolean = false;
 
 	useEffect (() =>{
@@ -198,12 +199,12 @@ const Profile = () => {
 								{
 									user.imgBuffer ? (
 										<div className="achvBlock">
-											{ user.Achievements.Ac1 ===  true ? (<img src={achievement} alt="a" />):(null) }
-											{ user.Achievements.Ac2 ===  true ? (<img src={firstWin} alt="a" />):(null) }
-											{ user.Achievements.Ac3 ===  true ? (<img src={w5wL} alt="a" />):(null) }
-											{ user.Achievements.Ac4 ===  true ? (<img src={w10wL} alt="a" />):(null) }
-											{ user.Achievements.Ac5 ===  true ? (<img src={ach1} alt="a" />):(null) }
-											{ user.Achievements.Ac6 ===  true ? (<img src={ach2} alt="a" />):(null) }
+											{ user.Achievements.Ac1 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={achievement} alt="a" />{isHovered && <p>First Win</p>}</div>):(null) }
+											{ user.Achievements.Ac2 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={firstWin} alt="a" />{isHovered && <p>First Lose</p>}</div>):(null) }
+											{ user.Achievements.Ac3 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={w5wL} alt="a" />{isHovered && <p>Win 10 times</p>}</div>):(null) }
+											{ user.Achievements.Ac4 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={w10wL} alt="a" />{isHovered && <p>Win 5 games without Losing</p>}</div>):(null) }
+											{ user.Achievements.Ac5 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={ach1} alt="a" />{isHovered && <p>Win 10 games without Losing</p>}</div>):(null) }
+											{ user.Achievements.Ac6 ===  true ? (<div onMouseOver={() => setHovered(true)} onMouseOut={()=> setHovered(false)}><img src={ach2} alt="a" />{isHovered && <p>Win without conceding any goals</p>}</div>):(null) }
 										</div>
 									): (null)
 								}

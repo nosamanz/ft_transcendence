@@ -58,10 +58,11 @@ export class AuthService {
 						Ac6:	false,
 					}
 				},
-				Friends:     	{},
-				IgnoredUsers:	{},
-				MatchHistory:	{},
-				Channels:     	{},
+				Friends:     		{},
+				IgnoredUsers:		{},
+				MatchHistory:		{},
+				GameInvitations:	{},
+				Channels:     		{},
 			}
 		});
 		// defaultuKaydet

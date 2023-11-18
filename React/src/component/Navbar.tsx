@@ -5,6 +5,7 @@ import ok from "../images/ok.png";
 import ko from "../images/close.png";
 import { cookies } from "../App";
 import { socket } from "../pages/Home";
+import { socketGame } from "./Game";
 
 
 const Navbar = ({user, setUser, maxSocket, isFormSigned}) => {
@@ -14,6 +15,7 @@ const Navbar = ({user, setUser, maxSocket, isFormSigned}) => {
         cookies.remove("jwt_authorization");
         cookies.remove("TFAStatus");
         socket.disconnect();
+        socketGame.disconnect();
         setUser({res: "undefined"})
     }
     const handleClick = ()=>{
