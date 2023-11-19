@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { clientInfo } from 'src/chat/entities/clientInfo.entity';
 import { connectedGameSockets } from 'src/game/game.gateway';
 import { UserService } from 'src/user/user.service';
+import { gameIntervals } from './game.service';
 
-let gameIntervalsM: Map<string, NodeJS.Timeout> = new Map<string, NodeJS.Timeout>();
 let roomStatesM: Map<string, {
     leftPaddleY: number,
     rightPaddleY: number,
@@ -48,14 +47,6 @@ export class GameModeService {
         this.startGameLoop(server, roomId);
     }
 
-    stopGame(roomId: string) {
-        const intervalId = gameIntervalsM.get(roomId);
-        if (intervalId) {
-            clearInterval(intervalId);
-            gameIntervalsM.delete(roomId);
-        }
-    }
-
     startGameLoop(server: Server, roomId: string) {
 		let intervalID = setInterval(() => {
             let gameState = roomStatesM.get(roomId);
@@ -97,8 +88,7 @@ export class GameModeService {
                 server.to(roomId).emit('updateModeGameState', gameState);
             }
         }, 16 ); // 60 FPS
-
-        gameIntervalsM.set(roomId, intervalID);
+        gameIntervals.set(roomId, intervalID);
 	}
 
     paddleCollision(e: any): any{

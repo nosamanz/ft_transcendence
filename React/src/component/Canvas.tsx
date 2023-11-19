@@ -6,7 +6,6 @@ import Confetti from './Confetti';
 const Canvas = ({ location, myNick, rival, roomID, setState, setPrivGame}: { location: string, myNick: string, rival: {nick: string, id: number}, roomID: string, setState: any, setPrivGame: any}) => {
 	const canvasRef1 = useRef<HTMLCanvasElement | null>(null);
 	const canvasRef2 = useRef<HTMLCanvasElement | null>(null);
-	const speed = 15;
 	const paddleWidth = 15;
 	const paddleHeight = 80;
 	const leftPaddleX = 30;
@@ -31,48 +30,49 @@ const Canvas = ({ location, myNick, rival, roomID, setState, setPrivGame}: { loc
 			ballY: 295
 		});
 
-	socketGame.on("updateGameState", (data) => {
-		setGameState(data);
-	});
-	socketGame.on("scoreUpdate", async (pos) => {
-		if (pos === "rivalDisconnected")
-		{
-			await fetch(`https://${process.env.REACT_APP_IP}:80/game/result/${rival.id}/3/0`, {
-				headers: {
-					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-				}
-			})
-			setMyScore(3);
-			setRivalScore(0);
-			setDisconnection(true);
-			socketGame.emit("stopInterval", roomID);
-			socketGame.disconnect();
-		}
-		else if (location === pos){
-			setMyScore(myScore + 1)
-			if(myScore + 1 == 10)
+	useEffect(() => {
+		socketGame.on("updateGameState", (data) => {
+			setGameState(data);
+		});
+	}, []);
+
+	useEffect(() =>{ 
+		socketGame.on("scoreUpdate", async (pos) => {
+			if (pos === "rivalDisconnected")
 			{
-				console.log("I WON");
-				await fetch(`https://${process.env.REACT_APP_IP}:80/game/result/${rival.id}/${myScore}/${rivalScore}`, {
+				await fetch(`https://${process.env.REACT_APP_IP}:80/game/result/${rival.id}/3/0`, {
 					headers: {
 						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 					}
 				})
-				socketGame.emit("stopInterval", roomID);
-				socketGame.disconnect();
+				setMyScore(3);
+				setRivalScore(0);
+				setDisconnection(true);
+				socketGame.emit("stopIntervalDisconnect", roomID);
 			}
-		}
-		else {
-			setRivalScore(rivalScore + 1)
-			if(rivalScore + 1 == 10)
-				socketGame.disconnect();
-		}
-	});
-
-	const printNick = (ctx: any, nick: string, x: number, y: number): void => {
-		if (nick !== undefined)
-			ctx.fillText(nick.length > 10 ? nick.substring(0, 9) + "." : nick, x, y);
-	}
+			else if (location === pos){
+				const tmpScore: number = myScore;
+				setMyScore(tmpScore + 1);
+				if(tmpScore + 1 == 10)
+				{
+					await fetch(`https://${process.env.REACT_APP_IP}:80/game/result/${rival.id}/${tmpScore + 1}/${rivalScore}`, {
+						headers: {
+							'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+						}
+					})
+					socketGame.emit("stopInterval", roomID);
+				}
+			}
+			else {
+				setRivalScore(rivalScore + 1)
+				if(rivalScore + 1 == 10)
+					socketGame.emit("stopInterval", roomID);
+			}
+		});
+		return (() => {
+			socketGame.off("scoreUpdate");
+		})
+	},[ myScore, rivalScore, location]);
 
 	useEffect(() => {
 		const canvas1 = canvasRef1.current;
@@ -131,7 +131,6 @@ const Canvas = ({ location, myNick, rival, roomID, setState, setPrivGame}: { loc
 				ctx2.fillStyle = 'white';
                 ctx2.fillRect(canvas2.width / 2 - 7, 30, 15, canvas2.height - 60);
 
-
 				// Draw left paddle
 				ctx2.fillStyle = 'white';
 				ctx2.fillRect(leftPaddleX, gameState.leftPaddleY, paddleWidth, paddleHeight);
@@ -146,8 +145,12 @@ const Canvas = ({ location, myNick, rival, roomID, setState, setPrivGame}: { loc
 				ctx2.fillStyle = 'white';
 				ctx2.fillRect(gameState.ballX + 1, gameState.ballY + 1, 18, 18);
 		}
-
 	}, [gameState, myScore, rivalScore, disconnection, roomID]);
+
+	const printNick = (ctx: any, nick: string, x: number, y: number): void => {
+		if (nick !== undefined)
+			ctx.fillText(nick.length > 10 ? nick.substring(0, 9) + "." : nick, x, y);
+	}
 
 	const handleClick = () =>{
 		socketGame.disconnect();
@@ -187,7 +190,6 @@ const Canvas = ({ location, myNick, rival, roomID, setState, setPrivGame}: { loc
 		></canvas>
 	    <button className="canvasX" onClick={handleClick}>X</button>
 	</>);
-
 };
 
 export default Canvas;

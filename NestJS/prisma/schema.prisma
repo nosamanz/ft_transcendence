@@ -75,7 +75,7 @@ model Channel {
 	id              Int @id @default(autoincrement())
 	Name            String @unique
 	ChannelOwnerID  Int
-	AdminIDs        Int[] // ChannelOwner is an administrator
+	AdminIDs        Int[]
 	BannedIDs       Int[]
 	MutedIDs        Int[]
 	InvitedIDs      Int[]
@@ -106,25 +106,3 @@ model GameInvitation {
 	User    User    @relation(fields: [UserID], references: [id])
 	UserID  Int
 }
-
-// @Get()//Ana Sayfa
-// @Get('/:channelName/messages')
-// @Get('/:channelName/ban/:user')
-// @Get('/:channelName/setAdmin/:user')
-// @Get('/:channelName/kick/:user')
-// @Get('/:channelName/mute/:user')
-// @Get('/:channelName/create')
-// @Get('/user/ignore/:user')
-
-// const users = await prisma.user.findMany({
-//   orderBy: {
-//     LatterLevel: 'asc', // You can use 'asc' for ascending or 'desc' for descending order
-//   },
-// });
-// this.prisma.message.create({
-//   data: {
-//     Content: "Msuab",
-//     SenderID: 9852,
-//     ChannelID: 2
-//   }
-// });

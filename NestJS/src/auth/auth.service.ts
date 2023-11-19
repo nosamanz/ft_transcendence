@@ -47,7 +47,7 @@ export class AuthService {
 				ImageExt:		"",
 				WinCount:    	0,
 				LoseCount:   	0,
-				LatterLevel: 	0,
+				LatterLevel: 	500,
 				Achievements:	{
 					create: {
 						Ac1:	false,

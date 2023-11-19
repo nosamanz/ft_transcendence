@@ -5,10 +5,10 @@ import { connectedGameSockets } from 'src/game/game.gateway';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 
-let gameIntervals: Map<string, NodeJS.Timeout> = new Map<string, NodeJS.Timeout>();
+export let gameIntervals: Map<string, NodeJS.Timeout> = new Map<string, NodeJS.Timeout>();
 let roomStates: Map<string, { leftPaddleY: number, rightPaddleY: number, ballX: number, ballY: number, speedX: number, speedY: number, leftPaddleM: number, rightPaddleM: number }> = new Map();
+let endedGames: number[] = [];
 let paddleSpeed: number = 10;
-let paddleHeight: number = 80;
 
 @Injectable()
 export class GameService {
@@ -21,26 +21,29 @@ export class GameService {
             return;
         await this.userService.setUserStatus(userID, "Online");
         const adapter = server.of('/').adapter;
-        let rooms: Map<string, string[]> = new Map()
+        let rooms: Map<string, string[]> = new Map();
 		adapter.sids.forEach((value, key) => {
-            const arr: any[] = Array.from(value)
+            const arr: any[] = Array.from(value);
             if(arr.length === 2)
             {
                 if (rooms.has(arr[1]) === false)
                     rooms.set(arr[1], ["1", arr[0]]);
                 else
                     rooms.set(arr[1], ["2", arr[0]]);
-        }
+            }
         });
         rooms.forEach((value, key) => {
+            if(endedGames.includes(parseInt(key)))
+                return;
             if(value[0] === "1")
             {
                 // value[1] won game because his rival disconnected
                 const clientInf: clientInfo = connectedGameSockets.find(element => element.client.id === value[1]);
-                const socket: Socket = clientInf.client
+                const socket: Socket = clientInf.client;
                 if (socket)
                 {
                     socket.emit("scoreUpdate", "rivalDisconnected");
+                    socket.emit("scoreModeUpdate", "rivalDisconnected");
                     socket.disconnect();
                 }
             }
@@ -61,7 +64,9 @@ export class GameService {
         this.startGameLoop(server, roomId);
     }
 
-    stopGame(roomId: string) {
+    stopGame(roomId: string, isDisconnect: boolean) {
+        if (isDisconnect === false)
+            endedGames.push(parseInt(roomId));
         const intervalId = gameIntervals.get(roomId);
         if (intervalId) {
             clearInterval(intervalId);
@@ -106,7 +111,6 @@ export class GameService {
                 server.to(roomId).emit('updateGameState', gameState);
             }
         }, 16 ); // 60 FPS
-
         gameIntervals.set(roomId, intervalID);
 	}
 
@@ -251,14 +255,14 @@ export class GameService {
 
     async deleteInvitation(userID: number, inviterID: number){
         console.log(`userID: ${userID}, inviterID: ${inviterID}`);
-        console.log (await this.prisma.gameInvitation.deleteMany({
+        await this.prisma.gameInvitation.deleteMany({
 			where: {
 				AND: [
 					{ UserID:  userID },
 					{ inviterID: inviterID },
 				],
 			},
-		}));
+		})
     }
 }
 

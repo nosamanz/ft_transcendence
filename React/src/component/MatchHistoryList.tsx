@@ -16,11 +16,11 @@ const MatchHistoryList = ({history, user}) =>{
 					{
 						history.Score > history.RivalScore ? (
 							<span className="mtchWin">
-							WIN
+								WIN
 							</span>
 						):(
 							<span className="mtchLose">
-								Lose
+								LOSE
 							</span>
 						)
 					}

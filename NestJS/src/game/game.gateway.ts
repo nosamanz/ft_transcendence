@@ -4,6 +4,7 @@ import { clientInfo } from 'src/chat/entities/clientInfo.entity';
 import { GameService } from 'src/game/game.service';
 import { GameModeService } from 'src/game/game-mode.service';
 import { connectedClients } from 'src/chat/chat.service';
+import { disconnect } from 'process';
 
 export let connectedGameSockets: clientInfo[] = [];
 let queue: Socket[] = [];
@@ -72,7 +73,14 @@ export class GameGateway {
 
 	@SubscribeMessage('stopInterval')
 	handleStopInterval(client: Socket, roomID: string) {
-		this.gameService.stopGame(roomID);
+		this.gameService.stopGame(roomID, false);
+		client.disconnect();
+	}
+	
+	@SubscribeMessage('stopIntervalDisconnect')
+	handleStopIntervalDisconnect(client: Socket, roomID: string) {
+		client.disconnect();
+		this.gameService.stopGame(roomID, true);
 	}
 
 	@SubscribeMessage('joinModeGame')
@@ -98,7 +106,8 @@ export class GameGateway {
 
 	@SubscribeMessage('stopModeInterval')
 	handleStopModeInterval(client: Socket, roomID: string) {
-		this.gameService.stopGame(roomID);
+		this.gameService.stopGame(roomID, false);
+		client.disconnect();
 	}
 
 	@SubscribeMessage('joinPrivGame')
@@ -123,7 +132,6 @@ export class GameGateway {
 		const queueElement: {ids: number[], socket: Socket} = privGameQueue.find(element => ((element.ids.some(id => (id === data.myId)) && element.socket.id !== client.id)))
 		if ( queueElement )
 		{
-			console.log("QElement")
 			queueElement.socket.emit("InvitationRejected");
 			privGameQueue = privGameQueue.filter(element => element !== queueElement);
 		}
@@ -139,7 +147,8 @@ export class GameGateway {
 
 	@SubscribeMessage('stopPrivInterval')
 	handleStopPrivInterval(client: Socket, roomID: string) {
-		this.gameService.stopGame(roomID);
+		this.gameService.stopGame(roomID, false);
+		client.disconnect();
 	}
 	
 	@SubscribeMessage('movePaddle')

@@ -49,7 +49,6 @@ const Game = ({user}) => {
         }
 
         socket.on("GameInvitation", async () => {
-            console.log("Socket on GameInvitation");
             await fetchData();
         })
 
@@ -73,7 +72,7 @@ const Game = ({user}) => {
                 socketGame.emit('joinPrivGame', {myId: user.id, rivalID: parseInt(friendID)});
                 socketGame.emit('invite', {myId: user.id, rivalID: parseInt(friendID)});
                 setPrivGame(1);
-                await fetch(`https://${process.env.REACT_APP_IP}:80/game/invite/${friendID}`, {///
+                await fetch(`https://${process.env.REACT_APP_IP}:80/game/invite/${friendID}`, {
                     headers: {
                         'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                     }
@@ -82,44 +81,51 @@ const Game = ({user}) => {
                 handleRemoveQueryParam();
             }
         }
-
         fetchData();
     }, [searchParams]);
 
-    socketGame.on("openGame", async (data) => {
-        rivalID = data.rivalId;
-        rivalSocketID = data.rival;
-        setRoomID(data.roomID);
-        setLocation(data.myLocation);
-        setState(2);
-        const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/nick/${rivalID}`, {
-            headers: {
-                'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-            }
-        })
-        const res = await response.json();
-        setRivalNick(res.nick);
-        setMyNick(res.myNick);
-    });
-    
-    socketGame.on("openModeGame", async (data) => {
-        rivalID = data.rivalId;
-        rivalSocketID = data.rival;
-        setRoomID(data.roomID);
-        setLocation(data.myLocation);
-        setState(3);
-        const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/nick/${rivalID}`, {
-            headers: {
-                'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-            }
-        })
-        const res = await response.json();
-        setRivalNick(res.nick);
-        setMyNick(res.myNick);
-    });
+    useEffect(() => {
+        socketGame.on("openGame", async (data) => {
+            rivalID = data.rivalId;
+            rivalSocketID = data.rival;
+            setRoomID(data.roomID);
+            setLocation(data.myLocation);
+            setState(2);
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/nick/${rivalID}`, {
+                headers: {
+                    'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+            })
+            const res = await response.json();
+            setRivalNick(res.nick);
+            setMyNick(res.myNick);
+        });
+        
+        socketGame.on("openModeGame", async (data) => {
+            rivalID = data.rivalId;
+            rivalSocketID = data.rival;
+            setRoomID(data.roomID);
+            setLocation(data.myLocation);
+            setState(3);
+            const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/nick/${rivalID}`, {
+                headers: {
+                    'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+                }
+            })
+            const res = await response.json();
+            setRivalNick(res.nick);
+            setMyNick(res.myNick);
+        });
+
+        
+        return(()=> {
+            socketGame.off("openGame");
+            socketGame.off("openModeGame");
+            //socketGame.off("InvitationRejected");
+        })   
+    },[searchParams, state]);
 
     socketGame.on("InvitationRejected", () => {
-        console.log("InvitatonRejected");
         setState(0);
         setPrivGame(0);
     })    
@@ -170,9 +176,7 @@ const Game = ({user}) => {
     }
 
     const acceptReq = (e: any) =>{
-        console.log(e);
         const fetchData = async () =>{
-            // databaseden sil
             await fetch(`https://${process.env.REACT_APP_IP}:80/game/deleteInvitaton/${e.id}`, {///
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
@@ -190,9 +194,7 @@ const Game = ({user}) => {
     }
     
     const rejectReq = (e: any) =>{
-        console.log(e);
         const fetchData = async () =>{
-            // databaseden sil
             await fetch(`https://${process.env.REACT_APP_IP}:80/game/deleteInvitaton/${e.id}`, {///
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
@@ -256,7 +258,7 @@ const Game = ({user}) => {
                 </div>
             ) : state === 3 ? (
                 <div>
-                    <CanvasMode location={location} myNick={myNick} rival={{nick: rivalNick, id: rivalID}} roomID={roomID} setState={setState}/>
+                    <CanvasMode location={location} myNick={myNick} rival={{nick: rivalNick, id: rivalID}} roomID={roomID} setState={setState} setPrivGame={setPrivGame}/>
                 </div>
             ) : null
         }

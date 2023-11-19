@@ -375,7 +375,6 @@ export class UserController {
 		@Res() res: Response,
 		@Param('nick') nick: string)
 	{
-		console.log("NICK IN GET: ", nick);
 		if (nick === "null")
 		{
 			const userID: number = parseInt(req.body.toString(), 10);
@@ -388,6 +387,9 @@ export class UserController {
 				nick: true,
 				LatterLevel: true,
 				MatchHistory: {
+					orderBy: {
+						id: 'desc',// You can use 'asc' for ascending or 'desc' for descending order
+					},
 					include: {
 						User: true
 					}
