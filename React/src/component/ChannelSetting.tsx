@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { useAsyncError } from "react-router-dom";
 import { cookies } from "../App";
 
-const ChannelCreate = ({setPopOpen, channelName}) =>{
-	const [inputValue, setInputValue] = useState<string>("");
+const ChannelSetting = ({setPopOpen, channelName}) =>{
 	const [pass, setPass] = useState<string>("undefined");
-	const [inv, setInv] = useState<boolean>(false);
 	const [check, setCheck] = useState<boolean>(false);
 	const [Process, setProcess] = useState<string>();
 
@@ -31,7 +28,6 @@ const ChannelCreate = ({setPopOpen, channelName}) =>{
 								'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 							}
 						})
-						console.log(response.ok);
 						break;
 					}
 					case "change":
@@ -41,7 +37,6 @@ const ChannelCreate = ({setPopOpen, channelName}) =>{
 								'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 							}
 						})
-						console.log(response.ok);
 						break;
 					}
 					case "remove":
@@ -51,7 +46,6 @@ const ChannelCreate = ({setPopOpen, channelName}) =>{
 							'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
 							}
 						})
-						console.log(response.ok);
 						break;
 					}
 				default:
@@ -69,13 +63,13 @@ const ChannelCreate = ({setPopOpen, channelName}) =>{
 				</div>
 				<div className="channelSettingForm">
 					<div className="settingLeft">
-						<div>
+						<div  className="sLeftLabel">
 							<label>ChannelName</label>
 						</div>
-						<div>
-							<label>Select</label>
+						<div  className="sLeftLabel">
+							<label >Select</label>
 						</div>
-						<div>
+						<div  className="sLeftLabel">
 							<label>Password</label>
 						</div>
 					</div>
@@ -102,4 +96,4 @@ const ChannelCreate = ({setPopOpen, channelName}) =>{
 	)
 }
 
-export default ChannelCreate;
+export default ChannelSetting;

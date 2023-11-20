@@ -134,7 +134,6 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 		if ((channel.BannedIDs.some((element) => element === targetUser.id)))
 			throw "Target User is Already Banned !";
 		channel.BannedIDs.push(targetUser.id);
-		console.log(channel.BannedIDs);
 		await this.prisma.channel.update({
 			where: { Name: channel.Name },
 			data: {
@@ -185,7 +184,6 @@ async createCh(userID, chname, passwd, isDirect, isInviteOnly)
 			where: { Name: channel.Name },
 			data: { MutedIDs: channel.MutedIDs }
 		})
-		console.log(status)
 		return status;
 	}
 

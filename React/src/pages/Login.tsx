@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIsFormSigned}) => {
 	const location = useLocation();
 	const navigate = useNavigate();
+	const [isPressed, setIsPressed] = useState<boolean>();
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -27,13 +28,9 @@ export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIs
 
 			if(code)
 			{
-				handleRemoveQueryParam();
+
 				const data = {}
-				data['grant_type']= 'authorization_code';
-				data['client_id']= process.env.REACT_APP_UID;
-				data['client_secret']= process.env.REACT_APP_SECRET;
 				data['code']= code;
-				data['redirect_uri']= process.env.REACT_APP_REDIRECT_URI;
 
 				const response = await fetch(`https://${process.env.REACT_APP_IP}:80/auth/42/signin_intra`, {
 					method: 'POST',
@@ -47,6 +44,7 @@ export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIs
 				// {token: Jwt_Token,  result: 1} The user has already been saved in database and the token has been created.
 				// {token: Jwt_Token,  result: 2} The user should be redirected to the TFA page.
 				// {token: return_msg, result:-1} The user couldn't log in.
+				handleRemoveQueryParam();
 				if (responseData.result === -1)
 				{
 					alert("You couldn't log in!!");
@@ -60,7 +58,6 @@ export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIs
 				const IsConnected = await responseIsConnected.json();
 				if (IsConnected.res === 1)
 				{
-					console.log("Login");
 					alert(IsConnected.msg);
 					setMaxSocket(true);
 					return;
@@ -86,22 +83,36 @@ export const Login = ({setUser, isTFAStatus, setIsTFAStatus, setMaxSocket, setIs
 				const UserData = await responseUser.json();
 				setUser(UserData);
 			}
-			const resIsSigned = await fetch(`https://${process.env.REACT_APP_IP}:80/user/isSigned`, {
-				headers: {
-					'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
-                }
-			});
-			const IsSigned = await resIsSigned.json();
-			if (IsSigned === true)
-				setIsFormSigned(true);
+			if(isPressed === true){
+				const resIsSigned = await fetch(`https://${process.env.REACT_APP_IP}:80/user/isSigned`, {
+					headers: {
+						'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
+					}
+				});
+				const IsSigned = await resIsSigned.json();
+				if (IsSigned === true)
+					setIsFormSigned(true);
+			}
 		}
 		fetchData();
-	}, []);
+	}, [isPressed]);
 
 
-	const handleFTLogin = () => {
-		window.location.href=(process.env.REACT_APP_API);
-	};
+
+const handleFTLogin = () => {
+        function messageHandler (event: MessageEvent<any>){
+            if(event.origin === process.env.REACT_APP_REDIRECT_URI){
+                const data = event.data;
+                if (data.message === 'popupRedirect'){
+                    navigate('/?code=' + data.additionalData, {replace: true});
+                    window.removeEventListener('message', messageHandler);
+                }
+            }
+            setIsPressed(true);
+        }
+        window.addEventListener('message', messageHandler);
+        window.open(process.env.REACT_APP_API, "intraPopUp", "width=500, height=300");
+    };
 	const calculateTransform = (index) => {
 		const degree = 7.2 * index;
 		return `rotate(${degree}deg) translate(300px) rotate(${0}deg)`;

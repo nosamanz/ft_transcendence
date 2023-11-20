@@ -53,14 +53,12 @@ const Navbar = ({user, setUser, maxSocket, isFormSigned}) => {
         fetchData();
     }
     const rejectFriend = (e) => {
-        console.log(e);
         const fetchData = async () =>{
             const response = await fetch(`https://${process.env.REACT_APP_IP}:80/user/rejectFriend/${e}`, {
                 headers: {
                     'authorization': 'Bearer ' + cookies.get("jwt_authorization"),
                 }
             })
-            console.log(response.ok);
             if (response.ok) {
                 // Update local state to remove the rejected friend request
                 setNotification(prevNotifications => prevNotifications.filter(not => not.nick !== e));

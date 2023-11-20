@@ -25,9 +25,7 @@ const ChannelPopUp = ({channel}) =>{
 			setPopChannel(resPopChannel.channel);
 			const myid:number = resPopChannel.myid;
 			setIsOwner(resPopChannel.channel.ChannelOwnerID === myid ? true : false);
-			console.log(IsOwner);
 			setIsAdmin(resPopChannel.channel.AdminIDs.some(element => element === myid));
-			console.log(resPopChannel.channel.AdminIDs.some(element => element === myid));
 		}
 		fetchData();
 	}, [checkMute])

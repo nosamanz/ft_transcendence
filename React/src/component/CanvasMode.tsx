@@ -47,7 +47,6 @@ const CanvasMode = ({ location, myNick, rival, roomID, setState, setPrivGame}: {
 				setMyScore(3);
 				setRivalScore(0);
 				setDisconnection(true);
-				console.log("Gitti O :(");
 				socketGame.emit("stopIntervalDisconnect", roomID);
 			}
 			else if (location === pos){
@@ -147,7 +146,7 @@ const CanvasMode = ({ location, myNick, rival, roomID, setState, setPrivGame}: {
 				ctx2.fillRect(gameState.ballX + 1, gameState.ballY + 1, 18, 18);
 		}
 	}, [gameState, myScore, rivalScore, disconnection, roomID]);
-	
+
 	const printNick = (ctx: any, nick: string, x: number, y: number): void => {
 		if (nick !== undefined)
 			ctx.fillText(nick.length > 10 ? nick.substring(0, 9) + "." : nick, x, y);
@@ -171,7 +170,7 @@ const CanvasMode = ({ location, myNick, rival, roomID, setState, setPrivGame}: {
 				myScore === 10 ? (
 					<div>
 						<p className='confetti'>You Win</p>
-						<Confetti /> 
+						<Confetti />
 					</div>
 				) : rivalScore === 10 ? (
 					<p className='confetti'>You Lose</p>

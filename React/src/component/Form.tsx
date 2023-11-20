@@ -12,7 +12,6 @@ const Form = ({user, setUser, setIsFormSigned, formType, setChgAvatar}) => {
 		setNick(e.target.value);
 	};
     const handleImageChange = (e) =>{
-        console.log("deneme");
 		const selectedFile = e.target.files[0];
         const fileSizeInKB = selectedFile.size / 1024; // Convert bytes to KB
 		const fileReader = new FileReader();

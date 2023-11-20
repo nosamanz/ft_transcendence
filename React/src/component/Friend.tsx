@@ -3,7 +3,6 @@ import messageIcon from "../images/message.png";
 import ignoreIcon from "../images/ignore.png"
 import gameInvite from "../images/gameInvite.png"
 import invite from "../images/invite.png"
-import Profile from "../pages/Profile"
 import { Link } from "react-router-dom";
 import { cookies } from "../App";
 
@@ -57,7 +56,6 @@ const Friend = ({friend, status, setStatus}) =>{
     }
     const chInvite = () =>
     {
-        console.log(name);
         const fetchData = async () =>{
             const response = await fetch(`https://${process.env.REACT_APP_IP}:80/chat/${name}/inviteChannel/${friend.nick}`, {
                 headers: {
@@ -71,7 +69,6 @@ const Friend = ({friend, status, setStatus}) =>{
     const handleXClick = () =>{
         setPopUp(false);
     }
-    console.log("status",friend.Status);
     return(
             <div className="friendOnePerson">
                 <div className="friendLink">

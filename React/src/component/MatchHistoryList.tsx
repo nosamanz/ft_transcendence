@@ -1,15 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 
 const MatchHistoryList = ({history, user}) =>{
-	const [result, setResult] = useState<string>("win");
 
-	// const myScore:number = user.Score;
-	// const rivalScore:number = history.Score;
-	// if (myScore > rivalScore)
-	// 	setResult("win");
-	// else
-	// 	setResult("lose");
-	console.log(history);
 	return(
 		<div className="mtchContainer">
 				<div className="matchResult">

@@ -51,22 +51,9 @@ export class TFAController {
 		const userID: number = parseInt(req.body.toString(), 10);
 		const user = await this.userService.getUserByID(userID);
 		const result = await this.tfaService.verifyTwoFactorAuthentication(code, user.TFSecret);
-		console.log(result)
 		if (result)
 			return await this.tfaService.Login(user);
 		throw new UnauthorizedException();
 	}
-
-	// @Get('verifyCode/:code')
-	// async verifyCode(
-	// 	@Req() req: Request,
-	// 	@Param('code') code: string)
-	// {
-	// 	const result = await this.tfaService.verifyTwoFactorAuthentication(code, user.TFSecret);
-	// 	console.log(result)
-	// 	if (result)
-	// 		return await this.tfaService.Login(user);
-	// 	throw new UnauthorizedException();
-	// }
 }
 

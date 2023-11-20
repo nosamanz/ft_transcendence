@@ -13,7 +13,6 @@ export class AppController {
 	@Get('leaderboard')
 	@UseGuards(JwtGuard)
 	async getLeaderboard(@Res() response : Response){
-		console.log("leaderboard");
 		const users = await this.prisma.user.findMany({
 			orderBy: {
 				LatterLevel: 'desc',

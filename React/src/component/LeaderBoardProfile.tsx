@@ -1,6 +1,4 @@
 import React from "react";
-import image from "../images/free-photo1.jpeg";
-import msgImg from "../images/msg.jpg";
 import addPerson from "../images/addPerson.png";
 import ignore from "../images/ignore.png";
 import msg from "../images/message.png";

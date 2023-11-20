@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Messages from "./Messages";
 
 const MessageBox = ({currentChannel, user}) =>{

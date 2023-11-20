@@ -3,7 +3,7 @@ import './App.scss';
 import Navbar from './component/Navbar';
 import Home, { socket } from './pages/Home';
 import Login from './pages/Login';
-import {BrowserRouter, Routes, Route, Link, Navigate} from "react-router-dom";
+import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Profile from './pages/Profile';
 import LeaderBoard from './pages/LeaderBoard';
 import Chat from './pages/Chat';
@@ -21,6 +21,13 @@ function App() {
 	const [isFormSigned, setIsFormSigned] = useState(false);
 
 	useEffect(() => {
+        const param = new URLSearchParams(window.location.search);
+        const code = param.get('code');
+        if(window.opener){
+                window.opener.postMessage({message: 'popupRedirect', additionalData:code}, process.env.REACT_APP_REDIRECT_URI);
+                window.close();
+                return(<></>);
+        }
 		const fetchData = async () => {
 			socket.on("connect", async () => {
 				const token = cookies.get("jwt_authorization");
@@ -33,7 +40,6 @@ function App() {
 					const IsConnected = await responseIsConnected.json();
 					if (IsConnected.res === 1)
 					{
-						console.log("Home")
 						alert(IsConnected.msg);
 						setMaxSocket(true);
 						return;

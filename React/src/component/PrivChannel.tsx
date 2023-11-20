@@ -1,5 +1,4 @@
 import React from "react";
-import image from "../images/avatar1.png"
 
 const PrivChannel = ({channel, setCurrentChannel}) =>{
     const HandleClick = async () => {
@@ -10,7 +9,7 @@ const PrivChannel = ({channel, setCurrentChannel}) =>{
 		    <div className="userChatChannel">
                 <div className="userChatInfo">
 			        <img className="searchChatImage" src={`data:image/png;base64,${channel.imgBuffer}`}/>
-                    <span  className="chatInfoSpan" onClick={HandleClick} >{channel.Users != undefined? channel.Users[0].nick : undefined}</span>
+                    <span  className="chatInfoSpan" onClick={HandleClick} >{channel.Users !== undefined? channel.Users[0].nick : undefined}</span>
                 </div>
             </div>
 		</div>

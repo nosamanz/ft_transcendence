@@ -65,24 +65,22 @@ export class AuthService {
 				Channels:     		{},
 			}
 		});
-		// defaultuKaydet
 		console.log("Successfully Logged In and Saved in DataBase");
 		return ({token: token, result: 0});
 	}
 
 	async getUserFromApi(data: any): Promise<any>{
 		const form = new FormData();
-		form.append('grant_type', 		data['grant_type']);
-		form.append('client_id', 		data['client_id']);
-		form.append('client_secret', 	data['client_secret']);
-		form.append('code', 			data['code']);
-		form.append('redirect_uri', 	data['redirect_uri']);
+		form.append('grant_type', 'authorization_code');
+		form.append('client_id', process.env.UID);
+		form.append('client_secret', process.env.SECRET);
+		form.append('code', data['code']);
+		form.append('redirect_uri', process.env.REDIRECT_URI);
 
 		const responseToken = await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',
 			body: form
-		})
-		console.log(responseToken.ok);
+		});
 		const dataToken = await responseToken.json();
 		const responseInfo = await fetch('https://api.intra.42.fr/v2/me', {
 			headers: {

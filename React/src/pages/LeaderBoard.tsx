@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { cookies } from "../App";
 import LeaderBoardProfile from "../component/LeaderBoardProfile";
-import TFA from "../component/TFA";
 
 const LeaderBoard = ({user}) =>{
 	const [Users, setUsers] = useState([]);
@@ -18,9 +17,7 @@ const LeaderBoard = ({user}) =>{
         }
         fetchData();
     }, [])
-	const closeTfa = (is: Boolean) =>
-	{
-	}
+
 	return(
 		<div className="leaderBoard">
 			<div className="lBh1">

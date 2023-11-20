@@ -173,7 +173,6 @@ export class UserController {
 		@Res() res: Response,
 		@Param('user') destuser: string)
 	{
-		console.log("IGNORE");
 		const userID: number = parseInt(req.body.toString(), 10);
 		let user = await this.userService.getUserByID(userID);
 		user = await this.userService.getUserByNick(user.nick, {IgnoredUsers: true});

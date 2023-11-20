@@ -10,13 +10,10 @@ import achievement from "../images/achievement.png";
 import firstWin from "../images/firstWin.png";
 import w5wL from "../images/w5wL.png";
 import w10wL from "../images/w10wL.png";
-import ach1 from "../images/ach1.png";
-import ach2 from "../images/ach2.png";
 import ach3 from "../images/ach2.png";
 import ach5 from "../images/ach5.png";
 
 import Form from "../component/Form";
-import MatchHistory from "../component/MatchHistory";
 
 const Profile = () => {
 
@@ -29,10 +26,8 @@ const Profile = () => {
 	const [isTFAPopUp, setIsTFAPopUp] = useState<boolean>(false);
 	const [isSettingPopUp, setSettingPopUp] = useState<boolean>(false);
 	const [toggleState, setToggleState] = useState<boolean>(false);
-	const [mtchOpen, setmtchOpen] = useState<boolean>(false);
     const [QR, setQR] = useState("");
 	const [isHovered, setHovered] = useState<boolean>(false);
-	let tfa: boolean = false;
 
 	useEffect (() =>{
 		if (nick !== null)
@@ -112,10 +107,8 @@ const Profile = () => {
 			});
 			if (response.ok)
 			{
-				console.log("response ok");
 				setNewNick(newNick);
 				setUser(prevUser => ({ ...prevUser, nick: newNick }));
-				console.log(user.nick);
 			}
 			else{
 				const res = await response.json();
@@ -123,16 +116,11 @@ const Profile = () => {
 			}
 		}
 		fetchData();
-		console.log(newNick);
 		setSettingPopUp(false);
 	}
 
 	const changeAvatar = () => {
 		setChgAvatar(true);
-	}
-	const matchOpen = () =>{
-		console.log("matchHistory");
-		setmtchOpen(true);
 	}
 
 	return(
@@ -193,10 +181,6 @@ const Profile = () => {
 									</div>
 								</div>
 								<div className="match">
-									{/* <label onClick={matchOpen}>Match History</label>
-									{
-										mtchOpen === true ?(<MatchHistory />):(null)
-									} */}
 									<Link to={`/profile/matchHistory?nick=${nick}`} className="link" ><label>Match History</label></Link>
 								</div>
 								{

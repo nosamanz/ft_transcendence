@@ -24,8 +24,6 @@ const MatchHistory = () =>{
 				{
 					setHistory(res.MatchHistory);
 					setUser(res);
-					console.log(res);
-					console.log("History : ", res.MatchHistory)
 				}
 			}
 			else{
@@ -39,8 +37,6 @@ const MatchHistory = () =>{
 				{
 					setHistory(res.MatchHistory);
 					setUser(res);
-					console.log(res);
-					console.log("History : ", res.MatchHistory)
 				}
 			}
 		}

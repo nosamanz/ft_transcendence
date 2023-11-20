@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from "react";
-import image1 from "../images/avatar1.png"
-import image2 from "../images/free-photo2.jpg"
 import mute from "../images/mute.png"
 import unmute from "../images/unmute.png"
 import admin from  "../images/admin.png"
